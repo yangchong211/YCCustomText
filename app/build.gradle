@@ -1,0 +1,35 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.3"
+    defaultConfig {
+        applicationId "com.ns.yc.yccustomtext"
+        minSdkVersion 16
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile project(':YCCustomTextLib')
+    //compile 'cn.yc:YCCustomTextLib:1.7'         //自定文本
+
+
+    //图片选择器 https://github.com/donglua/PhotoPicker
+    compile 'me.iwf.photopicker:PhotoPicker:0.8.4@aar'
+    //compile 'com.lzy.widget:imagepicker:0.5.0'
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile 'io.reactivex:rxjava:1.1.0'
+    compile 'io.reactivex:rxandroid:1.1.0'
+}

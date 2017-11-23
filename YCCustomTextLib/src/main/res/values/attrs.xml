@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="LabeledEditText">
+        <attr name="etTextAppearance" format="reference" />
+        <attr name="etPadding" format="reference|dimension" />
+        <attr name="etPaddingLeft" format="reference|dimension" />
+        <attr name="etPaddingTop" format="reference|dimension" />
+        <attr name="etPaddingRight" format="reference|dimension" />
+        <attr name="etPaddingBottom" format="reference|dimension" />
+        <attr name="etBackground" format="reference|color" />
+    </declare-styleable>
+
+    <declare-styleable name="PasswordEditText">
+        <attr name="pet_iconShow" format="integer"/>
+        <attr name="pet_iconHide" format="integer"/>
+    </declare-styleable>
+
+</resources>
