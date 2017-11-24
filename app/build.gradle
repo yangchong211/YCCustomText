@@ -23,7 +23,7 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile project(':YCCustomTextLib')
-    //compile 'cn.yc:YCCustomTextLib:1.7'         //自定文本
+//    compile 'cn.yc:YCCustomTextLib:2.0'         //自定文本
 
 
     //图片选择器 https://github.com/donglua/PhotoPicker

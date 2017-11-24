@@ -35,7 +35,7 @@ import com.ns.yc.yccustomtextlib.R;
  * 此项目更新到0.0.6版本后再无更新
  * ================================================
  */
-public class FloatLabeledEditText extends FrameLayout {
+public class LabeledEditText extends FrameLayout {
 
     private static final int DEFAULT_PADDING_LEFT= 2;
 
@@ -44,19 +44,19 @@ public class FloatLabeledEditText extends FrameLayout {
 
     private Context mContext;
 
-        public FloatLabeledEditText(Context context) {
+        public LabeledEditText(Context context) {
         super(context);
         mContext = context;
     }
 
-    public FloatLabeledEditText(Context context, AttributeSet attrs) {
+    public LabeledEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
         setAttributes(attrs);
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public FloatLabeledEditText(Context context, AttributeSet attrs, int defStyle) {
+    public LabeledEditText(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         mContext = context;
         setAttributes(attrs);

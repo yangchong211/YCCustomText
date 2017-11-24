@@ -9,7 +9,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin">
 
-    <com.ns.yc.yccustomtextlib.labelEt.FloatLabeledEditText
+    <com.ns.yc.yccustomtextlib.labelEt.LabeledEditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -17,10 +17,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="This is the hint" />
-    </com.ns.yc.yccustomtextlib.labelEt.FloatLabeledEditText>
+    </com.ns.yc.yccustomtextlib.labelEt.LabeledEditText>
 
     <!-- add some padding -->
-    <com.ns.yc.yccustomtextlib.labelEt.FloatLabeledEditText
+    <com.ns.yc.yccustomtextlib.labelEt.LabeledEditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         float:etPadding="10dp">
@@ -29,10 +29,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Username" />
-    </com.ns.yc.yccustomtextlib.labelEt.FloatLabeledEditText>
+    </com.ns.yc.yccustomtextlib.labelEt.LabeledEditText>
 
     <!-- password input -->
-    <com.ns.yc.yccustomtextlib.labelEt.FloatLabeledEditText
+    <com.ns.yc.yccustomtextlib.labelEt.LabeledEditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         float:etPaddingBottom="10dp">
@@ -42,10 +42,10 @@
             android:layout_height="wrap_content"
             android:hint="Password"
             android:inputType="textPassword" />
-    </com.ns.yc.yccustomtextlib.labelEt.FloatLabeledEditText>
+    </com.ns.yc.yccustomtextlib.labelEt.LabeledEditText>
 
     <!-- change color of hint text-->
-    <com.ns.yc.yccustomtextlib.labelEt.FloatLabeledEditText
+    <com.ns.yc.yccustomtextlib.labelEt.LabeledEditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         float:etPaddingBottom="10dp"
@@ -56,6 +56,6 @@
             android:layout_height="wrap_content"
             android:hint="Styled Hint"
             android:inputType="textPassword" />
-    </com.ns.yc.yccustomtextlib.labelEt.FloatLabeledEditText>
+    </com.ns.yc.yccustomtextlib.labelEt.LabeledEditText>
 
 </LinearLayout>

@@ -21,10 +21,15 @@ import android.view.inputmethod.EditorInfo;
 import com.ns.yc.yccustomtextlib.R;
 
 
+
 /**
- * 密码编辑框
- * <p/>
- * Created by wangchenlong on 16/2/15.
+ * ================================================
+ * 作    者：杨充
+ * 版    本：1.0
+ * 创建日期：2016/8/5
+ * 描    述：密码编辑框
+ * 修订历史：
+ * ================================================
  */
 public class PasswordEditText extends AppCompatEditText {
 
