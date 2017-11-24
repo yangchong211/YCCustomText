@@ -15,7 +15,7 @@
 ## 2.关于集成方法
 - 首先在项目build.gradlew中添加
 ```
-compile 'cn.yc:YCCustomTextLib:2.0'
+compile 'cn.yc:YCCustomTextLib:2.1'
 ```
 ## 3.关于超文本控件使用方法
 - 3.1在布局中
