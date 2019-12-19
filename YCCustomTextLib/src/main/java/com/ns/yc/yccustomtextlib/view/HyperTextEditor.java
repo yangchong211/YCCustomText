@@ -14,7 +14,6 @@ import android.text.TextUtils;
 import android.text.style.CharacterStyle;
 import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -230,8 +229,8 @@ public class HyperTextEditor extends ScrollView {
 			// 只有在光标已经顶到文本输入框的最前方，在判定是否删除之前的图片，或两个View合并
 			if (startSelection == 0) {
 				int editIndex = allLayout.indexOfChild(editTxt);
-				View preView = allLayout.getChildAt(editIndex - 1); // 如果editIndex-1<0,
-																	// 则返回的是null
+				// 如果editIndex-1<0,
+				View preView = allLayout.getChildAt(editIndex - 1);
 				if (null != preView) {
 					if (preView instanceof RelativeLayout) {
 						// 光标EditText的上一个view对应的是图片
@@ -406,8 +405,7 @@ public class HyperTextEditor extends ScrollView {
 			while (m.find()) {
 				// 需要重复！
 				span = new ForegroundColorSpan(Color.parseColor("#EE5C42"));
-				spannable.setSpan(span, m.start(), m.end(),
-						Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+				spannable.setSpan(span, m.start(), m.end(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -430,10 +428,12 @@ public class HyperTextEditor extends ScrollView {
 	public void addEditTextAtIndex(final int index, CharSequence editStr) {
 		try {
 			EditText editText2 = createEditText("插入文字", EDIT_PADDING);
-			if (!TextUtils.isEmpty(keywords)) {//搜索关键词高亮
+			if (!TextUtils.isEmpty(keywords)) {
+				//搜索关键词高亮
 				SpannableStringBuilder textStr = highlight(editStr.toString(), keywords);
 				editText2.setText(textStr);
-			} else if (!TextUtils.isEmpty(editStr)) {//判断插入的字符串是否为空，如果没有内容则显示hint提示信息
+			} else if (!TextUtils.isEmpty(editStr)) {
+				//判断插入的字符串是否为空，如果没有内容则显示hint提示信息
 				editText2.setText(editStr);
 			}
 			editText2.setOnFocusChangeListener(focusListener);
@@ -441,7 +441,8 @@ public class HyperTextEditor extends ScrollView {
 			// 请注意此处，EditText添加、或删除不触动Transition动画
 			allLayout.setLayoutTransition(null);
 			allLayout.addView(editText2, index);
-			allLayout.setLayoutTransition(mTransitioner); // remove之后恢复transition动画
+			// remove之后恢复transition动画
+			allLayout.setLayoutTransition(mTransitioner);
 			//插入新的EditText之后，修改lastFocusEdit的指向
 			lastFocusEdit = editText2;
 			lastFocusEdit.requestFocus();
@@ -534,16 +535,14 @@ public class HyperTextEditor extends ScrollView {
 		mTransitioner.addTransitionListener(new LayoutTransition.TransitionListener() {
 
 			@Override
-			public void startTransition(LayoutTransition transition,
-										ViewGroup container, View view, int transitionType) {
+			public void startTransition(LayoutTransition transition, ViewGroup container, View view, int transitionType) {
 
 			}
 
 			@Override
 			public void endTransition(LayoutTransition transition,
 					ViewGroup container, View view, int transitionType) {
-				if (!transition.isRunning()
-						&& transitionType == LayoutTransition.CHANGE_DISAPPEARING) {
+				if (!transition.isRunning() && transitionType == LayoutTransition.CHANGE_DISAPPEARING) {
 					// transition动画结束，合并EditText
 					 mergeEditText();
 				}
@@ -560,7 +559,6 @@ public class HyperTextEditor extends ScrollView {
 			View preView = allLayout.getChildAt(disappearingImageIndex - 1);
 			View nextView = allLayout.getChildAt(disappearingImageIndex);
 			if (preView instanceof EditText && nextView instanceof EditText) {
-				Log.d("LeiTest", "合并EditText");
 				EditText preEdit = (EditText) preView;
 				EditText nextEdit = (EditText) nextView;
 				String str1 = preEdit.getText().toString();
