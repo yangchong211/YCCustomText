@@ -312,7 +312,6 @@ public class HyperTextEditor extends ScrollView {
 		editText.setTag(viewTagIndex++);
 		editText.setPadding(editNormalPadding, paddingTop, editNormalPadding, paddingTop);
 		editText.setHint(hint);
-		//editText.setTextSize(rtTextSize);
 		editText.setTextSize(TypedValue.COMPLEX_UNIT_PX, rtTextSize);
 		editText.setTextColor(rtTextColor);
 		editText.setLineSpacing(rtTextLineSpace, 1.0f);
@@ -327,7 +326,6 @@ public class HyperTextEditor extends ScrollView {
 		RelativeLayout layout = (RelativeLayout) inflater.inflate(R.layout.edit_imageview, null);
 		layout.setTag(viewTagIndex++);
 		View closeView = layout.findViewById(R.id.image_close);
-		//closeView.setVisibility(GONE);
 		closeView.setTag(layout.getTag());
 		closeView.setOnClickListener(btnListener);
 		HyperImageView imageView = layout.findViewById(R.id.edit_imageView);

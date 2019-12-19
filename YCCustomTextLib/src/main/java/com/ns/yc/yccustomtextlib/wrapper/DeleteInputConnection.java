@@ -6,6 +6,15 @@ import android.view.inputmethod.InputConnectionWrapper;
 
 import com.ns.yc.yccustomtextlib.utils.HyperLogUtils;
 
+/**
+ * <pre>
+ *     @author 杨充
+ *     blog  : https://github.com/yangchong211
+ *     time  : 2019/07/18
+ *     desc  : 自定义InputConnectionWrapper
+ *     revise:
+ * </pre>
+ */
 public class DeleteInputConnection extends InputConnectionWrapper {
 
     public DeleteInputConnection(InputConnection target, boolean mutable) {
