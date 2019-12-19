@@ -20,7 +20,7 @@ compile 'cn.yc:YCCustomTextLib:2.1'
 ## 3.关于超文本控件使用方法
 - 3.1在布局中
 ```
-<com.ns.yc.yccustomtextlib.hyper.HyperTextEditor
+<com.ns.yc.yccustomtextlib.t.HyperTextEditor
         android:id="@+id/et_new_content"
         android:layout_marginTop="10dp"
         android:layout_width="match_parent"
@@ -48,3 +48,16 @@ et_new_content.insertImage(imagePath, et_new_content.getMeasuredWidth());
 
 ## 5.关于截图说明
 - 
+
+
+
+### 参考项目
+- https://github.com/xmuSistone/AnimRichEditor
+
+
+
+
+
+
+
+

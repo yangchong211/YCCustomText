@@ -6,9 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-import com.ns.yc.yccustomtext.first.FirstActivity;
-import com.ns.yc.yccustomtext.second.SecondActivity;
-import com.ns.yc.yccustomtext.third.ThirdActivity;
+import com.pedaily.yc.ycdialoglib.toast.ToastUtils;
+
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -21,6 +20,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
+        ToastUtils.init(getApplication());
     }
 
     private void init() {
@@ -38,13 +38,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.tv_1:
-                startActivity(new Intent(this, FirstActivity.class));
+                startActivity(new Intent(this,NewActivity.class));
                 break;
-            case R.id.tv_2:
-                startActivity(new Intent(this, SecondActivity.class));
-                break;
-            case R.id.tv_3:
-                startActivity(new Intent(this, ThirdActivity.class));
+            default:
                 break;
         }
     }

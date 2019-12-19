@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <declare-styleable name="LabeledEditText">
-        <attr name="etTextAppearance" format="reference" />
-        <attr name="etPadding" format="reference|dimension" />
-        <attr name="etPaddingLeft" format="reference|dimension" />
-        <attr name="etPaddingTop" format="reference|dimension" />
-        <attr name="etPaddingRight" format="reference|dimension" />
-        <attr name="etPaddingBottom" format="reference|dimension" />
-        <attr name="etBackground" format="reference|color" />
+    <declare-styleable name="HyperTextEditor" >
+        <attr name="rt_editor_image_height" format="integer" />
+        <attr name="rt_editor_image_bottom" format="integer" />
+        <attr name="rt_editor_text_init_hint" format="string" />
+        <attr name="rt_editor_text_size" format="dimension" />
+        <attr name="rt_editor_text_color" format="color" />
+        <attr name="rt_editor_text_line_space" format="dimension" />
     </declare-styleable>
 
-    <declare-styleable name="PasswordEditText">
-        <attr name="pet_iconShow" format="integer"/>
-        <attr name="pet_iconHide" format="integer"/>
+    <declare-styleable name="HyperTextView" >
+        <attr name="rt_view_image_height" format="integer" />
+        <attr name="rt_view_image_bottom" format="integer" />
+        <attr name="rt_view_text_init_hint" format="string" />
+        <attr name="rt_view_text_size" format="dimension" />
+        <attr name="rt_view_text_color" format="color" />
+        <attr name="rt_view_text_line_space" format="dimension" />
     </declare-styleable>
+
 
 </resources>
