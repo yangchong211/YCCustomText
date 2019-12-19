@@ -12,5 +12,11 @@ import android.widget.ImageView;
  * </pre>
  */
 public interface ImageLoader {
+    /**
+     * 加载图片
+     * @param imagePath                 图片地址
+     * @param imageView                 view
+     * @param imageHeight               图片高度
+     */
     void loadImage(String imagePath, ImageView imageView, int imageHeight);
 }
