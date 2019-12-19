@@ -27,7 +27,7 @@ import com.ns.yc.yccustomtext.util.CommonUtil;
 import com.ns.yc.yccustomtext.util.ImageUtils;
 import com.ns.yc.yccustomtext.util.MyGlideEngine;
 import com.ns.yc.yccustomtext.util.SDCardUtil;
-import com.ns.yc.yccustomtextlib.XRichText;
+import com.ns.yc.yccustomtextlib.HyperRichText;
 import com.ns.yc.yccustomtextlib.inter.ImageLoader;
 import com.ns.yc.yccustomtextlib.inter.OnHyperListener;
 import com.ns.yc.yccustomtextlib.view.HyperTextEditor;
@@ -261,7 +261,7 @@ public class NewActivity extends AppCompatActivity {
     }
 
     private void initHyper(){
-        XRichText.getInstance().setImageLoader(new ImageLoader() {
+        HyperRichText.getInstance().setImageLoader(new ImageLoader() {
             @Override
             public void loadImage(final String imagePath, final ImageView imageView, final int imageHeight) {
                 Log.e("---", "imageHeight: "+imageHeight);

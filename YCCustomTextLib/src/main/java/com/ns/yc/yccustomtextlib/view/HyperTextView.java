@@ -22,7 +22,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.ns.yc.yccustomtextlib.R;
-import com.ns.yc.yccustomtextlib.XRichText;
+import com.ns.yc.yccustomtextlib.HyperRichText;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -256,11 +256,11 @@ public class HyperTextView extends ScrollView {
         imageView.setAbsolutePath(imagePath);
 
 //        if (rtImageHeight > 0) {
-//            XRichText.getInstance().loadImage(imagePath, imageView, true);
+//            HyperRichText.getInstance().loadImage(imagePath, imageView, true);
 //        } else {
-//            XRichText.getInstance().loadImage(imagePath, imageView, false);
+//            HyperRichText.getInstance().loadImage(imagePath, imageView, false);
 //        }
-        XRichText.getInstance().loadImage(imagePath, imageView, rtImageHeight);
+        HyperRichText.getInstance().loadImage(imagePath, imageView, rtImageHeight);
 
         // onActivityResult无法触发动画，此处post处理
         allLayout.addView(imageLayout, index);

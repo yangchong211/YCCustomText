@@ -4,16 +4,16 @@ import android.widget.ImageView;
 
 import com.ns.yc.yccustomtextlib.inter.ImageLoader;
 
-public class XRichText {
+public class HyperRichText {
 
-    private static XRichText instance;
+    private static HyperRichText instance;
     private ImageLoader imageLoader;
 
-    public static XRichText getInstance(){
+    public static HyperRichText getInstance(){
         if (instance == null){
-            synchronized (XRichText.class){
+            synchronized (HyperRichText.class){
                 if (instance == null){
-                    instance = new XRichText();
+                    instance = new HyperRichText();
                 }
             }
         }
