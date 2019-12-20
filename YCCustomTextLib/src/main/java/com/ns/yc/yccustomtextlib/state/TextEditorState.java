@@ -31,7 +31,7 @@ import android.view.View;
  */
 public class TextEditorState extends View.BaseSavedState {
 
-    public String inputStr;
+    public int rtImageHeight;
     public String imagePath;
 
     public static final Creator<TextEditorState> CREATOR
@@ -53,13 +53,13 @@ public class TextEditorState extends View.BaseSavedState {
 
     public TextEditorState(Parcel source) {
         super(source);
-        inputStr = source.readString();
+        rtImageHeight = source.readInt();
         imagePath = source.readString();
     }
 
     @Override public void writeToParcel(Parcel out, int flags) {
         super.writeToParcel(out, flags);
-        out.writeString(inputStr);
+        out.writeInt(rtImageHeight);
         out.writeString(imagePath);
     }
 }

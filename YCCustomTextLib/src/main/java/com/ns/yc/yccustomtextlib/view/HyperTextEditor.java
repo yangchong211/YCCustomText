@@ -62,6 +62,9 @@ public class HyperTextEditor extends ScrollView {
 	 * 这个是所有子view的容器，scrollView内部的唯一一个ViewGroup
 	 */
 	private LinearLayout allLayout;
+	/**
+	 * inflater对象
+	 */
 	private LayoutInflater inflater;
 	/**
 	 * 所有EditText的软键盘监听器
@@ -134,10 +137,15 @@ public class HyperTextEditor extends ScrollView {
 
 	public HyperTextEditor(Context context, AttributeSet attrs, int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
-		initAttrs(context,attrs);
 		imagePaths = new ArrayList<>();
 		inflater = LayoutInflater.from(context);
+		initAttrs(context,attrs);
+		initLayoutView(context);
+		initListener();
+		initFirstEditText(context);
+	}
 
+	private void initLayoutView(Context context) {
 		// 1. 初始化allLayout
 		allLayout = new LinearLayout(context);
 		allLayout.setOrientation(LinearLayout.VERTICAL);
@@ -147,16 +155,6 @@ public class HyperTextEditor extends ScrollView {
 		//设置间距，防止生成图片时文字太靠边，不能用margin，否则有黑边
 		allLayout.setPadding(50,15,50,15);
 		addView(allLayout, layoutParams);
-
-		initListener();
-
-
-		LinearLayout.LayoutParams firstEditParam = new LinearLayout.LayoutParams(
-				LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-		//editNormalPadding = dip2px(EDIT_PADDING);
-		EditText firstEdit = createEditText(rtTextInitHint, HyperLibUtils.dip2px(context, EDIT_PADDING));
-		allLayout.addView(firstEdit, firstEditParam);
-		lastFocusEdit = firstEdit;
 	}
 
 	/**
@@ -181,10 +179,10 @@ public class HyperTextEditor extends ScrollView {
 		// 2. 初始化键盘退格监听
 		// 主要用来处理点击回删按钮时，view的一些列合并操作
 		keyListener = new OnKeyListener() {
-
 			@Override
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
-				if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DEL) {
+				if (event.getAction() == KeyEvent.ACTION_DOWN &&
+						event.getKeyCode() == KeyEvent.KEYCODE_DEL) {
 					EditText edit = (EditText) v;
 					onBackspacePress(edit);
 				}
@@ -216,6 +214,16 @@ public class HyperTextEditor extends ScrollView {
 				}
 			}
 		};
+	}
+
+
+	private void initFirstEditText(Context context) {
+		LinearLayout.LayoutParams firstEditParam = new LinearLayout.LayoutParams(
+				LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+		int padding = HyperLibUtils.dip2px(context, EDIT_PADDING);
+		EditText firstEdit = createEditText(rtTextInitHint, padding);
+		allLayout.addView(firstEdit, firstEditParam);
+		lastFocusEdit = firstEdit;
 	}
 
 
@@ -279,10 +287,13 @@ public class HyperTextEditor extends ScrollView {
 						onHyperListener.onRtImageDelete(editData.getImagePath());
 					}
 					//SDCardUtil.deleteFile(editData.imagePath);
+					//从图片集合中移除图片链接
 					imagePaths.remove(editData.getImagePath());
 				}
+				//然后移除当前view
 				allLayout.removeView(view);
-				mergeEditText();//合并上下EditText内容
+				//合并上下EditText内容
+				mergeEditText();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -518,8 +529,7 @@ public class HyperTextEditor extends ScrollView {
 		try {
 			options.inJustDecodeBounds = true;
 			BitmapFactory.decodeFile(filePath, options);
-			int sampleSize = options.outWidth > width ? options.outWidth / width
-					+ 1 : 1;
+			int sampleSize = options.outWidth > width ? options.outWidth / width + 1 : 1;
 			options.inJustDecodeBounds = false;
 			options.inSampleSize = sampleSize;
 		} catch (Exception e) {
