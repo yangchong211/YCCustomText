@@ -1,4 +1,4 @@
-package com.ns.yc.yccustomtext.util;
+package com.ns.yc.yccustomtext;
 
 import android.content.ContentResolver;
 import android.content.Context;

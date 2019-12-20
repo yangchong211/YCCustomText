@@ -1,4 +1,4 @@
-package com.ns.yc.yccustomtext.util;
+package com.ns.yc.yccustomtext;
 
 import android.app.ActivityManager;
 import android.content.ComponentName;

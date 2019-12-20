@@ -1,4 +1,4 @@
-package com.ns.yc.yccustomtext.util;
+package com.ns.yc.yccustomtext;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
