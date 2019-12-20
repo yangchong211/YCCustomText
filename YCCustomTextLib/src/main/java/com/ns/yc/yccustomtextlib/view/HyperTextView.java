@@ -5,11 +5,8 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.text.style.CharacterStyle;
-import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -18,14 +15,14 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
 import com.ns.yc.yccustomtextlib.HyperRichText;
 import com.ns.yc.yccustomtextlib.R;
 import com.ns.yc.yccustomtextlib.inter.OnHyperTextListener;
 import com.ns.yc.yccustomtextlib.utils.HyperLibUtils;
 import com.ns.yc.yccustomtextlib.utils.HyperLogUtils;
+
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 /**

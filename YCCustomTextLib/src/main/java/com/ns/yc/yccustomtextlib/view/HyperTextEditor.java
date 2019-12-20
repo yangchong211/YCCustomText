@@ -9,11 +9,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
-import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.text.style.CharacterStyle;
-import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -37,8 +34,6 @@ import com.ns.yc.yccustomtextlib.utils.HyperLogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 /**
@@ -385,10 +380,14 @@ public class HyperTextEditor extends ScrollView {
 		try {
 			//lastFocusEdit获取焦点的EditText
 			String lastEditStr = lastFocusEdit.getText().toString();
-			int cursorIndex = lastFocusEdit.getSelectionStart();//获取光标所在位置
-			String editStr1 = lastEditStr.substring(0, cursorIndex).trim();//获取光标前面的字符串
-			String editStr2 = lastEditStr.substring(cursorIndex).trim();//获取光标后的字符串
-			int lastEditIndex = layout.indexOfChild(lastFocusEdit);//获取焦点的EditText所在位置
+			//获取光标所在位置
+			int cursorIndex = lastFocusEdit.getSelectionStart();
+			//获取光标前面的字符串
+			String editStr1 = lastEditStr.substring(0, cursorIndex).trim();
+			//获取光标后的字符串
+			String editStr2 = lastEditStr.substring(cursorIndex).trim();
+			//获取焦点的EditText所在位置
+			int lastEditIndex = layout.indexOfChild(lastFocusEdit);
 			if (lastEditStr.length() == 0) {
 				//如果当前获取焦点的EditText为空，直接在EditText下方插入图片，并且插入空的EditText
 				addEditTextAtIndex(lastEditIndex + 1, "");
@@ -428,7 +427,6 @@ public class HyperTextEditor extends ScrollView {
 			imm.hideSoftInputFromWindow(lastFocusEdit.getWindowToken(), 0);
 		}
 	}
-
 
 	public void setKeywords(String keywords) {
 		this.keywords = keywords;
