@@ -1,5 +1,4 @@
-### 自定义文本控件
-## 目录介绍
+#### 自定义文本控件目录介绍
 - **1.关于控件类型，共三种**
 - **2.关于集成方法**
 - **3.关于超文本控件使用方法**
@@ -37,17 +36,6 @@ et_new_content.insertImage(imagePath, et_new_content.getMeasuredWidth());
 - 3.3具体的使用可以参考此案例
 - 支持从相册选中图片并且插入，完整案例链接地址：https://github.com/yangchong211/LifeHelper
 
-## 4.关于密码控件使用方法
-- 直接在代码中
-```
- <com.ns.yc.yccustomtextlib.pwdEt.PasswordEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="This is the hint" />
-```
-
-## 5.关于截图说明
-- 
 
 
 

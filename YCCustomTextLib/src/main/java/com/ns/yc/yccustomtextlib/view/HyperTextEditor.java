@@ -245,7 +245,8 @@ public class HyperTextEditor extends ScrollView {
 						// 合并文本view时，不需要transition动画
 						allLayout.setLayoutTransition(null);
 						allLayout.removeView(editTxt);
-						allLayout.setLayoutTransition(mTransitioner); // 恢复transition动画
+						// 恢复transition动画
+						allLayout.setLayoutTransition(mTransitioner);
 
 						// 文本合并
 						preEdit.setText(String.valueOf(str2 + str1));

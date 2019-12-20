@@ -28,6 +28,7 @@ import com.ns.yc.yccustomtextlib.inter.ImageLoader;
 import com.ns.yc.yccustomtextlib.inter.OnHyperEditListener;
 import com.ns.yc.yccustomtextlib.inter.OnHyperTextListener;
 import com.ns.yc.yccustomtextlib.model.HyperEditData;
+import com.ns.yc.yccustomtextlib.utils.HyperLibUtils;
 import com.ns.yc.yccustomtextlib.view.HyperTextEditor;
 import com.ns.yc.yccustomtextlib.view.HyperTextView;
 import com.pedaily.yc.ycdialoglib.toast.ToastUtils;
@@ -257,7 +258,7 @@ public class NewActivity extends AppCompatActivity {
                             if (htv_content !=null) {
                                 if (text.contains("<img") && text.contains("src=")) {
                                     //imagePath可能是本地路径，也可能是网络地址
-                                    String imagePath = StringUtils.getImgSrc(text);
+                                    String imagePath = HyperLibUtils.getImgSrc(text);
                                     htv_content.addImageViewAtIndex(htv_content.getLastIndex(), imagePath);
                                 } else {
                                     htv_content.addTextViewAtIndex(htv_content.getLastIndex(), text);
@@ -276,7 +277,7 @@ public class NewActivity extends AppCompatActivity {
      */
     private void showEditData(ObservableEmitter<String> emitter, String html) {
         try {
-            List<String> textList = StringUtils.cutStringByImgTag(html);
+            List<String> textList = HyperLibUtils.cutStringByImgTag(html);
             for (int i = 0; i < textList.size(); i++) {
                 String text = textList.get(i);
                 emitter.onNext(text);
