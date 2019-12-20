@@ -1,6 +1,11 @@
 package com.ns.yc.yccustomtextlib.utils;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.CharacterStyle;
+import android.text.style.ForegroundColorSpan;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +27,29 @@ public final class HyperLibUtils {
     public static int dip2px(Context context, float dipValue) {
         float m = context.getResources().getDisplayMetrics().density;
         return (int) (dipValue * m + 0.5f);
+    }
+
+    /**
+     * 关键字高亮显示
+     * @param target                    需要高亮的关键字
+     * @param text	                    需要显示的文字
+     * @return                          spannable
+     */
+    public static SpannableStringBuilder highlight(String text, String target, int color) {
+        SpannableStringBuilder spannable = new SpannableStringBuilder(text);
+        CharacterStyle span;
+        try {
+            Pattern p = Pattern.compile(target);
+            Matcher m = p.matcher(text);
+            while (m.find()) {
+                // 需要重复！
+                span = new ForegroundColorSpan(color);
+                spannable.setSpan(span, m.start(), m.end(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return spannable;
     }
 
     /**

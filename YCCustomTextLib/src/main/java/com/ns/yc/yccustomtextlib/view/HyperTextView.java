@@ -1,6 +1,5 @@
 package com.ns.yc.yccustomtextlib.view;
 
-import android.animation.LayoutTransition;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -15,17 +14,15 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-
-import com.ns.yc.yccustomtextlib.R;
 import com.ns.yc.yccustomtextlib.HyperRichText;
+import com.ns.yc.yccustomtextlib.R;
 import com.ns.yc.yccustomtextlib.inter.OnHyperTextListener;
 import com.ns.yc.yccustomtextlib.utils.HyperLibUtils;
-
+import com.ns.yc.yccustomtextlib.utils.HyperLogUtils;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -55,14 +52,6 @@ public class HyperTextView extends ScrollView {
      */
     private LinearLayout allLayout;
     private LayoutInflater inflater;
-    /**
-     * 最近被聚焦的TextView
-     */
-    private TextView lastFocusText;
-    /**
-     * 只在图片View添加或remove时，触发transition动画
-     */
-    private LayoutTransition mTransitioner;
     private int editNormalPadding = 0;
     /**
      * 图片点击事件
@@ -99,6 +88,12 @@ public class HyperTextView extends ScrollView {
      */
     private int rtTextLineSpace = 8;
 
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        HyperLogUtils.d("HyperTextView----onDetachedFromWindow------");
+    }
+
     public HyperTextView(Context context) {
         this(context, null);
     }
@@ -115,13 +110,7 @@ public class HyperTextView extends ScrollView {
         initAttrs(context,attrs);
         initLayoutView(context);
         initListener();
-
-        LinearLayout.LayoutParams firstEditParam = new LinearLayout.LayoutParams(
-                LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        //editNormalPadding = dip2px(EDIT_PADDING);
-        TextView firstText = createTextView(rtTextInitHint, HyperLibUtils.dip2px(context, EDIT_PADDING));
-        allLayout.addView(firstText, firstEditParam);
-        lastFocusText = firstText;
+        initFirstTextView(context);
     }
 
     /**
@@ -146,7 +135,6 @@ public class HyperTextView extends ScrollView {
         allLayout = new LinearLayout(context);
         allLayout.setOrientation(LinearLayout.VERTICAL);
         //allLayout.setBackgroundColor(Color.WHITE);//去掉背景
-        //setupLayoutTransitions();//禁止载入动画
         LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         //设置间距，防止生成图片时文字太靠边
         allLayout.setPadding(50,15,50,15);
@@ -156,7 +144,6 @@ public class HyperTextView extends ScrollView {
 
     private void initListener() {
         btnListener = new OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 if (v instanceof HyperImageView){
@@ -170,6 +157,16 @@ public class HyperTextView extends ScrollView {
                 }
             }
         };
+    }
+
+
+    private void initFirstTextView(Context context) {
+        LinearLayout.LayoutParams firstEditParam = new LinearLayout.LayoutParams(
+                LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        //editNormalPadding = dip2px(EDIT_PADDING);
+        int padding = HyperLibUtils.dip2px(context, EDIT_PADDING);
+        TextView firstText = createTextView(rtTextInitHint,padding);
+        allLayout.addView(firstText, firstEditParam);
     }
 
     public void setOnHyperTextListener(OnHyperTextListener onRtImageClickListener) {
@@ -204,7 +201,6 @@ public class HyperTextView extends ScrollView {
         textView.setTag(viewTagIndex++);
         textView.setPadding(editNormalPadding, paddingTop, editNormalPadding, paddingTop);
         textView.setHint(hint);
-        //textView.setTextSize(getResources().getDimensionPixelSize(R.dimen.text_size_16));
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, rtTextSize);
         textView.setLineSpacing(rtTextLineSpace, 1.0f);
         textView.setTextColor(rtTextColor);
@@ -219,36 +215,11 @@ public class HyperTextView extends ScrollView {
         layout.setTag(viewTagIndex++);
         View closeView = layout.findViewById(R.id.image_close);
         closeView.setVisibility(GONE);
-        HyperImageView imageView = (HyperImageView) layout.findViewById(R.id.edit_imageView);
-        //imageView.setTag(layout.getTag());
+        HyperImageView imageView = layout.findViewById(R.id.edit_imageView);
 		imageView.setOnClickListener(btnListener);
         return layout;
     }
 
-    /**
-     * 关键字高亮显示
-     * @param target  需要高亮的关键字
-     * @param text	     需要显示的文字
-     * @return spannable 处理完后的结果，记得不要toString()，否则没有效果
-     * SpannableStringBuilder textString = TextUtilTools.highlight(item.getItemName(), KnowledgeActivity.searchKey);
-     * vHolder.tv_itemName_search.setText(textString);
-     */
-    public static SpannableStringBuilder highlight(String text, String target) {
-        SpannableStringBuilder spannable = new SpannableStringBuilder(text);
-        CharacterStyle span;
-        try {
-            Pattern p = Pattern.compile(target);
-            Matcher m = p.matcher(text);
-            while (m.find()) {
-                span = new ForegroundColorSpan(Color.parseColor("#EE5C42"));// 需要重复！
-                spannable.setSpan(span, m.start(), m.end(),
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return spannable;
-    }
 
     public void setKeywords(String keywords) {
         this.keywords = keywords;
@@ -263,17 +234,15 @@ public class HyperTextView extends ScrollView {
     public void addTextViewAtIndex(final int index, CharSequence editStr) {
         try {
             TextView textView = createTextView("", EDIT_PADDING);
-            if (!TextUtils.isEmpty(keywords)) {//搜索关键词高亮
-                SpannableStringBuilder textStr = highlight(editStr.toString(), keywords);
+            if (!TextUtils.isEmpty(keywords)) {
+                //搜索关键词高亮
+                SpannableStringBuilder textStr = HyperLibUtils.highlight(
+                        editStr.toString(), keywords,Color.parseColor("#EE5C42"));
                 textView.setText(textStr);
             } else {
                 textView.setText(editStr);
             }
-
-            // 请注意此处，EditText添加、或删除不触动Transition动画
-            //allLayout.setLayoutTransition(null);
             allLayout.addView(textView, index);
-            //allLayout.setLayoutTransition(mTransitioner); // remove之后恢复transition动画
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -293,14 +262,7 @@ public class HyperTextView extends ScrollView {
         }
         final HyperImageView imageView = imageLayout.findViewById(R.id.edit_imageView);
         imageView.setAbsolutePath(imagePath);
-
-//        if (rtImageHeight > 0) {
-//            HyperRichText.getInstance().loadImage(imagePath, imageView, true);
-//        } else {
-//            HyperRichText.getInstance().loadImage(imagePath, imageView, false);
-//        }
         HyperRichText.getInstance().loadImage(imagePath, imageView, rtImageHeight);
-
         // onActivityResult无法触发动画，此处post处理
         allLayout.addView(imageLayout, index);
     }
@@ -357,78 +319,4 @@ public class HyperTextView extends ScrollView {
         return BitmapFactory.decodeFile(filePath, options);
     }
 
-
-    /**
-     * 初始化transition动画
-     */
-    private void setupLayoutTransitions() {
-        mTransitioner = new LayoutTransition();
-        allLayout.setLayoutTransition(mTransitioner);
-        mTransitioner.addTransitionListener(new LayoutTransition.TransitionListener() {
-
-            @Override
-            public void startTransition(LayoutTransition transition, ViewGroup container, View view, int transitionType) {
-
-            }
-
-            @Override
-            public void endTransition(LayoutTransition transition,
-                                      ViewGroup container, View view, int transitionType) {
-                if (!transition.isRunning()
-                        && transitionType == LayoutTransition.CHANGE_DISAPPEARING) {
-                    // transition动画结束，合并EditText
-                    // mergeEditText();
-                }
-            }
-        });
-        mTransitioner.setDuration(300);
-    }
-
-    public int getRtImageHeight() {
-        return rtImageHeight;
-    }
-
-    public void setRtImageHeight(int rtImageHeight) {
-        this.rtImageHeight = rtImageHeight;
-    }
-
-    public int getRtImageBottom() {
-        return rtImageBottom;
-    }
-
-    public void setRtImageBottom(int rtImageBottom) {
-        this.rtImageBottom = rtImageBottom;
-    }
-
-    public String getRtTextInitHint() {
-        return rtTextInitHint;
-    }
-
-    public void setRtTextInitHint(String rtTextInitHint) {
-        this.rtTextInitHint = rtTextInitHint;
-    }
-
-    public int getRtTextSize() {
-        return rtTextSize;
-    }
-
-    public void setRtTextSize(int rtTextSize) {
-        this.rtTextSize = rtTextSize;
-    }
-
-    public int getRtTextColor() {
-        return rtTextColor;
-    }
-
-    public void setRtTextColor(int rtTextColor) {
-        this.rtTextColor = rtTextColor;
-    }
-
-    public int getRtTextLineSpace() {
-        return rtTextLineSpace;
-    }
-
-    public void setRtTextLineSpace(int rtTextLineSpace) {
-        this.rtTextLineSpace = rtTextLineSpace;
-    }
 }

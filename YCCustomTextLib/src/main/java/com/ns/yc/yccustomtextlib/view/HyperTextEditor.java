@@ -389,7 +389,6 @@ public class HyperTextEditor extends ScrollView {
 			String editStr1 = lastEditStr.substring(0, cursorIndex).trim();//获取光标前面的字符串
 			String editStr2 = lastEditStr.substring(cursorIndex).trim();//获取光标后的字符串
 			int lastEditIndex = layout.indexOfChild(lastFocusEdit);//获取焦点的EditText所在位置
-
 			if (lastEditStr.length() == 0) {
 				//如果当前获取焦点的EditText为空，直接在EditText下方插入图片，并且插入空的EditText
 				addEditTextAtIndex(lastEditIndex + 1, "");
@@ -430,30 +429,6 @@ public class HyperTextEditor extends ScrollView {
 		}
 	}
 
-	/**
-	 * 关键字高亮显示
-	 * @param target  				需要高亮的关键字
-	 * @param text	     			需要显示的文字
-	 * @return spannable 			处理完后的结果，记得不要toString()，否则没有效果
-	 * SpannableStringBuilder textString = TextUtilTools.highlight(item.getItemName(), KnowledgeActivity.searchKey);
-	 * vHolder.tv_itemName_search.setText(textString);
-	 */
-	public static SpannableStringBuilder highlight(String text, String target) {
-		SpannableStringBuilder spannable = new SpannableStringBuilder(text);
-		CharacterStyle span;
-		try {
-			Pattern p = Pattern.compile(target);
-			Matcher m = p.matcher(text);
-			while (m.find()) {
-				// 需要重复！
-				span = new ForegroundColorSpan(Color.parseColor("#EE5C42"));
-				spannable.setSpan(span, m.start(), m.end(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return spannable;
-	}
 
 	public void setKeywords(String keywords) {
 		this.keywords = keywords;
@@ -472,7 +447,8 @@ public class HyperTextEditor extends ScrollView {
 			EditText editText2 = createEditText("插入文字", EDIT_PADDING);
 			if (!TextUtils.isEmpty(keywords)) {
 				//搜索关键词高亮
-				SpannableStringBuilder textStr = highlight(editStr.toString(), keywords);
+				SpannableStringBuilder textStr = HyperLibUtils.highlight(
+						editStr.toString(), keywords  , Color.parseColor("#EE5C42"));
 				editText2.setText(textStr);
 			} else if (!TextUtils.isEmpty(editStr)) {
 				//判断插入的字符串是否为空，如果没有内容则显示hint提示信息
@@ -676,51 +652,4 @@ public class HyperTextEditor extends ScrollView {
 		this.onHyperListener = listener;
 	}
 
-    public int getRtImageHeight() {
-        return rtImageHeight;
-    }
-
-    public void setRtImageHeight(int rtImageHeight) {
-        this.rtImageHeight = rtImageHeight;
-    }
-
-    public int getRtImageBottom() {
-        return rtImageBottom;
-    }
-
-    public void setRtImageBottom(int rtImageBottom) {
-        this.rtImageBottom = rtImageBottom;
-    }
-
-	public String getRtTextInitHint() {
-		return rtTextInitHint;
-	}
-
-	public void setRtTextInitHint(String rtTextInitHint) {
-		this.rtTextInitHint = rtTextInitHint;
-	}
-
-	public int getRtTextSize() {
-		return rtTextSize;
-	}
-
-	public void setRtTextSize(int rtTextSize) {
-		this.rtTextSize = rtTextSize;
-	}
-
-	public int getRtTextColor() {
-		return rtTextColor;
-	}
-
-	public void setRtTextColor(int rtTextColor) {
-		this.rtTextColor = rtTextColor;
-	}
-
-	public int getRtTextLineSpace() {
-		return rtTextLineSpace;
-	}
-
-	public void setRtTextLineSpace(int rtTextLineSpace) {
-		this.rtTextLineSpace = rtTextLineSpace;
-	}
 }
