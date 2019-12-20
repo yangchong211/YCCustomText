@@ -41,34 +41,63 @@ import java.util.regex.Pattern;
  * </pre>
  */
 public class HyperTextView extends ScrollView {
-    private static final int EDIT_PADDING = 10; // edittext常规padding是10dp
-    //private static final int EDIT_FIRST_PADDING_TOP = 10; // 第一个EditText的paddingTop值
 
-    private int viewTagIndex = 1; // 新生的view都会打一个tag，对每个view来说，这个tag是唯一的。
-    private LinearLayout allLayout; // 这个是所有子view的容器，scrollView内部的唯一一个ViewGroup
+    /**
+     * 常规padding是10dp
+     */
+    private static final int EDIT_PADDING = 10;
+    /**
+     * 新生的view都会打一个tag，对每个view来说，这个tag是唯一的
+     */
+    private int viewTagIndex = 1;
+    /**
+     * 这个是所有子view的容器，scrollView内部的唯一一个ViewGroup
+     */
+    private LinearLayout allLayout;
     private LayoutInflater inflater;
-    private TextView lastFocusText; // 最近被聚焦的TextView
-    private LayoutTransition mTransitioner; // 只在图片View添加或remove时，触发transition动画
-    private int editNormalPadding = 0; //
-    private int disappearingImageIndex = 0;
-    //private Bitmap bmp;
-    private OnClickListener btnListener;//图片点击事件
-    private ArrayList<String> imagePaths;//图片地址集合
-    private String keywords;//关键词高亮
-
+    /**
+     * 最近被聚焦的TextView
+     */
+    private TextView lastFocusText;
+    /**
+     * 只在图片View添加或remove时，触发transition动画
+     */
+    private LayoutTransition mTransitioner;
+    private int editNormalPadding = 0;
+    /**
+     * 图片点击事件
+     */
+    private OnClickListener btnListener;
+    /**
+     * 图片地址集合
+     */
+    private ArrayList<String> imagePaths;
+    /**
+     * 关键词高亮
+     */
+    private String keywords;
     private OnHyperTextListener onHyperTextListener;
-
-    /** 自定义属性 **/
-    //插入的图片显示高度
-    private int rtImageHeight = 0; //为0显示原始高度
-    //两张相邻图片间距
+    /**
+     * 插入的图片显示高度，为0显示原始高度
+     */
+    private int rtImageHeight = 0;
+    /**
+     * 两张相邻图片间距
+     */
     private int rtImageBottom = 10;
-    //文字相关属性，初始提示信息，文字大小和颜色
+    /**
+     * 文字相关属性，初始提示信息，文字大小和颜色
+     */
     private String rtTextInitHint = "没有内容";
-    //getResources().getDimensionPixelSize(R.dimen.text_size_16)
-    private int rtTextSize = 16; //相当于16sp
+    /**
+     * 相当于16sp
+     */
+    private int rtTextSize = 16;
     private int rtTextColor = Color.parseColor("#757575");
-    private int rtTextLineSpace = 8; //相当于8dp
+    /**
+     * 相当于8dp
+     */
+    private int rtTextLineSpace = 8;
 
     public HyperTextView(Context context) {
         this(context, null);
@@ -80,33 +109,52 @@ public class HyperTextView extends ScrollView {
 
     public HyperTextView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-
-        //获取自定义属性
-        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.HyperTextView);
-        rtImageHeight = ta.getInteger(R.styleable.HyperTextView_rt_view_image_height, 0);
-        rtImageBottom = ta.getInteger(R.styleable.HyperTextView_rt_view_image_bottom, 10);
-        rtTextSize = ta.getDimensionPixelSize(R.styleable.HyperTextView_rt_view_text_size, 16);
-        //rtTextSize = ta.getInteger(R.styleable.RichTextView_rt_view_text_size, 16);
-        rtTextLineSpace = ta.getDimensionPixelSize(R.styleable.HyperTextView_rt_view_text_line_space, 8);
-        rtTextColor = ta.getColor(R.styleable.HyperTextView_rt_view_text_color, Color.parseColor("#757575"));
-        rtTextInitHint = ta.getString(R.styleable.HyperTextView_rt_view_text_init_hint);
-
-        ta.recycle();
-
         imagePaths = new ArrayList<>();
-
         inflater = LayoutInflater.from(context);
+        //获取自定义属性
+        initAttrs(context,attrs);
+        initLayoutView(context);
+        initListener();
 
+        LinearLayout.LayoutParams firstEditParam = new LinearLayout.LayoutParams(
+                LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        //editNormalPadding = dip2px(EDIT_PADDING);
+        TextView firstText = createTextView(rtTextInitHint, HyperLibUtils.dip2px(context, EDIT_PADDING));
+        allLayout.addView(firstText, firstEditParam);
+        lastFocusText = firstText;
+    }
+
+    /**
+     * 初始化自定义属性
+     * @param context						context上下文
+     * @param attrs							attrs属性
+     */
+    private void initAttrs(Context context, AttributeSet attrs) {
+        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.HyperTextView);
+        rtImageHeight = ta.getInteger(R.styleable.HyperTextView_ht_view_image_height, 0);
+        rtImageBottom = ta.getInteger(R.styleable.HyperTextView_ht_view_image_bottom, 10);
+        rtTextSize = ta.getDimensionPixelSize(R.styleable.HyperTextView_ht_view_text_size, 16);
+        rtTextLineSpace = ta.getDimensionPixelSize(R.styleable.HyperTextView_ht_view_text_line_space, 8);
+        rtTextColor = ta.getColor(R.styleable.HyperTextView_ht_view_text_color, Color.parseColor("#757575"));
+        rtTextInitHint = ta.getString(R.styleable.HyperTextView_ht_view_text_init_hint);
+        ta.recycle();
+    }
+
+
+    private void initLayoutView(Context context) {
         // 1. 初始化allLayout
         allLayout = new LinearLayout(context);
         allLayout.setOrientation(LinearLayout.VERTICAL);
         //allLayout.setBackgroundColor(Color.WHITE);//去掉背景
         //setupLayoutTransitions();//禁止载入动画
-        LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT,
-                LayoutParams.WRAP_CONTENT);
-        allLayout.setPadding(50,15,50,15);//设置间距，防止生成图片时文字太靠边
+        LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        //设置间距，防止生成图片时文字太靠边
+        allLayout.setPadding(50,15,50,15);
         addView(allLayout, layoutParams);
+    }
 
+
+    private void initListener() {
         btnListener = new OnClickListener() {
 
             @Override
@@ -122,15 +170,7 @@ public class HyperTextView extends ScrollView {
                 }
             }
         };
-
-        LinearLayout.LayoutParams firstEditParam = new LinearLayout.LayoutParams(
-                LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        //editNormalPadding = dip2px(EDIT_PADDING);
-        TextView firstText = createTextView(rtTextInitHint, HyperLibUtils.dip2px(context, EDIT_PADDING));
-        allLayout.addView(firstText, firstEditParam);
-        lastFocusText = firstText;
     }
-
 
     public void setOnHyperTextListener(OnHyperTextListener onRtImageClickListener) {
         this.onHyperTextListener = onRtImageClickListener;
@@ -140,15 +180,20 @@ public class HyperTextView extends ScrollView {
      * 清除所有的view
      */
     public void clearAllLayout(){
-        allLayout.removeAllViews();
+        if (allLayout!=null){
+            allLayout.removeAllViews();
+        }
     }
 
     /**
      * 获得最后一个子view的位置
      */
     public int getLastIndex(){
-        int lastEditIndex = allLayout.getChildCount();
-        return lastEditIndex;
+        if (allLayout!=null){
+            int lastEditIndex = allLayout.getChildCount();
+            return lastEditIndex;
+        }
+        return -1;
     }
 
     /**

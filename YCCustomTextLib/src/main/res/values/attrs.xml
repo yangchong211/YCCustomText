@@ -2,21 +2,23 @@
 <resources>
 
     <declare-styleable name="HyperTextEditor" >
-        <attr name="rt_editor_image_height" format="integer" />
-        <attr name="rt_editor_image_bottom" format="integer" />
-        <attr name="rt_editor_text_init_hint" format="string" />
-        <attr name="rt_editor_text_size" format="dimension" />
-        <attr name="rt_editor_text_color" format="color" />
-        <attr name="rt_editor_text_line_space" format="dimension" />
+        <attr name="editor_layout_right_left" format="integer" />
+        <attr name="editor_layout_top_bottom" format="integer" />
+        <attr name="editor_image_height" format="integer" />
+        <attr name="editor_image_bottom" format="integer" />
+        <attr name="editor_text_init_hint" format="string" />
+        <attr name="editor_text_size" format="dimension" />
+        <attr name="editor_text_color" format="color" />
+        <attr name="editor_text_line_space" format="dimension" />
     </declare-styleable>
 
     <declare-styleable name="HyperTextView" >
-        <attr name="rt_view_image_height" format="integer" />
-        <attr name="rt_view_image_bottom" format="integer" />
-        <attr name="rt_view_text_init_hint" format="string" />
-        <attr name="rt_view_text_size" format="dimension" />
-        <attr name="rt_view_text_color" format="color" />
-        <attr name="rt_view_text_line_space" format="dimension" />
+        <attr name="ht_view_image_height" format="integer" />
+        <attr name="ht_view_image_bottom" format="integer" />
+        <attr name="ht_view_text_init_hint" format="string" />
+        <attr name="ht_view_text_size" format="dimension" />
+        <attr name="ht_view_text_color" format="color" />
+        <attr name="ht_view_text_line_space" format="dimension" />
     </declare-styleable>
 
 

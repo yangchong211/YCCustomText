@@ -1,6 +1,7 @@
 package com.ns.yc.yccustomtextlib.view;
 
 import android.animation.LayoutTransition;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -26,12 +27,13 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
-import com.ns.yc.yccustomtextlib.R;
 import com.ns.yc.yccustomtextlib.HyperRichText;
+import com.ns.yc.yccustomtextlib.R;
 import com.ns.yc.yccustomtextlib.inter.OnHyperEditListener;
 import com.ns.yc.yccustomtextlib.model.HyperEditData;
 import com.ns.yc.yccustomtextlib.state.TextEditorState;
 import com.ns.yc.yccustomtextlib.utils.HyperLibUtils;
+import com.ns.yc.yccustomtextlib.utils.HyperLogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +63,7 @@ public class HyperTextEditor extends ScrollView {
 	/**
 	 * 这个是所有子view的容器，scrollView内部的唯一一个ViewGroup
 	 */
-	private LinearLayout allLayout;
+	private LinearLayout layout;
 	/**
 	 * inflater对象
 	 */
@@ -85,7 +87,7 @@ public class HyperTextEditor extends ScrollView {
 	/**
 	 * 只在图片View添加或remove时，触发transition动画
 	 */
-	private LayoutTransition mTransitioner;
+	private LayoutTransition mTransition;
 	private int editNormalPadding = 0;
 	private int disappearingImageIndex = 0;
 	/**
@@ -100,6 +102,14 @@ public class HyperTextEditor extends ScrollView {
 	 * 插入的图片显示高度
 	 */
 	private int rtImageHeight;
+	/**
+	 * 父控件的上和下padding
+	 */
+	private int topAndBottom;
+	/**
+	 * 父控件的左和右padding
+	 */
+	private int leftAndRight;
 	/**
 	 * 两张相邻图片间距
 	 */
@@ -127,6 +137,16 @@ public class HyperTextEditor extends ScrollView {
 		super.onRestoreInstanceState(viewState.getSuperState());
 	}
 
+	@Override
+	protected void onDetachedFromWindow() {
+		super.onDetachedFromWindow();
+		if (mTransition!=null){
+			//移除Layout变化监听
+			mTransition.removeTransitionListener(transitionListener);
+			HyperLogUtils.d("HyperTextEditor----onDetachedFromWindow------移除Layout变化监听");
+		}
+	}
+
 	public HyperTextEditor(Context context) {
 		this(context, null);
 	}
@@ -146,15 +166,15 @@ public class HyperTextEditor extends ScrollView {
 	}
 
 	private void initLayoutView(Context context) {
-		// 1. 初始化allLayout
-		allLayout = new LinearLayout(context);
-		allLayout.setOrientation(LinearLayout.VERTICAL);
+		//初始化layout
+		layout = new LinearLayout(context);
+		layout.setOrientation(LinearLayout.VERTICAL);
 		//禁止载入动画
-		setupLayoutTransitions();
+		setUpLayoutTransitions();
 		LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		//设置间距，防止生成图片时文字太靠边，不能用margin，否则有黑边
-		allLayout.setPadding(50,15,50,15);
-		addView(allLayout, layoutParams);
+		layout.setPadding(leftAndRight,topAndBottom,leftAndRight,topAndBottom);
+		addView(layout, layoutParams);
 	}
 
 	/**
@@ -165,32 +185,34 @@ public class HyperTextEditor extends ScrollView {
 	private void initAttrs(Context context, AttributeSet attrs) {
 		//获取自定义属性
 		TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.HyperTextEditor);
-		rtImageHeight = ta.getInteger(R.styleable.HyperTextEditor_rt_editor_image_height, 500);
-		rtImageBottom = ta.getInteger(R.styleable.HyperTextEditor_rt_editor_image_bottom, 10);
-		rtTextSize = ta.getDimensionPixelSize(R.styleable.HyperTextEditor_rt_editor_text_size, 16);
-		rtTextLineSpace = ta.getDimensionPixelSize(R.styleable.HyperTextEditor_rt_editor_text_line_space, 8);
-		rtTextColor = ta.getColor(R.styleable.HyperTextEditor_rt_editor_text_color, Color.parseColor("#757575"));
-		rtTextInitHint = ta.getString(R.styleable.HyperTextEditor_rt_editor_text_init_hint);
+		topAndBottom = ta.getInteger(R.styleable.HyperTextEditor_editor_layout_top_bottom, 15);
+		leftAndRight = ta.getInteger(R.styleable.HyperTextEditor_editor_layout_right_left, 40);
+		rtImageHeight = ta.getInteger(R.styleable.HyperTextEditor_editor_image_height, 500);
+		rtImageBottom = ta.getInteger(R.styleable.HyperTextEditor_editor_image_bottom, 10);
+		rtTextSize = ta.getDimensionPixelSize(R.styleable.HyperTextEditor_editor_text_size, 16);
+		rtTextLineSpace = ta.getDimensionPixelSize(R.styleable.HyperTextEditor_editor_text_line_space, 8);
+		rtTextColor = ta.getColor(R.styleable.HyperTextEditor_editor_text_color, Color.parseColor("#757575"));
+		rtTextInitHint = ta.getString(R.styleable.HyperTextEditor_editor_text_init_hint);
 		ta.recycle();
 	}
 
 
 	private void initListener() {
-		// 2. 初始化键盘退格监听
-		// 主要用来处理点击回删按钮时，view的一些列合并操作
+		// 初始化键盘退格监听，主要用来处理点击回删按钮时，view的一些列合并操作
 		keyListener = new OnKeyListener() {
 			@Override
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
-				if (event.getAction() == KeyEvent.ACTION_DOWN &&
-						event.getKeyCode() == KeyEvent.KEYCODE_DEL) {
+				//KeyEvent.KEYCODE_DEL    删除插入点之前的字符
+				if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DEL) {
 					EditText edit = (EditText) v;
+					//处于退格删除的逻辑
 					onBackspacePress(edit);
 				}
 				return false;
 			}
 		};
 
-		// 3. 图片叉掉处理
+		// 图片叉掉处理
 		btnListener = new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -222,46 +244,48 @@ public class HyperTextEditor extends ScrollView {
 				LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		int padding = HyperLibUtils.dip2px(context, EDIT_PADDING);
 		EditText firstEdit = createEditText(rtTextInitHint, padding);
-		allLayout.addView(firstEdit, firstEditParam);
+		layout.addView(firstEdit, firstEditParam);
 		lastFocusEdit = firstEdit;
 	}
 
 
 	/**
 	 * 处理软键盘backSpace回退事件
-	 * 
-	 * @param editTxt 光标所在的文本输入框
+	 * @param editText 					光标所在的文本输入框
 	 */
-	private void onBackspacePress(EditText editTxt) {
+	@SuppressLint("SetTextI18n")
+	private void onBackspacePress(EditText editText) {
 		try {
-			int startSelection = editTxt.getSelectionStart();
+			int startSelection = editText.getSelectionStart();
 			// 只有在光标已经顶到文本输入框的最前方，在判定是否删除之前的图片，或两个View合并
 			if (startSelection == 0) {
-				int editIndex = allLayout.indexOfChild(editTxt);
+				//获取当前控件在layout父容器中的索引
+				int editIndex = layout.indexOfChild(editText);
 				// 如果editIndex-1<0,
-				View preView = allLayout.getChildAt(editIndex - 1);
+				View preView = layout.getChildAt(editIndex - 1);
 				if (null != preView) {
 					if (preView instanceof RelativeLayout) {
-						// 光标EditText的上一个view对应的是图片
+						// 光标EditText的上一个view对应的是图片，删除图片操作
 						onImageCloseClick(preView);
 					} else if (preView instanceof EditText) {
-						// 光标EditText的上一个view对应的还是文本框EditText
-						String str1 = editTxt.getText().toString();
+						// 光标EditText的上一个view对应的还是文本框EditText，删除文字操作
+						String str1 = editText.getText().toString();
 						EditText preEdit = (EditText) preView;
 						String str2 = preEdit.getText().toString();
-
 						// 合并文本view时，不需要transition动画
-						allLayout.setLayoutTransition(null);
-						allLayout.removeView(editTxt);
+						layout.setLayoutTransition(null);
+						//移除editText文本控件
+						layout.removeView(editText);
 						// 恢复transition动画
-						allLayout.setLayoutTransition(mTransitioner);
-
-						// 文本合并
-						preEdit.setText(String.valueOf(str2 + str1));
+						layout.setLayoutTransition(mTransition);
+						// 文本合并操作
+						preEdit.setText(str2 + str1);
 						preEdit.requestFocus();
 						preEdit.setSelection(str2.length(), str2.length());
 						lastFocusEdit = preEdit;
 					}
+				} else {
+					HyperLogUtils.d("HyperTextEditor----onBackspacePress------没有上一个view");
 				}
 			}
 		} catch (Exception e) {
@@ -270,15 +294,15 @@ public class HyperTextEditor extends ScrollView {
 	}
 
 	/**
-	 * 处理图片叉掉的点击事件
-	 * 
-	 * @param view 整个image对应的relativeLayout view
-	 * @type 删除类型 0代表backspace删除 1代表按红叉按钮删除
+	 * 处理图片上删除的点击事件
+	 * 删除类型 0代表backspace删除 1代表按红叉按钮删除
+	 * @param view 							整个image对应的relativeLayout view
 	 */
 	private void onImageCloseClick(View view) {
 		try {
-			if (!mTransitioner.isRunning()) {
-				disappearingImageIndex = allLayout.indexOfChild(view);
+			//判断过渡动画是否结束，只能等到结束才可以操作
+			if (!mTransition.isRunning()) {
+				disappearingImageIndex = layout.indexOfChild(view);
 				//删除文件夹里的图片
 				List<HyperEditData> dataList = buildEditData();
 				HyperEditData editData = dataList.get(disappearingImageIndex);
@@ -291,7 +315,7 @@ public class HyperTextEditor extends ScrollView {
 					imagePaths.remove(editData.getImagePath());
 				}
 				//然后移除当前view
-				allLayout.removeView(view);
+				layout.removeView(view);
 				//合并上下EditText内容
 				mergeEditText();
 			}
@@ -304,15 +328,20 @@ public class HyperTextEditor extends ScrollView {
 	 * 清空所有布局
 	 */
 	public void clearAllLayout(){
-		allLayout.removeAllViews();
+		if (layout!=null){
+			layout.removeAllViews();
+		}
 	}
 
 	/**
 	 * 获取索引位置
      */
 	public int getLastIndex(){
-		int childCount = allLayout.getChildCount();
-		return childCount;
+		if (layout!=null){
+			int childCount = layout.getChildCount();
+			return childCount;
+		}
+		return -1;
 	}
 
 	/**
@@ -359,7 +388,7 @@ public class HyperTextEditor extends ScrollView {
 			int cursorIndex = lastFocusEdit.getSelectionStart();//获取光标所在位置
 			String editStr1 = lastEditStr.substring(0, cursorIndex).trim();//获取光标前面的字符串
 			String editStr2 = lastEditStr.substring(cursorIndex).trim();//获取光标后的字符串
-			int lastEditIndex = allLayout.indexOfChild(lastFocusEdit);//获取焦点的EditText所在位置
+			int lastEditIndex = layout.indexOfChild(lastFocusEdit);//获取焦点的EditText所在位置
 
 			if (lastEditStr.length() == 0) {
 				//如果当前获取焦点的EditText为空，直接在EditText下方插入图片，并且插入空的EditText
@@ -452,10 +481,10 @@ public class HyperTextEditor extends ScrollView {
 			editText2.setOnFocusChangeListener(focusListener);
 
 			// 请注意此处，EditText添加、或删除不触动Transition动画
-			allLayout.setLayoutTransition(null);
-			allLayout.addView(editText2, index);
+			layout.setLayoutTransition(null);
+			layout.addView(editText2, index);
 			// remove之后恢复transition动画
-			allLayout.setLayoutTransition(mTransitioner);
+			layout.setLayoutTransition(mTransition);
 			//插入新的EditText之后，修改lastFocusEdit的指向
 			lastFocusEdit = editText2;
 			lastFocusEdit.requestFocus();
@@ -486,9 +515,9 @@ public class HyperTextEditor extends ScrollView {
 //				imageHeight = rtImageHeight;
 //			} else {
 //				Bitmap bmp = BitmapFactory.decodeFile(imagePath);
-//				int layoutWidth = allLayout.getWidth() - allLayout.getPaddingLeft() - allLayout.getPaddingRight();
+//				int layoutWidth = layout.getWidth() - layout.getPaddingLeft() - layout.getPaddingRight();
 //				imageHeight = layoutWidth * bmp.getHeight() / bmp.getWidth();
-//				//imageHeight = allLayout.getWidth() * bmp.getHeight() / bmp.getWidth();
+//				//imageHeight = layout.getWidth() * bmp.getHeight() / bmp.getWidth();
 //			}
 //			RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
 //					LayoutParams.MATCH_PARENT, imageHeight);//固定图片高度，记得设置裁剪剧中
@@ -502,11 +531,11 @@ public class HyperTextEditor extends ScrollView {
 //			}
 
 			// onActivityResult无法触发动画，此处post处理
-			allLayout.addView(imageLayout, index);
-//			allLayout.postDelayed(new Runnable() {
+			layout.addView(imageLayout, index);
+//			layout.postDelayed(new Runnable() {
 //				@Override
 //				public void run() {
-//					allLayout.addView(imageLayout, index);
+//					layout.addView(imageLayout, index);
 //				}
 //			}, 200);
 		} catch (Exception e) {
@@ -541,35 +570,58 @@ public class HyperTextEditor extends ScrollView {
 	/**
 	 * 初始化transition动画
 	 */
-	private void setupLayoutTransitions() {
-		mTransitioner = new LayoutTransition();
-		allLayout.setLayoutTransition(mTransitioner);
-		mTransitioner.addTransitionListener(new LayoutTransition.TransitionListener() {
-
-			@Override
-			public void startTransition(LayoutTransition transition, ViewGroup container, View view, int transitionType) {
-
-			}
-
-			@Override
-			public void endTransition(LayoutTransition transition,
-					ViewGroup container, View view, int transitionType) {
-				if (!transition.isRunning() && transitionType == LayoutTransition.CHANGE_DISAPPEARING) {
-					// transition动画结束，合并EditText
-					 mergeEditText();
-				}
-			}
-		});
-		mTransitioner.setDuration(300);
+	private void setUpLayoutTransitions() {
+		mTransition = new LayoutTransition();
+		//添加Layout变化监听
+		mTransition.addTransitionListener(transitionListener);
+		//若向ViewGroup中添加一个ImageView，ImageView对象可以设置动画(即APPEARING 动画形式)，
+		//ViewGroup中的其它ImageView对象此时移动到新的位置的过程中也可以设置相关的动画(即CHANGE_APPEARING 动画形式)。
+		mTransition.enableTransitionType(LayoutTransition.APPEARING);
+		//设置整个Layout变换动画时间
+		mTransition.setDuration(300);
+		layout.setLayoutTransition(mTransition);
 	}
+
+	private LayoutTransition.TransitionListener transitionListener =
+			new LayoutTransition.TransitionListener() {
+
+		/**
+		 * LayoutTransition某一类型动画开始
+		 * @param transition				transition
+		 * @param container					container容器
+		 * @param view						view控件
+		 * @param transitionType			类型
+		 */
+		@Override
+		public void startTransition(LayoutTransition transition, ViewGroup container,
+									View view, int transitionType) {
+
+		}
+
+		/**
+		 * LayoutTransition某一类型动画结束
+		 * @param transition				transition
+		 * @param container					container容器
+		 * @param view						view控件
+		 * @param transitionType			类型
+		 */
+		@Override
+		public void endTransition(LayoutTransition transition,
+								  ViewGroup container, View view, int transitionType) {
+			if (!transition.isRunning() && transitionType == LayoutTransition.CHANGE_DISAPPEARING) {
+				// transition动画结束，合并EditText
+				mergeEditText();
+			}
+		}
+	};
 
 	/**
 	 * 图片删除的时候，如果上下方都是EditText，则合并处理
 	 */
 	private void mergeEditText() {
 		try {
-			View preView = allLayout.getChildAt(disappearingImageIndex - 1);
-			View nextView = allLayout.getChildAt(disappearingImageIndex);
+			View preView = layout.getChildAt(disappearingImageIndex - 1);
+			View nextView = layout.getChildAt(disappearingImageIndex);
 			if (preView instanceof EditText && nextView instanceof EditText) {
 				EditText preEdit = (EditText) preView;
 				EditText nextEdit = (EditText) nextView;
@@ -582,12 +634,13 @@ public class HyperTextEditor extends ScrollView {
 					mergeText = str1;
 				}
 
-				allLayout.setLayoutTransition(null);
-				allLayout.removeView(nextEdit);
+				layout.setLayoutTransition(null);
+				layout.removeView(nextEdit);
 				preEdit.setText(mergeText);
 				preEdit.requestFocus();
 				preEdit.setSelection(str1.length(), str1.length());
-				allLayout.setLayoutTransition(mTransitioner);
+				//设置动画
+				layout.setLayoutTransition(mTransition);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -600,9 +653,9 @@ public class HyperTextEditor extends ScrollView {
 	public List<HyperEditData> buildEditData() {
 		List<HyperEditData> dataList = new ArrayList<>();
 		try {
-			int num = allLayout.getChildCount();
+			int num = layout.getChildCount();
 			for (int index = 0; index < num; index++) {
-				View itemView = allLayout.getChildAt(index);
+				View itemView = layout.getChildAt(index);
 				HyperEditData hyperEditData = new HyperEditData();
 				if (itemView instanceof EditText) {
 					EditText item = (EditText) itemView;

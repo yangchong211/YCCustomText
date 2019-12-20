@@ -23,7 +23,7 @@ import android.view.View;
 /**
  * <pre>
  *     @author yangchong
- *     blog  : https://github.com/yangchong211/YCStatusBar
+ *     blog  : https://github.com/yangchong211
  *     time  : 2017/5/18
  *     desc  : 自定义BaseSavedState
  *     revise:

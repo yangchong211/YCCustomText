@@ -73,12 +73,12 @@
         android:layout_height="match_parent"
         android:background="@android:color/white"
         android:textSize="16sp"
-        app:rt_editor_text_line_space="6dp"
-        app:rt_editor_image_height="500"
-        app:rt_editor_image_bottom="10"
-        app:rt_editor_text_init_hint="在这里输入内容"
-        app:rt_editor_text_size="16sp"
-        app:rt_editor_text_color="@android:color/black"/>
+        app:editor_text_line_space="6dp"
+        app:editor_image_height="500"
+        app:editor_image_bottom="10"
+        app:editor_text_init_hint="在这里输入内容"
+        app:editor_text_size="16sp"
+        app:editor_text_color="@android:color/black"/>
 
 
     <com.ns.yc.yccustomtextlib.view.HyperTextView
@@ -86,11 +86,11 @@
         android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:rt_view_text_line_space="6dp"
-        app:rt_view_image_height="0"
-        app:rt_view_image_bottom="10"
-        app:rt_view_text_size="16sp"
-        app:rt_view_text_color="@android:color/black"/>
+        app:ht_view_text_line_space="6dp"
+        app:ht_view_image_height="0"
+        app:ht_view_image_bottom="10"
+        app:ht_view_text_size="16sp"
+        app:ht_view_text_color="@android:color/black"/>
 
 
 </LinearLayout>
