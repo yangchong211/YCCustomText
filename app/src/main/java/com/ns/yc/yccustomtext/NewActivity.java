@@ -27,6 +27,7 @@ import com.ns.yc.yccustomtextlib.HyperRichText;
 import com.ns.yc.yccustomtextlib.inter.ImageLoader;
 import com.ns.yc.yccustomtextlib.inter.OnHyperEditListener;
 import com.ns.yc.yccustomtextlib.inter.OnHyperTextListener;
+import com.ns.yc.yccustomtextlib.model.HyperEditData;
 import com.ns.yc.yccustomtextlib.view.HyperTextEditor;
 import com.ns.yc.yccustomtextlib.view.HyperTextView;
 import com.pedaily.yc.ycdialoglib.toast.ToastUtils;
@@ -294,12 +295,12 @@ public class NewActivity extends AppCompatActivity {
     private String getEditData() {
         StringBuilder content = new StringBuilder();
         try {
-            List<HyperTextEditor.EditData> editList = hte_content.buildEditData();
-            for (HyperTextEditor.EditData itemData : editList) {
-                if (itemData.inputStr != null) {
-                    content.append(itemData.inputStr);
-                } else if (itemData.imagePath != null) {
-                    content.append("<img src=\"").append(itemData.imagePath).append("\"/>");
+            List<HyperEditData> editList = hte_content.buildEditData();
+            for (HyperEditData itemData : editList) {
+                if (itemData.getInputStr() != null) {
+                    content.append(itemData.getInputStr());
+                } else if (itemData.getImagePath() != null) {
+                    content.append("<img src=\"").append(itemData.getImagePath()).append("\"/>");
                 }
             }
         } catch (Exception e) {

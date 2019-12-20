@@ -29,6 +29,7 @@ import android.widget.ScrollView;
 import com.ns.yc.yccustomtextlib.R;
 import com.ns.yc.yccustomtextlib.HyperRichText;
 import com.ns.yc.yccustomtextlib.inter.OnHyperEditListener;
+import com.ns.yc.yccustomtextlib.model.HyperEditData;
 import com.ns.yc.yccustomtextlib.state.TextEditorState;
 import com.ns.yc.yccustomtextlib.utils.HyperLibUtils;
 
@@ -270,14 +271,14 @@ public class HyperTextEditor extends ScrollView {
 			if (!mTransitioner.isRunning()) {
 				disappearingImageIndex = allLayout.indexOfChild(view);
 				//删除文件夹里的图片
-				List<EditData> dataList = buildEditData();
-				EditData editData = dataList.get(disappearingImageIndex);
-				if (editData.imagePath != null){
+				List<HyperEditData> dataList = buildEditData();
+				HyperEditData editData = dataList.get(disappearingImageIndex);
+				if (editData.getImagePath() != null){
 					if (onHyperListener != null){
-						onHyperListener.onRtImageDelete(editData.imagePath);
+						onHyperListener.onRtImageDelete(editData.getImagePath());
 					}
 					//SDCardUtil.deleteFile(editData.imagePath);
-					imagePaths.remove(editData.imagePath);
+					imagePaths.remove(editData.getImagePath());
 				}
 				allLayout.removeView(view);
 				mergeEditText();//合并上下EditText内容
@@ -585,33 +586,26 @@ public class HyperTextEditor extends ScrollView {
 	/**
 	 * 对外提供的接口, 生成编辑数据上传
 	 */
-	public List<EditData> buildEditData() {
-		List<EditData> dataList = new ArrayList<>();
+	public List<HyperEditData> buildEditData() {
+		List<HyperEditData> dataList = new ArrayList<>();
 		try {
 			int num = allLayout.getChildCount();
 			for (int index = 0; index < num; index++) {
 				View itemView = allLayout.getChildAt(index);
-				EditData itemData = new EditData();
+				HyperEditData hyperEditData = new HyperEditData();
 				if (itemView instanceof EditText) {
 					EditText item = (EditText) itemView;
-					itemData.inputStr = item.getText().toString();
+					hyperEditData.setInputStr(item.getText().toString());
 				} else if (itemView instanceof RelativeLayout) {
 					HyperImageView item = itemView.findViewById(R.id.edit_imageView);
-					itemData.imagePath = item.getAbsolutePath();
+					hyperEditData.setImagePath(item.getAbsolutePath());
 				}
-				dataList.add(itemData);
+				dataList.add(hyperEditData);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 		return dataList;
-	}
-
-	public class EditData {
-		public String inputStr;
-		public String imagePath;
-		public Bitmap bitmap;
 	}
 
 	public void setOnHyperListener(OnHyperEditListener listener){
