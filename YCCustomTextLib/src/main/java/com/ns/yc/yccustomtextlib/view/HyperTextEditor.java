@@ -28,7 +28,7 @@ import android.widget.ScrollView;
 
 import com.ns.yc.yccustomtextlib.R;
 import com.ns.yc.yccustomtextlib.HyperRichText;
-import com.ns.yc.yccustomtextlib.inter.OnHyperListener;
+import com.ns.yc.yccustomtextlib.inter.OnHyperEditListener;
 import com.ns.yc.yccustomtextlib.state.TextEditorState;
 import com.ns.yc.yccustomtextlib.utils.HyperLibUtils;
 
@@ -107,7 +107,7 @@ public class HyperTextEditor extends ScrollView {
     private int rtTextSize = 16;
     private int rtTextColor = Color.parseColor("#757575");
 	private int rtTextLineSpace = 8;
-	private OnHyperListener onHyperListener;
+	private OnHyperEditListener onHyperListener;
 
 	@Nullable
 	@Override
@@ -390,9 +390,9 @@ public class HyperTextEditor extends ScrollView {
 
 	/**
 	 * 关键字高亮显示
-	 * @param target  需要高亮的关键字
-	 * @param text	     需要显示的文字
-	 * @return spannable 处理完后的结果，记得不要toString()，否则没有效果
+	 * @param target  				需要高亮的关键字
+	 * @param text	     			需要显示的文字
+	 * @return spannable 			处理完后的结果，记得不要toString()，否则没有效果
 	 * SpannableStringBuilder textString = TextUtilTools.highlight(item.getItemName(), KnowledgeActivity.searchKey);
 	 * vHolder.tv_itemName_search.setText(textString);
 	 */
@@ -598,7 +598,6 @@ public class HyperTextEditor extends ScrollView {
 				} else if (itemView instanceof RelativeLayout) {
 					HyperImageView item = itemView.findViewById(R.id.edit_imageView);
 					itemData.imagePath = item.getAbsolutePath();
-					//itemData.bitmap = item.getBitmap();//去掉这个防止bitmap一直被占用，导致内存溢出
 				}
 				dataList.add(itemData);
 			}
@@ -615,7 +614,7 @@ public class HyperTextEditor extends ScrollView {
 		public Bitmap bitmap;
 	}
 
-	public void setOnHyperListener(OnHyperListener listener){
+	public void setOnHyperListener(OnHyperEditListener listener){
 		this.onHyperListener = listener;
 	}
 

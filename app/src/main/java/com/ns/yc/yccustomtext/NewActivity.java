@@ -25,8 +25,10 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.ns.yc.yccustomtextlib.HyperRichText;
 import com.ns.yc.yccustomtextlib.inter.ImageLoader;
-import com.ns.yc.yccustomtextlib.inter.OnHyperListener;
+import com.ns.yc.yccustomtextlib.inter.OnHyperEditListener;
+import com.ns.yc.yccustomtextlib.inter.OnHyperTextListener;
 import com.ns.yc.yccustomtextlib.view.HyperTextEditor;
+import com.ns.yc.yccustomtextlib.view.HyperTextView;
 import com.pedaily.yc.ycdialoglib.toast.ToastUtils;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
@@ -48,9 +50,12 @@ public class NewActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_CHOOSE = 520;
     private Toolbar toolbar;
     private HyperTextEditor hte_content;
+    private HyperTextView htv_content;
     private int screenWidth;
     private int screenHeight;
     private Disposable subsInsert;
+    private Disposable mDisposable;
+    private String content;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,11 +64,12 @@ public class NewActivity extends AppCompatActivity {
         StateAppBar.setStatusBarColor(this, ContextCompat.getColor(this, R.color.colorPrimary));
         toolbar = findViewById(R.id.toolbar);
         hte_content = findViewById(R.id.hte_content);
+        htv_content = findViewById(R.id.htv_content);
         initToolBar();
         screenWidth = CommonUtil.getScreenWidth(this);
         screenHeight = CommonUtil.getScreenHeight(this);
         initHyper();
-        hte_content.setOnHyperListener(new OnHyperListener() {
+        hte_content.setOnHyperListener(new OnHyperEditListener() {
             @Override
             public void onImageClick(View view, String imagePath) {
                 //图片点击事件
@@ -72,6 +78,12 @@ public class NewActivity extends AppCompatActivity {
             @Override
             public void onRtImageDelete(String imagePath) {
                 //图片删除事件
+            }
+        });
+        htv_content.setOnHyperTextListener(new OnHyperTextListener() {
+            @Override
+            public void onImageClick(View view, String imagePath) {
+                //图片点击事件
             }
         });
     }
@@ -107,7 +119,9 @@ public class NewActivity extends AppCompatActivity {
                 });
                 break;
             case R.id.save:
+                content = getEditData();
                 //保存
+                showDataSync(content);
                 break;
             default:
                 break;
@@ -122,6 +136,9 @@ public class NewActivity extends AppCompatActivity {
         try {
             if (subsInsert != null && subsInsert.isDisposed()){
                 subsInsert.dispose();
+            }
+            if (mDisposable != null && !mDisposable.isDisposed()){
+                mDisposable.dispose();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -199,6 +216,96 @@ public class NewActivity extends AppCompatActivity {
                         hte_content.insertImage(imagePath);
                     }
                 });
+    }
+
+
+    /**
+     * 异步方式显示数据
+     */
+    private void showDataSync(final String html){
+        Observable.create(new ObservableOnSubscribe<String>() {
+            @Override
+            public void subscribe(ObservableEmitter<String> emitter) {
+                showEditData(emitter, html);
+            }
+        })
+                //.onBackpressureBuffer()
+                .subscribeOn(Schedulers.io())//生产事件在io
+                .observeOn(AndroidSchedulers.mainThread())//消费事件在UI线程
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onComplete() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        ToastUtils.showRoundRectToast("解析错误：图片不存在或已损坏");
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        mDisposable = d;
+                    }
+
+                    @Override
+                    public void onNext(String text) {
+                        try {
+                            htv_content.setVisibility(View.VISIBLE);
+                            hte_content.setVisibility(View.GONE);
+                            if (htv_content !=null) {
+                                if (text.contains("<img") && text.contains("src=")) {
+                                    //imagePath可能是本地路径，也可能是网络地址
+                                    String imagePath = StringUtils.getImgSrc(text);
+                                    htv_content.addImageViewAtIndex(htv_content.getLastIndex(), imagePath);
+                                } else {
+                                    htv_content.addTextViewAtIndex(htv_content.getLastIndex(), text);
+                                }
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+    }
+
+    /**
+     * 显示数据
+     */
+    private void showEditData(ObservableEmitter<String> emitter, String html) {
+        try {
+            List<String> textList = StringUtils.cutStringByImgTag(html);
+            for (int i = 0; i < textList.size(); i++) {
+                String text = textList.get(i);
+                emitter.onNext(text);
+            }
+            emitter.onComplete();
+        } catch (Exception e){
+            e.printStackTrace();
+            emitter.onError(e);
+        }
+    }
+
+
+    /**
+     * 负责处理编辑数据提交等事宜，请自行实现
+     */
+    private String getEditData() {
+        StringBuilder content = new StringBuilder();
+        try {
+            List<HyperTextEditor.EditData> editList = hte_content.buildEditData();
+            for (HyperTextEditor.EditData itemData : editList) {
+                if (itemData.inputStr != null) {
+                    content.append(itemData.inputStr);
+                } else if (itemData.imagePath != null) {
+                    content.append("<img src=\"").append(itemData.imagePath).append("\"/>");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return content.toString();
     }
 
 

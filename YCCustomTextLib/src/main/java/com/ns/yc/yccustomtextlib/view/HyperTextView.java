@@ -23,6 +23,8 @@ import android.widget.TextView;
 
 import com.ns.yc.yccustomtextlib.R;
 import com.ns.yc.yccustomtextlib.HyperRichText;
+import com.ns.yc.yccustomtextlib.inter.OnHyperTextListener;
+import com.ns.yc.yccustomtextlib.utils.HyperLibUtils;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -54,7 +56,7 @@ public class HyperTextView extends ScrollView {
     private ArrayList<String> imagePaths;//图片地址集合
     private String keywords;//关键词高亮
 
-    private OnRtImageClickListener onRtImageClickListener;
+    private OnHyperTextListener onHyperTextListener;
 
     /** 自定义属性 **/
     //插入的图片显示高度
@@ -114,8 +116,8 @@ public class HyperTextView extends ScrollView {
                     //int currentItem = imagePaths.indexOf(imageView.getAbsolutePath());
                     //Toast.makeText(getContext(),"点击图片："+currentItem+"："+imageView.getAbsolutePath(), Toast.LENGTH_SHORT).show();
                     // 开放图片点击接口
-                    if (onRtImageClickListener != null){
-                        onRtImageClickListener.onRtImageClick(imageView, imageView.getAbsolutePath());
+                    if (onHyperTextListener != null){
+                        onHyperTextListener.onImageClick(imageView, imageView.getAbsolutePath());
                     }
                 }
             }
@@ -124,22 +126,14 @@ public class HyperTextView extends ScrollView {
         LinearLayout.LayoutParams firstEditParam = new LinearLayout.LayoutParams(
                 LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         //editNormalPadding = dip2px(EDIT_PADDING);
-        TextView firstText = createTextView(rtTextInitHint, dip2px(context, EDIT_PADDING));
+        TextView firstText = createTextView(rtTextInitHint, HyperLibUtils.dip2px(context, EDIT_PADDING));
         allLayout.addView(firstText, firstEditParam);
         lastFocusText = firstText;
     }
 
-    private int dip2px(Context context, float dipValue) {
-        float m = context.getResources().getDisplayMetrics().density;
-        return (int) (dipValue * m + 0.5f);
-    }
 
-    public interface OnRtImageClickListener{
-        void onRtImageClick(View view, String imagePath);
-    }
-
-    public void setOnRtImageClickListener(OnRtImageClickListener onRtImageClickListener) {
-        this.onRtImageClickListener = onRtImageClickListener;
+    public void setOnHyperTextListener(OnHyperTextListener onRtImageClickListener) {
+        this.onHyperTextListener = onRtImageClickListener;
     }
 
     /**

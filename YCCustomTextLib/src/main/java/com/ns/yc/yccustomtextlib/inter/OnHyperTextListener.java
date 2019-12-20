@@ -11,17 +11,11 @@ import android.view.View;
  *     revise:
  * </pre>
  */
-public interface OnHyperListener {
+public interface OnHyperTextListener {
     /**
      * 图片点击事件
      * @param view                  view
      * @param imagePath             图片地址
      */
     void onImageClick(View view, String imagePath);
-
-    /**
-     * 图片删除事件
-     * @param imagePath             图片地址
-     */
-    void onRtImageDelete(String imagePath);
 }
