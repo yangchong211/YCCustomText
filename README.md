@@ -39,11 +39,6 @@ et_new_content.insertImage(imagePath, et_new_content.getMeasuredWidth());
 
 
 
-### 参考项目
-- https://github.com/xmuSistone/AnimRichEditor
-
-
-
 
 
 
