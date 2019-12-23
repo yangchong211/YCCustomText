@@ -29,7 +29,7 @@ import java.util.Locale;
  *     blog  : https://github.com/yangchong211
  *     time  : 2019/07/18
  *     desc  : 自定义WebView富文本控件
- *     revise:
+ *     revise: 遇到问题，webView如何设置图片点击去除功能，如何剧中裁剪功能
  * </pre>
  */
 public class WebViewRichEditor extends WebView {
