@@ -4,5 +4,4 @@ public interface OnTextChangeListener {
 
     void onTextChange(String text);
 
-
 }
