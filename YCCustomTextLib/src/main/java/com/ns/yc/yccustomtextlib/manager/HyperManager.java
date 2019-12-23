@@ -1,19 +1,19 @@
-package com.ns.yc.yccustomtextlib;
+package com.ns.yc.yccustomtextlib.manager;
 
 import android.widget.ImageView;
 
 import com.ns.yc.yccustomtextlib.inter.ImageLoader;
 
-public class HyperRichText {
+public class HyperManager {
 
-    private static HyperRichText instance;
+    private static HyperManager instance;
     private ImageLoader imageLoader;
 
-    public static HyperRichText getInstance(){
+    public static HyperManager getInstance(){
         if (instance == null){
-            synchronized (HyperRichText.class){
+            synchronized (HyperManager.class){
                 if (instance == null){
-                    instance = new HyperRichText();
+                    instance = new HyperManager();
                 }
             }
         }

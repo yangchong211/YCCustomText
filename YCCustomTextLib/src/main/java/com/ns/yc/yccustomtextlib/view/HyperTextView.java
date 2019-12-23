@@ -16,7 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.ns.yc.yccustomtextlib.HyperRichText;
+import com.ns.yc.yccustomtextlib.manager.HyperManager;
 import com.ns.yc.yccustomtextlib.R;
 import com.ns.yc.yccustomtextlib.inter.OnHyperTextListener;
 import com.ns.yc.yccustomtextlib.utils.HyperLibUtils;
@@ -259,15 +259,15 @@ public class HyperTextView extends ScrollView {
         }
         final HyperImageView imageView = imageLayout.findViewById(R.id.edit_imageView);
         imageView.setAbsolutePath(imagePath);
-        HyperRichText.getInstance().loadImage(imagePath, imageView, rtImageHeight);
+        HyperManager.getInstance().loadImage(imagePath, imageView, rtImageHeight);
         // onActivityResult无法触发动画，此处post处理
         allLayout.addView(imageLayout, index);
     }
 
     /**
-     * 在特定位置添加ImageView
+     * 在特定位置添加ImageView，折行
      */
-    public void addImageViewAtIndex1(final int index, String imagePath) {
+    public void addImageViewAtIndex(final int index, String imagePath , boolean isWordWrap) {
         if(imagePath==null || imagePath.length()==0){
             return;
         }

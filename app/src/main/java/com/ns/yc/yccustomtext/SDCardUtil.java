@@ -19,7 +19,7 @@ import java.io.IOException;
 public class SDCardUtil {
 
 	public static String SDCardRoot = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator;
-	public static String APP_NAME = "HyperRichText";
+	public static String APP_NAME = "HyperManager";
 
 	/**
 	 * 检查是否存在SDCard

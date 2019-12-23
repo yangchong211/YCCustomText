@@ -19,11 +19,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
-import com.ns.yc.yccustomtextlib.HyperRichText;
+import com.ns.yc.yccustomtextlib.manager.HyperManager;
 import com.ns.yc.yccustomtextlib.inter.ImageLoader;
 import com.ns.yc.yccustomtextlib.inter.OnHyperEditListener;
 import com.ns.yc.yccustomtextlib.inter.OnHyperTextListener;
@@ -57,7 +58,6 @@ public class NewActivity extends AppCompatActivity {
     private int screenHeight;
     private Disposable subsInsert;
     private Disposable mDisposable;
-    private String content;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,6 +70,27 @@ public class NewActivity extends AppCompatActivity {
         initToolBar();
         screenWidth = CommonUtil.getScreenWidth(this);
         screenHeight = CommonUtil.getScreenHeight(this);
+
+
+        TextView tv_0_1 = findViewById(R.id.tv_0_1);
+        TextView tv_0_2 = findViewById(R.id.tv_0_2);
+        tv_0_1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //编辑
+                hte_content.setVisibility(View.VISIBLE);
+                htv_content.setVisibility(View.GONE);
+            }
+        });
+
+        tv_0_2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //保存
+                showDataSync(getEditData());
+            }
+        });
+
         initHyper();
         hte_content.setOnHyperListener(new OnHyperEditListener() {
             @Override
@@ -121,9 +142,8 @@ public class NewActivity extends AppCompatActivity {
                 });
                 break;
             case R.id.save:
-                content = getEditData();
                 //保存
-                showDataSync(content);
+                showDataSync(getEditData());
                 break;
             default:
                 break;
@@ -225,6 +245,10 @@ public class NewActivity extends AppCompatActivity {
      * 异步方式显示数据
      */
     private void showDataSync(final String html){
+        if (html==null || html.length()==0){
+            return;
+        }
+        htv_content.clearAllLayout();
         Observable.create(new ObservableOnSubscribe<String>() {
             @Override
             public void subscribe(ObservableEmitter<String> emitter) {
@@ -366,7 +390,7 @@ public class NewActivity extends AppCompatActivity {
     }
 
     private void initHyper(){
-        HyperRichText.getInstance().setImageLoader(new ImageLoader() {
+        HyperManager.getInstance().setImageLoader(new ImageLoader() {
             @Override
             public void loadImage(final String imagePath, final ImageView imageView, final int imageHeight) {
                 Log.e("---", "imageHeight: "+imageHeight);

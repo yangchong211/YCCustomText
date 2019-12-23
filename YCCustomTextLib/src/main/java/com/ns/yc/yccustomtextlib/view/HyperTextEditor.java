@@ -24,7 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
-import com.ns.yc.yccustomtextlib.HyperRichText;
+import com.ns.yc.yccustomtextlib.manager.HyperManager;
 import com.ns.yc.yccustomtextlib.R;
 import com.ns.yc.yccustomtextlib.inter.OnHyperEditListener;
 import com.ns.yc.yccustomtextlib.model.HyperEditData;
@@ -482,7 +482,7 @@ public class HyperTextEditor extends ScrollView {
 			HyperImageView imageView = imageLayout.findViewById(R.id.edit_imageView);
 			imageView.setAbsolutePath(imagePath);
 			//imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);//裁剪剧中
-			HyperRichText.getInstance().loadImage(imagePath, imageView, rtImageHeight);
+			HyperManager.getInstance().loadImage(imagePath, imageView, rtImageHeight);
 
 //			// 调整imageView的高度，根据宽度等比获得高度
 //			int imageHeight ; //解决连续加载多张图片导致后续图片都跟第一张高度相同的问题
@@ -500,9 +500,9 @@ public class HyperTextEditor extends ScrollView {
 //			imageView.setLayoutParams(lp);
 //
 //			if (rtImageHeight > 0){
-//				HyperRichText.getInstance().loadImage(imagePath, imageView, true);
+//				HyperManager.getInstance().loadImage(imagePath, imageView, true);
 //			} else {
-//				HyperRichText.getInstance().loadImage(imagePath, imageView, false);
+//				HyperManager.getInstance().loadImage(imagePath, imageView, false);
 //			}
 
 			// onActivityResult无法触发动画，此处post处理
@@ -644,6 +644,7 @@ public class HyperTextEditor extends ScrollView {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		HyperLogUtils.d("HyperTextEditor----buildEditData------dataList---"+dataList.size());
 		return dataList;
 	}
 
