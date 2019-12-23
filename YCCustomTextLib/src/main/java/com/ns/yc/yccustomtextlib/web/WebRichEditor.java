@@ -82,7 +82,6 @@ public class WebRichEditor extends WebView {
                 types.add(type);
             }
         }
-
         if (mDecorationStateListener != null) {
             mDecorationStateListener.onStateChangeListener(state, types);
         }
