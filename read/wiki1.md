@@ -41,6 +41,8 @@
 - 连续插入多张图片时，比如顺序1，2，3，注意避免出现图片插入顺序混乱的问题(异步插入多张图片可能出现顺序错乱问题)；
 - 在编辑富文本状态的时候，连续多张图片之间插入输入框，方便在图片间输入文本内容；
 - 在编辑状态中，可以设置文字大小和颜色，同时做好拓展需求，后期可能添加文本加粗，下划线，插入超链接，对齐方式等功能；
+- 编辑状态，连续插入多张图片，如果想在图片中间插入文字内容，则需要靠谱在图片之间预留编辑文本控件，方便操作；
+
 
 
 
@@ -109,8 +111,48 @@
 
 
 ### 05.在指定位置插入图片
-
-
+- 当点击插入图片的时候，需要思考两个问题。第一个是在那个位置插入图片，所以需要定位到这个位置；第二个是插入图片后，什么时候折行操作。
+- 对于上面两个问题，这个位置可以取光标所在的位置，但是对于一个EditText输入文本，插入图片这个位置可以分多种情况：
+    - 如果光标已经顶在了editText的最前面，则直接插入图片，并且EditText下移即可
+    - 如果光标已经顶在了editText的最末端，则需要添加新的imageView
+    - 如果光标已经顶在了editText的最中间，则需要分割字符串，分割成两个EditText，并在两个EditText中间插入图片
+    - 如果当前获取焦点的EditText为空，直接在EditText下方插入图片，并且插入空的EditText
+- 代码思路如下所示
+    ```
+    /**
+     * 插入一张图片
+     * @param imagePath							图片路径地址
+     */
+    public void insertImage(String imagePath) {
+        if (TextUtils.isEmpty(imagePath)){
+            return;
+        }
+        try {
+            //lastFocusEdit获取焦点的EditText
+            String lastEditStr = lastFocusEdit.getText().toString();
+            //获取光标所在位置
+            int cursorIndex = lastFocusEdit.getSelectionStart();
+            //获取光标前面的字符串
+            String editStr1 = lastEditStr.substring(0, cursorIndex).trim();
+            //获取光标后的字符串
+            String editStr2 = lastEditStr.substring(cursorIndex).trim();
+            //获取焦点的EditText所在位置
+            int lastEditIndex = layout.indexOfChild(lastFocusEdit);
+            if (lastEditStr.length() == 0) {
+                //如果当前获取焦点的EditText为空，直接在EditText下方插入图片，并且插入空的EditText
+            } else if (editStr1.length() == 0) {
+                //如果光标已经顶在了editText的最前面，则直接插入图片，并且EditText下移即可
+            } else if (editStr2.length() == 0) {
+                // 如果光标已经顶在了editText的最末端，则需要添加新的imageView和EditText
+            } else {
+                //如果光标已经顶在了editText的最中间，则需要分割字符串，分割成两个EditText，并在两个EditText中间插入图片
+            }
+            hideKeyBoard();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    ```
 
 ### 06.在指定位置插入输入文字
 

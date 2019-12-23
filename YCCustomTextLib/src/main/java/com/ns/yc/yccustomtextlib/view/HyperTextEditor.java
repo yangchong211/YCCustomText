@@ -370,6 +370,7 @@ public class HyperTextEditor extends ScrollView {
 
 	/**
 	 * 插入一张图片
+	 * @param imagePath							图片路径地址
 	 */
 	public void insertImage(String imagePath) {
 		//bitmap == null时，可能是网络图片，不能做限制
@@ -411,6 +412,7 @@ public class HyperTextEditor extends ScrollView {
 				//在空的EditText的位置插入图片布局，空的EditText下移
 				addImageViewAtIndex(lastEditIndex + 1, imagePath);
 			}
+			//隐藏小键盘
 			hideKeyBoard();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -421,7 +423,8 @@ public class HyperTextEditor extends ScrollView {
 	 * 隐藏小键盘
 	 */
 	public void hideKeyBoard() {
-		InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+		InputMethodManager imm = (InputMethodManager)
+				getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
 		if (imm != null && lastFocusEdit != null) {
 			imm.hideSoftInputFromWindow(lastFocusEdit.getWindowToken(), 0);
 		}
@@ -433,11 +436,8 @@ public class HyperTextEditor extends ScrollView {
 
 	/**
 	 * 在特定位置插入EditText
-	 * 
-	 * @param index
-	 *            位置
-	 * @param editStr
-	 *            EditText显示的文字
+	 * @param index							位置
+	 * @param editStr						EditText显示的文字
 	 */
 	public void addEditTextAtIndex(final int index, CharSequence editStr) {
 		try {
@@ -460,7 +460,9 @@ public class HyperTextEditor extends ScrollView {
 			layout.setLayoutTransition(mTransition);
 			//插入新的EditText之后，修改lastFocusEdit的指向
 			lastFocusEdit = editText2;
+			//获取焦点
 			lastFocusEdit.requestFocus();
+			//将光标移至文字指定索引处
 			lastFocusEdit.setSelection(editStr.length(), editStr.length());
 		} catch (Exception e) {
 			e.printStackTrace();
