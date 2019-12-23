@@ -105,7 +105,7 @@ public class NewActivity extends AppCompatActivity {
                 //生成json
                 Gson gson = new Gson();
                 String content = gson.toJson(editList);
-                String string = HyperLibUtils.stringToJSON(content);
+                String string = HyperLibUtils.stringToJson(content);
                 Intent intent = new Intent(NewActivity.this, TextActivity.class);
                 intent.putExtra("content", string);
                 startActivity(intent);

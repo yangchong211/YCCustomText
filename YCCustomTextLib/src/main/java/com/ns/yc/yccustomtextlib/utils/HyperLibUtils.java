@@ -449,18 +449,17 @@ public final class HyperLibUtils {
      * @param strJson                       字符串
      * @return                              json
      */
-    public static String stringToJSON(String strJson) {
+    public static String stringToJson(String strJson) {
         // 计数tab的个数
         int tabNum = 0;
-        StringBuffer jsonFormat = new StringBuffer();
+        StringBuilder jsonFormat = new StringBuilder();
         int length = strJson.length();
-
         char last = 0;
         for (int i = 0; i < length; i++) {
             char c = strJson.charAt(i);
             if (c == '{') {
                 tabNum++;
-                jsonFormat.append(c + "\n");
+                jsonFormat.append(c).append("\n");
                 jsonFormat.append(getSpaceOrTab(tabNum));
             }
             else if (c == '}') {
@@ -470,11 +469,11 @@ public final class HyperLibUtils {
                 jsonFormat.append(c);
             }
             else if (c == ',') {
-                jsonFormat.append(c + "\n");
+                jsonFormat.append(c).append("\n");
                 jsonFormat.append(getSpaceOrTab(tabNum));
             }
             else if (c == ':') {
-                jsonFormat.append(c + " ");
+                jsonFormat.append(c).append(" ");
             } else if (c == '[') {
                 tabNum++;
                 char next = strJson.charAt(i + 1);
@@ -482,7 +481,7 @@ public final class HyperLibUtils {
                     jsonFormat.append(c);
                 }
                 else {
-                    jsonFormat.append(c + "\n");
+                    jsonFormat.append(c).append("\n");
                     jsonFormat.append(getSpaceOrTab(tabNum));
                 }
             } else if (c == ']') {
@@ -491,7 +490,7 @@ public final class HyperLibUtils {
                     jsonFormat.append(c);
                 }
                 else {
-                    jsonFormat.append("\n" + getSpaceOrTab(tabNum) + c);
+                    jsonFormat.append("\n").append(getSpaceOrTab(tabNum)).append(c);
                 }
             }
             else {
@@ -502,8 +501,13 @@ public final class HyperLibUtils {
         return jsonFormat.toString();
     }
 
+    /**
+     * 换行操作
+     * @param tabNum
+     * @return
+     */
     private static String getSpaceOrTab(int tabNum) {
-        StringBuffer sbTab = new StringBuffer();
+        StringBuilder sbTab = new StringBuilder();
         for (int i = 0; i < tabNum; i++) {
             sbTab.append('\t');
         }
