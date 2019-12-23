@@ -72,10 +72,15 @@ public class NewActivity extends AppCompatActivity {
         initToolBar();
         screenWidth = CommonUtil.getScreenWidth(this);
         screenHeight = CommonUtil.getScreenHeight(this);
+        initListener();
+        initHyper();
+    }
 
-
+    private void initListener() {
         TextView tv_0_1 = findViewById(R.id.tv_0_1);
         TextView tv_0_2 = findViewById(R.id.tv_0_2);
+        TextView tv_5 = findViewById(R.id.tv_5);
+        TextView tv_6 = findViewById(R.id.tv_6);
         tv_0_1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,8 +97,18 @@ public class NewActivity extends AppCompatActivity {
                 showDataSync(getEditData());
             }
         });
-
-        initHyper();
+        tv_5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //生成json
+            }
+        });
+        tv_6.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //生成html
+            }
+        });
         hte_content.setOnHyperListener(new OnHyperEditListener() {
             @Override
             public void onImageClick(View view, String imagePath) {
