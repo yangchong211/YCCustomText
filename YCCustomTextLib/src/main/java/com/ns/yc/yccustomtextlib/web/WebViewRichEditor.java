@@ -23,8 +23,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-
-public class WebRichEditor extends WebView {
+/**
+ * <pre>
+ *     @author 杨充
+ *     blog  : https://github.com/yangchong211
+ *     time  : 2019/07/18
+ *     desc  : 自定义WebView富文本控件
+ *     revise:
+ * </pre>
+ */
+public class WebViewRichEditor extends WebView {
 
     private static final String SETUP_HTML = "file:///android_asset/editor.html";
     private static final String CALLBACK_SCHEME = "re-callback://";
@@ -35,16 +43,16 @@ public class WebRichEditor extends WebView {
     private OnDecorationListener mDecorationStateListener;
     private AfterInitialLoadListener mLoadListener;
 
-    public WebRichEditor(Context context) {
+    public WebViewRichEditor(Context context) {
         this(context, null);
     }
 
-    public WebRichEditor(Context context, AttributeSet attrs) {
+    public WebViewRichEditor(Context context, AttributeSet attrs) {
         this(context, attrs, android.R.attr.webViewStyle);
     }
 
     @SuppressLint("SetJavaScriptEnabled")
-    public WebRichEditor(Context context, AttributeSet attrs, int defStyleAttr) {
+    public WebViewRichEditor(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setVerticalScrollBarEnabled(false);
         setHorizontalScrollBarEnabled(false);

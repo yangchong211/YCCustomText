@@ -176,17 +176,22 @@ public final class HyperLibUtils {
     public static Bitmap getSmallBitmap(String filePath, int newWidth, int newHeight) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(filePath, options);
+        Bitmap decodeFile = BitmapFactory.decodeFile(filePath, options);
+        HyperLogUtils.d("HyperLibUtils----getSmallBitmap---byteCount压缩前大小--"+decodeFile);
         // Calculate inSampleSize
         // 计算图片的缩放值
         options.inSampleSize = calculateInSampleSize(options, newWidth, newHeight);
         // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
         Bitmap bitmap = BitmapFactory.decodeFile(filePath, options);
+        int bitmapByteCount = bitmap.getByteCount();
+        HyperLogUtils.d("HyperLibUtils----getSmallBitmap---byteCount压缩中大小--"+bitmapByteCount);
         // 质量压缩
         Bitmap newBitmap = compressImage(bitmap, 500);
+        int byteCount = newBitmap.getByteCount();
+        HyperLogUtils.d("HyperLibUtils----getSmallBitmap---byteCount压缩后大小--"+byteCount);
         if (bitmap != null){
-            //手动释放资源
+            // 手动释放资源
             bitmap.recycle();
         }
         return newBitmap;

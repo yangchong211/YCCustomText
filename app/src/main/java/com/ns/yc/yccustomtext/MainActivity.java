@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.ns.yc.yccustomtextlib.utils.HyperLogUtils;
 import com.pedaily.yc.ycdialoglib.toast.ToastUtils;
 
 
@@ -21,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
+        HyperLogUtils.setIsLog(true);
         ToastUtils.init(getApplication());
     }
 

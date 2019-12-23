@@ -19,7 +19,7 @@ import android.widget.TextView;
 
 import com.ns.yc.yccustomtextlib.utils.HyperLibUtils;
 import com.ns.yc.yccustomtextlib.web.OnTextChangeListener;
-import com.ns.yc.yccustomtextlib.web.WebRichEditor;
+import com.ns.yc.yccustomtextlib.web.WebViewRichEditor;
 import com.pedaily.yc.ycdialoglib.toast.ToastUtils;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
@@ -39,7 +39,7 @@ import io.reactivex.schedulers.Schedulers;
 public class WebRichActivity extends AppCompatActivity implements View.OnClickListener {
 
     //文本编辑器
-    private WebRichEditor mEditor;
+    private WebViewRichEditor mEditor;
     //加粗按钮
     private ImageView mBold;
     //颜色编辑器

@@ -196,10 +196,9 @@ public class NewActivity extends AppCompatActivity {
                     // 可以同时插入多张图片
                     for (Uri imageUri : mSelected) {
                         String imagePath = HyperLibUtils.getFilePathFromUri(NewActivity.this,  imageUri);
-                        //Log.e(TAG, "###path=" + imagePath);
+
                         Bitmap bitmap = HyperLibUtils.getSmallBitmap(imagePath, screenWidth, screenHeight);
                         //压缩图片
-                        //bitmap = BitmapFactory.decodeFile(imagePath);
                         imagePath = SDCardUtil.saveToSdCard(bitmap);
                         //Log.e(TAG, "###imagePath="+imagePath);
                         emitter.onNext(imagePath);
