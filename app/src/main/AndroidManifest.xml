@@ -26,7 +26,6 @@
 
 
         <activity android:name=".NewActivity"/>
-        <activity android:name=".DetailActivity"/>
 
     </application>
 

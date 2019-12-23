@@ -49,11 +49,19 @@
 
 
 ### 02.实现的方案介绍
+#### 2.1 第一种方案
 - 使用ScrollView作为最外层，布局包含LineaLayout，图文混排内容，则是用TextView/EditText和ImageView去填充。
 - 富文本编辑状态：ScrollView + LineaLayout + n个EditText + n个ImageView
 - 富文本预览状态：ScrollView + LineaLayout + n个TextView + n个ImageView
 - 删除的时候，根据光标的位置，如果光标遇到是图片，则可以用光标删除图片；如果光标遇到是文字，则可以用光标删除文字
 - 当插入或者删除图片的时候，可以添加一个过渡动画效果，避免直接生硬的显示。如何在ViewGroup中添加view，删除view时给相应view和受影响的其他view添加动画，不太容易做。如果只是对受到影响的view添加动画，可以通过设置view的高度使之显示和隐藏，还可以利用ScrollView通过滚动隐藏和显示动画，但其他受影响的view则比较难处理，最终选择布局动画LayoutTransition 就可以很好地完成这个功能。
+
+
+
+
+#### 2.2 第二种方法
+- 使用WebView实现编辑器，支持n多格式，例如常见的html或者markdown格式。利用html标签对富文本处理，这种方式就需要专门处理标签的样式。
+
 
 
 
@@ -319,6 +327,7 @@
 ### 参考项目和博客
 - https://github.com/sendtion/XRichText
 - https://github.com/chinalwb/Android-Rich-text-Editor
+- https://github.com/Even201314/MRichEditor
 
 
 

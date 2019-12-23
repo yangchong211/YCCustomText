@@ -15,13 +15,23 @@ limitations under the License.
 */
 package com.ns.yc.yccustomtextlib.utils;
 
+import android.content.ContentResolver;
 import android.content.Context;
-import android.graphics.Color;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.ParcelFileDescriptor;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.CharacterStyle;
 import android.text.style.ForegroundColorSpan;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -152,5 +162,225 @@ public final class HyperLibUtils {
         }
     }
 
+    /**
+     * 根据路径获得突破并压缩返回bitmap用于显示
+     *
+     * @return
+     */
+    public static Bitmap getSmallBitmap(String filePath, int newWidth, int newHeight) {
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(filePath, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, newWidth, newHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+
+        Bitmap bitmap = BitmapFactory.decodeFile(filePath, options);
+        Bitmap newBitmap = compressImage(bitmap, 500);
+        if (bitmap != null){
+            bitmap.recycle();
+        }
+        return newBitmap;
+    }
+
+
+    /**
+     * 计算图片的缩放值
+     *
+     * @param options
+     * @param reqWidth
+     * @param reqHeight
+     * @return
+     */
+    public static int calculateInSampleSize(BitmapFactory.Options options,
+                                            int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            // Calculate ratios of height and width to requested height and
+            // width
+            final int heightRatio = Math.round((float) height / (float) reqHeight);
+            final int widthRatio = Math.round((float) width / (float) reqWidth);
+
+            // Choose the smallest ratio as inSampleSize value, this will
+            // guarantee
+            // a final image with both dimensions larger than or equal to the
+            // requested height and width.
+            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+        }
+
+        return inSampleSize;
+    }
+
+    /**
+     * 质量压缩
+     * @param image
+     * @param maxSize
+     */
+    public static Bitmap compressImage(Bitmap image, int maxSize){
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        // scale
+        int options = 80;
+        // Store the bitmap into output stream(no compress)
+        image.compress(Bitmap.CompressFormat.JPEG, options, os);
+        // Compress by loop
+        while ( os.toByteArray().length / 1024 > maxSize) {
+            // Clean up os
+            os.reset();
+            // interval 10
+            options -= 10;
+            image.compress(Bitmap.CompressFormat.JPEG, options, os);
+        }
+
+        Bitmap bitmap = null;
+        byte[] b = os.toByteArray();
+        if (b.length != 0) {
+            bitmap = BitmapFactory.decodeByteArray(b, 0, b.length);
+        }
+        return bitmap;
+    }
+
+
+
+    /**
+     * 通过像素压缩图片，将修改图片宽高，适合获得缩略图，Used to get thumbnail
+     * @param srcPath
+     * @return
+     */
+    public static Bitmap compressBitmapByPath(String srcPath, float pixelW, float pixelH) {
+        BitmapFactory.Options newOpts = new BitmapFactory.Options();
+        //开始读入图片，此时把options.inJustDecodeBounds 设回true了
+        newOpts.inJustDecodeBounds = true;
+        newOpts.inPreferredConfig = Bitmap.Config.RGB_565;
+        Bitmap bitmap = BitmapFactory.decodeFile(srcPath,newOpts);//此时返回bm为空
+
+        newOpts.inJustDecodeBounds = false;
+        int w = newOpts.outWidth;
+        int h = newOpts.outHeight;
+        //现在主流手机比较多是800*480分辨率，所以高和宽我们设置为
+        float hh = pixelH;//这里设置高度为800f
+        float ww = pixelW;//这里设置宽度为480f
+        //缩放比。由于是固定比例缩放，只用高或者宽其中一个数据进行计算即可
+        int be = 1;//be=1表示不缩放
+        if (w > h && w > ww) {//如果宽度大的话根据宽度固定大小缩放
+            be = (int) (newOpts.outWidth / ww);
+        } else if (w < h && h > hh) {//如果高度高的话根据宽度固定大小缩放
+            be = (int) (newOpts.outHeight / hh);
+        }
+        if (be <= 0)
+            be = 1;
+        newOpts.inSampleSize = be;//设置缩放比例
+        //重新读入图片，注意此时已经把options.inJustDecodeBounds 设回false了
+        bitmap = BitmapFactory.decodeFile(srcPath, newOpts);
+        //        return compress(bitmap, maxSize); // 这里再进行质量压缩的意义不大，反而耗资源，删除
+        return bitmap;
+    }
+
+    /**
+     * 通过大小压缩，将修改图片宽高，适合获得缩略图，Used to get thumbnail
+     * @param image
+     * @param pixelW
+     * @param pixelH
+     * @return
+     */
+    public static Bitmap compressBitmapByBmp(Bitmap image, float pixelW, float pixelH) {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 100, os);
+        if( os.toByteArray().length / 1024>1024) {//判断如果图片大于1M,进行压缩避免在生成图片（BitmapFactory.decodeStream）时溢出
+            os.reset();//重置baos即清空baos
+            image.compress(Bitmap.CompressFormat.JPEG, 50, os);//这里压缩50%，把压缩后的数据存放到baos中
+        }
+        ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+        BitmapFactory.Options newOpts = new BitmapFactory.Options();
+        //开始读入图片，此时把options.inJustDecodeBounds 设回true了
+        newOpts.inJustDecodeBounds = true;
+        newOpts.inPreferredConfig = Bitmap.Config.RGB_565;
+        Bitmap bitmap = BitmapFactory.decodeStream(is, null, newOpts);
+        newOpts.inJustDecodeBounds = false;
+        int w = newOpts.outWidth;
+        int h = newOpts.outHeight;
+        float hh = pixelH;// 设置高度为240f时，可以明显看到图片缩小了
+        float ww = pixelW;// 设置宽度为120f，可以明显看到图片缩小了
+        //缩放比。由于是固定比例缩放，只用高或者宽其中一个数据进行计算即可
+        int be = 1;//be=1表示不缩放
+        if (w > h && w > ww) {//如果宽度大的话根据宽度固定大小缩放
+            be = (int) (newOpts.outWidth / ww);
+        } else if (w < h && h > hh) {//如果高度高的话根据宽度固定大小缩放
+            be = (int) (newOpts.outHeight / hh);
+        }
+        if (be <= 0) be = 1;
+        newOpts.inSampleSize = be;//设置缩放比例
+        //重新读入图片，注意此时已经把options.inJustDecodeBounds 设回false了
+        is = new ByteArrayInputStream(os.toByteArray());
+        bitmap = BitmapFactory.decodeStream(is, null, newOpts);
+        int desWidth = (int) (w / be);
+        int desHeight = (int) (h / be);
+        bitmap = Bitmap.createScaledBitmap(bitmap, desWidth, desHeight, true);
+        //压缩好比例大小后再进行质量压缩
+//      return compress(bitmap, maxSize); // 这里再进行质量压缩的意义不大，反而耗资源，删除
+        return bitmap;
+    }
+
+
+
+    /**
+     * 根据Uri获取真实的文件路径
+     *
+     * @param context
+     * @param uri
+     * @return
+     */
+    public static String getFilePathFromUri(Context context, Uri uri) {
+        if (uri == null) {
+            return null;
+        }
+        ContentResolver resolver = context.getContentResolver();
+        FileInputStream input = null;
+        FileOutputStream output = null;
+        try {
+            ParcelFileDescriptor pfd = resolver.openFileDescriptor(uri, "r");
+            if (pfd == null) {
+                return null;
+            }
+            FileDescriptor fd = pfd.getFileDescriptor();
+            input = new FileInputStream(fd);
+
+
+            File outputDir = context.getCacheDir();
+            File outputFile = File.createTempFile("image", "tmp", outputDir);
+            String tempFilename = outputFile.getAbsolutePath();
+            output = new FileOutputStream(tempFilename);
+
+            int read;
+            byte[] bytes = new byte[4096];
+            while ((read = input.read(bytes)) != -1) {
+                output.write(bytes, 0, read);
+            }
+
+            return new File(tempFilename).getAbsolutePath();
+        } catch (Exception ignored) {
+
+            ignored.getStackTrace();
+        } finally {
+            try {
+                if (input != null){
+                    input.close();
+                }
+                if (output != null){
+                    output.close();
+                }
+            } catch (Throwable t) {
+                // Do nothing
+            }
+        }
+        return null;
+    }
 
 }
