@@ -164,23 +164,25 @@ public final class HyperLibUtils {
 
     /**
      * 根据路径获得突破并压缩返回bitmap用于显示
-     *
+     * @param filePath                              文件路径
+     * @param newWidth                              宽
+     * @param newHeight                             高
      * @return
      */
     public static Bitmap getSmallBitmap(String filePath, int newWidth, int newHeight) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(filePath, options);
-
         // Calculate inSampleSize
+        // 计算图片的缩放值
         options.inSampleSize = calculateInSampleSize(options, newWidth, newHeight);
-
         // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
-
         Bitmap bitmap = BitmapFactory.decodeFile(filePath, options);
+        // 质量压缩
         Bitmap newBitmap = compressImage(bitmap, 500);
         if (bitmap != null){
+            //手动释放资源
             bitmap.recycle();
         }
         return newBitmap;
@@ -189,40 +191,35 @@ public final class HyperLibUtils {
 
     /**
      * 计算图片的缩放值
-     *
-     * @param options
-     * @param reqWidth
-     * @param reqHeight
+     * @param options                           属性
+     * @param reqWidth                          宽
+     * @param reqHeight                         高
      * @return
      */
-    public static int calculateInSampleSize(BitmapFactory.Options options,
-                                            int reqWidth, int reqHeight) {
+    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         // Raw height and width of image
         final int height = options.outHeight;
         final int width = options.outWidth;
         int inSampleSize = 1;
-
         if (height > reqHeight || width > reqWidth) {
-
             // Calculate ratios of height and width to requested height and
             // width
             final int heightRatio = Math.round((float) height / (float) reqHeight);
             final int widthRatio = Math.round((float) width / (float) reqWidth);
-
             // Choose the smallest ratio as inSampleSize value, this will
             // guarantee
             // a final image with both dimensions larger than or equal to the
             // requested height and width.
             inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
         }
-
         return inSampleSize;
     }
 
     /**
      * 质量压缩
-     * @param image
-     * @param maxSize
+     * @param image                             bitmap
+     * @param maxSize                           最大值
+     * @return
      */
     public static Bitmap compressImage(Bitmap image, int maxSize){
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -238,7 +235,6 @@ public final class HyperLibUtils {
             options -= 10;
             image.compress(Bitmap.CompressFormat.JPEG, options, os);
         }
-
         Bitmap bitmap = null;
         byte[] b = os.toByteArray();
         if (b.length != 0) {
@@ -315,7 +311,9 @@ public final class HyperLibUtils {
         } else if (w < h && h > hh) {//如果高度高的话根据宽度固定大小缩放
             be = (int) (newOpts.outHeight / hh);
         }
-        if (be <= 0) be = 1;
+        if (be <= 0) {
+            be = 1;
+        }
         newOpts.inSampleSize = be;//设置缩放比例
         //重新读入图片，注意此时已经把options.inJustDecodeBounds 设回false了
         is = new ByteArrayInputStream(os.toByteArray());
@@ -329,12 +327,10 @@ public final class HyperLibUtils {
     }
 
 
-
     /**
      * 根据Uri获取真实的文件路径
-     *
-     * @param context
-     * @param uri
+     * @param context                               上下文
+     * @param uri                                   图片uri地址
      * @return
      */
     public static String getFilePathFromUri(Context context, Uri uri) {
@@ -351,8 +347,6 @@ public final class HyperLibUtils {
             }
             FileDescriptor fd = pfd.getFileDescriptor();
             input = new FileInputStream(fd);
-
-
             File outputDir = context.getCacheDir();
             File outputFile = File.createTempFile("image", "tmp", outputDir);
             String tempFilename = outputFile.getAbsolutePath();
@@ -363,11 +357,9 @@ public final class HyperLibUtils {
             while ((read = input.read(bytes)) != -1) {
                 output.write(bytes, 0, read);
             }
-
             return new File(tempFilename).getAbsolutePath();
-        } catch (Exception ignored) {
-
-            ignored.getStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             try {
                 if (input != null){
@@ -378,6 +370,7 @@ public final class HyperLibUtils {
                 }
             } catch (Throwable t) {
                 // Do nothing
+                t.printStackTrace();
             }
         }
         return null;

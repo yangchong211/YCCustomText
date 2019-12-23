@@ -184,6 +184,42 @@
 
 
 ### 11.如何避免插入图片OOM
+- 加载一个本地的大图片或者网络图片，从加载到设置到View上，如何减下内存，避免加载图片OOM。
+    - 在展示高分辨率图片的时候，最好先将图片进行压缩。压缩后的图片大小应该和用来展示它的控件大小相近，在一个很小的ImageView上显示一张超大的图片不会带来任何视觉上的好处，但却会占用相当多宝贵的内存，而且在性能上还可能会带来负面影响。
+- 加载图片的内存都去哪里呢？
+    - 其实我们的内存就是去bitmap里了，BitmapFactory的每个decode函数都会生成一个bitmap对象，用于存放解码后的图像，然后返回该引用。如果图像数据较大就会造成bitmap对象申请的内存较多，如果图像过多就会造成内存不够用自然就会出现out of memory的现象。
+- 为何容易OOM？
+    - 通过BitmapFactory的decode的这些方法会尝试为已经构建的bitmap分配内存，这时就会很容易导致OOM出现。为此每一种解析方法都提供了一个可选的BitmapFactory.Options参数，将这个参数的inJustDecodeBounds属性设置为true就可以让解析方法禁止为bitmap分配内存，返回值也不再是一个Bitmap对象，而是null。
+- 如何对图片进行压缩？
+    - 1.解析图片，获取图片资源的属性
+    - 2.计算图片的缩放值
+    - 3.最后对图片进行质量压缩
+- 具体设置图片压缩的代码如下所示
+    ```
+    public static Bitmap getSmallBitmap(String filePath, int newWidth, int newHeight) {
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(filePath, options);
+        // Calculate inSampleSize
+        // 计算图片的缩放值
+        options.inSampleSize = calculateInSampleSize(options, newWidth, newHeight);
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        Bitmap bitmap = BitmapFactory.decodeFile(filePath, options);
+        // 质量压缩
+        Bitmap newBitmap = compressImage(bitmap, 500);
+        if (bitmap != null){
+            //手动释放资源
+            bitmap.recycle();
+        }
+        return newBitmap;
+    }
+    ```
+- 思考：inJustDecodeBounds这个参数是干什么的？
+    - 如果设置为true则表示decode函数不会生成bitmap对象，仅是将图像相关的参数填充到option对象里，这样我们就可以在不生成bitmap而获取到图像的相关参数了。
+- 为何设置两次inJustDecodeBounds属性？
+    - 第一次：设置为true则表示decode函数不会生成bitmap对象，仅是将图像相关的参数填充到option对象里，这样我们就可以在不生成bitmap而获取到图像的相关参数。
+    - 第二次：将inJustDecodeBounds设置为false再次调用decode函数时就能生成bitmap了。而此时的bitmap已经压缩减小很多了，所以加载到内存中并不会导致OOM。
 
 
 
