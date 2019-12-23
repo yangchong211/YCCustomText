@@ -361,6 +361,10 @@ public class WebViewRichEditor extends WebView {
         }
     }
 
+    /**
+     * 4.4以上可用 evaluateJavascript
+     * @param trigger                       trigger
+     */
     private void load(String trigger) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             evaluateJavascript(trigger, null);
