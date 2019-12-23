@@ -206,7 +206,6 @@ public class HyperTextEditor extends ScrollView {
 				return false;
 			}
 		};
-
 		// 图片叉掉处理
 		btnListener = new OnClickListener() {
 			@Override
