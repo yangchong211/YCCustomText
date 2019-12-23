@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.google.gson.Gson;
 import com.ns.yc.yccustomtextlib.edit.manager.HyperManager;
 import com.ns.yc.yccustomtextlib.edit.inter.ImageLoader;
 import com.ns.yc.yccustomtextlib.edit.inter.OnHyperEditListener;
@@ -100,7 +101,14 @@ public class NewActivity extends AppCompatActivity {
         tv_5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                List<HyperEditData> editList = hte_content.buildEditData();
                 //生成json
+                Gson gson = new Gson();
+                String content = gson.toJson(editList);
+                String string = HyperLibUtils.stringToJSON(content);
+                Intent intent = new Intent(NewActivity.this, TextActivity.class);
+                intent.putExtra("content", string);
+                startActivity(intent);
             }
         });
         tv_6.setOnClickListener(new View.OnClickListener() {

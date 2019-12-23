@@ -29,6 +29,7 @@
         <activity android:name=".NewActivity"/>
         <activity android:name=".WebRichActivity"/>
         <activity android:name=".WebDataActivity"/>
+        <activity android:name=".TextActivity"/>
 
     </application>
 
