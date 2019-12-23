@@ -59,6 +59,8 @@ public class NewActivity extends AppCompatActivity {
     private Disposable subsInsert;
     private Disposable mDisposable;
 
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
