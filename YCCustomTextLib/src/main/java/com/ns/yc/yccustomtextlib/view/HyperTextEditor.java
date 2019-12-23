@@ -206,7 +206,7 @@ public class HyperTextEditor extends ScrollView {
 				return false;
 			}
 		};
-		// 图片叉掉处理
+		// 图片删除图标叉掉处理
 		btnListener = new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -342,7 +342,13 @@ public class HyperTextEditor extends ScrollView {
 	 * 生成文本输入框
 	 */
 	public EditText createEditText(String hint, int paddingTop) {
-		EditText editText = (EditText) inflater.inflate(R.layout.rich_edittext, null);
+		EditText editText = new DeletableEditText(getContext());
+		LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		editText.setLayoutParams(layoutParams);
+		editText.setTextSize(16);
+		editText.setTextColor(Color.parseColor("#616161"));
+		editText.setCursorVisible(true);
+		editText.setBackground(null);
 		editText.setOnKeyListener(keyListener);
 		editText.setTag(viewTagIndex++);
 		editText.setPadding(editNormalPadding, paddingTop, editNormalPadding, paddingTop);

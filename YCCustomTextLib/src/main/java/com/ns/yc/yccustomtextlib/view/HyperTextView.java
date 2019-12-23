@@ -16,9 +16,9 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.ns.yc.yccustomtextlib.manager.HyperManager;
 import com.ns.yc.yccustomtextlib.R;
 import com.ns.yc.yccustomtextlib.inter.OnHyperTextListener;
+import com.ns.yc.yccustomtextlib.manager.HyperManager;
 import com.ns.yc.yccustomtextlib.utils.HyperLibUtils;
 import com.ns.yc.yccustomtextlib.utils.HyperLogUtils;
 
@@ -194,7 +194,13 @@ public class HyperTextView extends ScrollView {
      * 生成文本输入框
      */
     public TextView createTextView(String hint, int paddingTop) {
-        TextView textView = (TextView) inflater.inflate(R.layout.rich_textview, null);
+        TextView textView = new TextView(getContext());
+        LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        textView.setLayoutParams(layoutParams);
+        textView.setTextSize(16);
+        textView.setTextColor(Color.parseColor("#616161"));
+        textView.setTextIsSelectable(true);
+        textView.setBackground(null);
         textView.setTag(viewTagIndex++);
         textView.setPadding(editNormalPadding, paddingTop, editNormalPadding, paddingTop);
         textView.setHint(hint);

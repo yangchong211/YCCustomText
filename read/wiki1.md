@@ -170,6 +170,7 @@
 ### 09.如何设置插入多张图片
 
 
+
 ### 10.如何设置插入网络图片
 
 
@@ -177,9 +178,42 @@
 ### 11.如何避免插入图片OOM
 
 
+
+
 ### 12.如何删除图片或者文字
-
-
+- 当富文本处于编辑状态时，点击删除图片是可以删除图片的，对于删除的逻辑，封装的lib可以给开发者暴露一个删除的监听事件。注意删除图片有两种操作：第一种是利用光标删除，第二种是点击触发删除。删除图片后，不仅仅是要删除图片数据，而且还要删除图片ImageView控件。
+    ```
+    /**
+     * 处理图片上删除的点击事件
+     * 删除类型 0代表backspace删除 1代表按红叉按钮删除
+     * @param view 							整个image对应的relativeLayout view
+     */
+    private void onImageCloseClick(View view) {
+        try {
+            //判断过渡动画是否结束，只能等到结束才可以操作
+            if (!mTransition.isRunning()) {
+                disappearingImageIndex = layout.indexOfChild(view);
+                //删除文件夹里的图片
+                List<HyperEditData> dataList = buildEditData();
+                HyperEditData editData = dataList.get(disappearingImageIndex);
+                if (editData.getImagePath() != null){
+                    if (onHyperListener != null){
+                        onHyperListener.onRtImageDelete(editData.getImagePath());
+                    }
+                    //SDCardUtil.deleteFile(editData.imagePath);
+                    //从图片集合中移除图片链接
+                    imagePaths.remove(editData.getImagePath());
+                }
+                //然后移除当前view
+                layout.removeView(view);
+                //合并上下EditText内容
+                mergeEditText();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    ```
 
 
 ### 13.删除和插入图片添加动画
@@ -233,7 +267,24 @@
     - 分析源码可以知道，默认情况下DISAPPEARING和CHANGE_APPEARING类型动画会立即执行，其他类型动画则会有个延迟。也就是说如果删除view，被删除的view将先执行动画消失，经过一些延迟受影响的view会进行动画补上位置，如果添加view，受影响的view将会先给添加的view腾位置执行CHANGE_APPEARING动画，经过一些时间的延迟才会执行APPEARING动画。这里就不贴分析源码的思路呢！
 
 
+
 ### 14.点击图片可以查看大图
+- 编辑状态时，由于图片有空能比较大，在显示在富文本的时候，会裁剪局中显示，也就是图片会显示不全。那么后期如果是想添加点击图片查看，则需要暴露给开发者监听事件，需要考虑到后期拓展性，代码如下所示：
+    ```
+    // 图片删除图标叉掉处理
+    btnListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (v instanceof HyperImageView){
+                HyperImageView imageView = (HyperImageView)v;
+                // 开放图片点击接口
+                if (onHyperListener != null){
+                    onHyperListener.onImageClick(imageView, imageView.getAbsolutePath());
+                }
+            } 
+        }
+    };
+    ```
 
 
 

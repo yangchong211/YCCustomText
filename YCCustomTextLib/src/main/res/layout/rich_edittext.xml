@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<com.ns.yc.yccustomtextlib.view.DeletableEditText
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@null"
-    android:cursorVisible="true"
-    android:textSize="16sp"
-    android:textColor="#616161" />
