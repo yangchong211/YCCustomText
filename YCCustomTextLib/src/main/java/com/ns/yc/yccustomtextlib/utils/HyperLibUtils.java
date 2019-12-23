@@ -188,7 +188,6 @@ public final class HyperLibUtils {
         return newBitmap;
     }
 
-
     /**
      * 计算图片的缩放值
      * @param options                           属性
@@ -342,7 +341,6 @@ public final class HyperLibUtils {
         //return compress(bitmap, maxSize); // 这里再进行质量压缩的意义不大，反而耗资源，删除
         return bitmap;
     }
-
 
     /**
      * 根据Uri获取真实的文件路径
