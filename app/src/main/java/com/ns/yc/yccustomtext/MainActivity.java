@@ -1,5 +1,6 @@
 package com.ns.yc.yccustomtext;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -30,8 +31,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tv_2 = (TextView) findViewById(R.id.tv_2);
         tv_2.setOnClickListener(this);
 
-        tv_3 = (TextView) findViewById(R.id.tv_3);
-        tv_3.setOnClickListener(this);
     }
 
     @Override
@@ -39,6 +38,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()){
             case R.id.tv_1:
                 startActivity(new Intent(this,NewActivity.class));
+                break;
+            case R.id.tv_2:
+                startActivity(new Intent(MainActivity.this,WebRichActivity.class));
                 break;
             default:
                 break;

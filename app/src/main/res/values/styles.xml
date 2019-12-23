@@ -12,4 +12,13 @@
         <item name="android:textColor">#FF0000</item>
     </style>
 
+    <style name="EditorIcon">
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">20dp</item>
+        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/button_enabled</item>
+    </style>
+
+
 </resources>

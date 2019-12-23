@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <com.ns.yc.yccustomtextlib.view.HyperImageView
+    <com.ns.yc.yccustomtextlib.edit.view.HyperImageView
         android:id="@+id/edit_imageView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -78,7 +78,7 @@
         android:background="@android:color/darker_gray"/>
 
 
-    <com.ns.yc.yccustomtextlib.view.HyperTextEditor
+    <com.ns.yc.yccustomtextlib.edit.view.HyperTextEditor
         android:id="@+id/hte_content"
         android:visibility="visible"
         android:layout_width="match_parent"
@@ -93,7 +93,7 @@
         app:editor_text_color="@android:color/black"/>
 
 
-    <com.ns.yc.yccustomtextlib.view.HyperTextView
+    <com.ns.yc.yccustomtextlib.edit.view.HyperTextView
         android:id="@+id/htv_content"
         android:visibility="gone"
         android:layout_width="match_parent"

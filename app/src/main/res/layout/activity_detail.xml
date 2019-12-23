@@ -14,7 +14,7 @@
         android:layout_height="50dp"
         android:background="@color/colorPrimary"/>
 
-    <com.ns.yc.yccustomtextlib.view.HyperTextView
+    <com.ns.yc.yccustomtextlib.edit.view.HyperTextView
         android:id="@+id/et_new_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

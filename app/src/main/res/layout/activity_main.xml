@@ -26,15 +26,8 @@
         android:padding="10dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="2.自定义浮动标记编辑"/>
+        android:text="2.使用webView实现富文本控件"/>
 
 
-    <TextView
-        android:id="@+id/tv_3"
-        android:layout_width="match_parent"
-        android:padding="10dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="3.密码自定义控件"/>
 
 </LinearLayout>

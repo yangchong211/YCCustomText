@@ -19,6 +19,8 @@
 - 18.前后台切换编辑富文本优化
 - 19.合理运用面向对象编程思想
 - 20.用的设计模式介绍
+- 21.生成html片段上传服务器
+- 22.生成json片段上传服务器
 
 
 
@@ -42,6 +44,7 @@
 - 在编辑富文本状态的时候，连续多张图片之间插入输入框，方便在图片间输入文本内容；
 - 在编辑状态中，可以设置文字大小和颜色，同时做好拓展需求，后期可能添加文本加粗，下划线，插入超链接，对齐方式等功能；
 - 编辑状态，连续插入多张图片，如果想在图片中间插入文字内容，则需要靠谱在图片之间预留编辑文本控件，方便操作；
+- 支持对文字选中的内容进行设置加粗，添加下划线，改变颜色，设置对齐方式等等；
 
 
 
@@ -61,7 +64,7 @@
 
 #### 2.2 第二种方法
 - 使用WebView实现编辑器，支持n多格式，例如常见的html或者markdown格式。利用html标签对富文本处理，这种方式就需要专门处理标签的样式。
-
+- 注意这种方法的实现，需要深入研究js，css等，必须非常熟悉才可以用到实际开发中，可以当作学习一下。
 
 
 
@@ -358,16 +361,28 @@
 
 
 
+### 21.生成html片段上传服务器
+
 
 
 ### 参考项目和博客
+- https://github.com/wasabeef/richeditor-android
+    - WebView + JavaScript 的实现方式  ， 太多html和css标签，对这个不熟，慎用
 - https://github.com/sendtion/XRichText
-- https://github.com/chinalwb/Android-Rich-text-Editor
+    - EditText
 - https://github.com/Even201314/MRichEditor
+    - webView ，太多html和css标签，对这个不熟，慎用
+- https://github.com/yuruiyin/RichEditor
+    - 原生EditText+span  有点复杂，可以参考一下
+- https://github.com/youlookwhat/RichEditorView
+    - webView
 
 
 
 
+### 参考博客
+- Android 端 （图文混排）富文本编辑器的开发：https://www.jianshu.com/p/155aa1e9f9d3
+- Android富文本编辑器（四）：HTML文本转换：https://www.jianshu.com/p/578085fb07d1
 
 
 
