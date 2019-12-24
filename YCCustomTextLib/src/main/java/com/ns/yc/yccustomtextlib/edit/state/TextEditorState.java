@@ -34,8 +34,7 @@ public class TextEditorState extends View.BaseSavedState {
     public int rtImageHeight;
     public String imagePath;
 
-    public static final Creator<TextEditorState> CREATOR
-            = new Creator<TextEditorState>() {
+    public static final Creator<TextEditorState> CREATOR = new Creator<TextEditorState>() {
         @Override
         public TextEditorState createFromParcel(Parcel in) {
             return new TextEditorState(in);

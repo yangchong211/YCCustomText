@@ -143,7 +143,7 @@ public class HyperTextView extends ScrollView {
 
 
     private void initLayoutView(Context context) {
-        // 1. 初始化allLayout
+        //初始化allLayout
         allLayout = new LinearLayout(context);
         allLayout.setOrientation(LinearLayout.VERTICAL);
         //allLayout.setBackgroundColor(Color.WHITE);//去掉背景
@@ -161,7 +161,6 @@ public class HyperTextView extends ScrollView {
                 if (v instanceof HyperImageView){
                     HyperImageView imageView = (HyperImageView) v;
                     //int currentItem = imagePaths.indexOf(imageView.getAbsolutePath());
-                    //Toast.makeText(getContext(),"点击图片："+currentItem+"："+imageView.getAbsolutePath(), Toast.LENGTH_SHORT).show();
                     // 开放图片点击接口
                     if (onHyperTextListener != null){
                         onHyperTextListener.onImageClick(imageView, imageView.getAbsolutePath());
@@ -175,7 +174,6 @@ public class HyperTextView extends ScrollView {
     private void initFirstTextView(Context context) {
         LinearLayout.LayoutParams firstEditParam = new LinearLayout.LayoutParams(
                 LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        //editNormalPadding = dip2px(EDIT_PADDING);
         int padding = HyperLibUtils.dip2px(context, EDIT_PADDING);
         TextView firstText = createTextView(rtTextInitHint,padding);
         allLayout.addView(firstText, firstEditParam);
@@ -227,6 +225,7 @@ public class HyperTextView extends ScrollView {
 
     /**
      * 生成图片View
+     * @return                                  view
      */
     private RelativeLayout createImageLayout() {
         RelativeLayout layout = (RelativeLayout) inflater.inflate(R.layout.edit_imageview, null);
@@ -237,7 +236,6 @@ public class HyperTextView extends ScrollView {
 		imageView.setOnClickListener(btnListener);
         return layout;
     }
-
 
     public void setKeywords(String keywords) {
         this.keywords = keywords;
@@ -250,6 +248,9 @@ public class HyperTextView extends ScrollView {
      * @param editStr EditText显示的文字
      */
     public void addTextViewAtIndex(final int index, CharSequence editStr) {
+        if (index==-1){
+            return;
+        }
         try {
             TextView textView = createTextView("", EDIT_PADDING);
             if (!TextUtils.isEmpty(keywords)) {
@@ -270,6 +271,9 @@ public class HyperTextView extends ScrollView {
      * 在特定位置添加ImageView
      */
     public void addImageViewAtIndex(final int index, final String imagePath) {
+        if (index==-1){
+            return;
+        }
         if (TextUtils.isEmpty(imagePath)){
             return;
         }
@@ -289,6 +293,9 @@ public class HyperTextView extends ScrollView {
      * 在特定位置添加ImageView，折行
      */
     public void addImageViewAtIndex(final int index, String imagePath , boolean isWordWrap) {
+        if (index==-1){
+            return;
+        }
         if(imagePath==null || imagePath.length()==0){
             return;
         }
@@ -311,30 +318,6 @@ public class HyperTextView extends ScrollView {
         lp.bottomMargin = 10;
         imageView.setLayoutParams(lp);
         allLayout.addView(imageLayout, index);
-    }
-
-
-    /**
-     * 根据view的宽度，动态缩放bitmap尺寸
-     *
-     * @param width view的宽度
-     */
-    public Bitmap getScaledBitmap(String filePath, int width) {
-        if (TextUtils.isEmpty(filePath)){
-            return null;
-        }
-        BitmapFactory.Options options = null;
-        try {
-            options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            BitmapFactory.decodeFile(filePath, options);
-            int sampleSize = options.outWidth > width ? options.outWidth / width + 1 : 1;
-            options.inJustDecodeBounds = false;
-            options.inSampleSize = sampleSize;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return BitmapFactory.decodeFile(filePath, options);
     }
 
 }

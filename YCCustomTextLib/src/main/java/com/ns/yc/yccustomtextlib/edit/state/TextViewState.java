@@ -35,8 +35,7 @@ public class TextViewState extends View.BaseSavedState {
     int mLocation;
     boolean isRunning;
 
-    public static final Creator<TextViewState> CREATOR
-            = new Creator<TextViewState>() {
+    public static final Creator<TextViewState> CREATOR = new Creator<TextViewState>() {
         @Override
         public TextViewState createFromParcel(Parcel in) {
             return new TextViewState(in);
