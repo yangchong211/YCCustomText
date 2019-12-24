@@ -27,7 +27,8 @@
         </activity>
 
 
-        <activity android:name=".NewActivity"/>
+        <activity android:name=".NewActivity"
+            android:windowSoftInputMode="adjustResize|stateHidden"/>
         <activity android:name=".WebRichActivity"/>
         <activity android:name=".WebDataActivity"/>
         <activity android:name=".TextActivity"/>

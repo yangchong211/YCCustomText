@@ -14,11 +14,47 @@
         android:layout_height="50dp"
         android:background="@color/colorPrimary"/>
 
+
+    <com.ns.yc.yccustomtextlib.edit.view.HyperTextEditor
+        android:id="@+id/hte_content"
+        android:visibility="visible"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@android:color/white"
+        android:textSize="16sp"
+        app:editor_text_line_space="6dp"
+        app:editor_image_height="500"
+        app:editor_image_bottom="10"
+        app:editor_text_init_hint="在这里输入内容"
+        app:editor_text_size="16sp"
+        app:editor_text_color="@android:color/black"/>
+
+
+    <com.ns.yc.yccustomtextlib.edit.view.HyperTextView
+        android:id="@+id/htv_content"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginBottom="40dp"
+        app:ht_view_text_line_space="6dp"
+        app:ht_view_image_height="0"
+        app:ht_view_image_bottom="10"
+        app:ht_view_text_size="16sp"
+        app:ht_view_text_color="@android:color/black"/>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
     <HorizontalScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="40dp">
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:orientation="horizontal"
             android:background="@android:color/white">
@@ -28,12 +64,20 @@
                 android:layout_height="match_parent"
                 android:padding="10dp"
                 android:text="编辑" />
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@android:color/darker_gray"/>
             <TextView
                 android:id="@+id/tv_0_2"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:padding="10dp"
                 android:text="保存" />
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@android:color/darker_gray"/>
             <TextView
                 android:id="@+id/tv_1"
                 android:layout_width="wrap_content"
@@ -96,39 +140,6 @@
                 android:background="@android:color/darker_gray"/>
         </LinearLayout>
     </HorizontalScrollView>
-
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
-
-
-    <com.ns.yc.yccustomtextlib.edit.view.HyperTextEditor
-        android:id="@+id/hte_content"
-        android:visibility="visible"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/white"
-        android:textSize="16sp"
-        app:editor_text_line_space="6dp"
-        app:editor_image_height="500"
-        app:editor_image_bottom="10"
-        app:editor_text_init_hint="在这里输入内容"
-        app:editor_text_size="16sp"
-        app:editor_text_color="@android:color/black"/>
-
-
-    <com.ns.yc.yccustomtextlib.edit.view.HyperTextView
-        android:id="@+id/htv_content"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:ht_view_text_line_space="6dp"
-        app:ht_view_image_height="0"
-        app:ht_view_image_bottom="10"
-        app:ht_view_text_size="16sp"
-        app:ht_view_text_color="@android:color/black"/>
 
 
 </LinearLayout>

@@ -14,8 +14,10 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -61,7 +63,44 @@ public class NewActivity extends AppCompatActivity {
     private Disposable subsInsert;
     private Disposable mDisposable;
 
+//    @Override
+//    public boolean dispatchTouchEvent(MotionEvent ev) {
+//        if(ev.getAction()==MotionEvent.ACTION_DOWN){
+//            if(isShouldHideInput(ev)){
+//                hintKeyBord();
+//            }
+//        }
+//        if (getWindow().superDispatchTouchEvent(ev)) {
+//            return true;
+//        }
+//        return onTouchEvent(ev);
+//    }
 
+    private boolean isShouldHideInput(MotionEvent ev) {
+        View view=getCurrentFocus();
+        if(view!=null && view instanceof EditText){
+            int[]viewsArr=new int [2];
+            view.getLocationInWindow(viewsArr);
+            int left=viewsArr[0];
+            int top=viewsArr[1];
+            int bottom = top + view.getHeight();
+            int right = left + view.getWidth();
+            if(ev.getX()>=left && ev.getX()<=right && ev.getY()>top && ev.getY()<bottom){
+                return false;
+            }else {
+                return true;
+            }
+        }else {
+            return true;
+        }
+    }
+
+    public void hintKeyBord(){
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm !=null) {
+            imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
+        }
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
