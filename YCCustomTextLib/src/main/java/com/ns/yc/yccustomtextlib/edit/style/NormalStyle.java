@@ -20,6 +20,7 @@ public abstract class NormalStyle<E> {
     private Class<E> clazzE;
 
     public NormalStyle() {
+        //利用反射
         clazzE = (Class<E>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
     }
 
@@ -57,8 +58,7 @@ public abstract class NormalStyle<E> {
     }
 
     /**
-     *
-     *
+     * 移除样式
      *
      * setSpan(Object what, int start, int end, int flags); flag的四种类型
      * Spanned.SPAN_EXCLUSIVE_EXCLUSIVE(前后都不包括)；

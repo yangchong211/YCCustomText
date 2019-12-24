@@ -267,6 +267,7 @@
         - 在这种情况下 仍需要进行左右侧边界判断进行删除。这个具体可以看代码逻辑。
 
 
+
 ### 08.利用Span对文字属性处理
 - 这里仅仅是对字体加粗进行介绍，其实设置span可以找到规律。多个span样式，考虑到后期的拓展性，肯定要进行封装和抽象，具体该如何处理呢？
     - 设置文本选中内容加粗模式，代码如下所示，可以看到这里只需要传递一个lastFocusEdit对象即可，这个对象是最近被聚焦的EditText。
@@ -295,19 +296,6 @@
      */
     public void bold() {
         SpanTextHelper.getInstance().bold(lastFocusEdit);
-    }
-    /**
-     * 修改斜体样式
-     */
-    public void italic() {
-        SpanTextHelper.getInstance().italic(lastFocusEdit);
-    }
-    
-    /**
-     * 修改删除线样式
-     */
-    public void strikeThrough() {
-        SpanTextHelper.getInstance().strikeThrough(lastFocusEdit);
     }
     ```
 - 然后看一下new BoldStyle().applyStyle(editable, start, end)具体做了什么？下面这段代码逻辑，具体可以看07.如果对选中文字加粗的分析思路。
@@ -588,7 +576,73 @@
 
 ### 15.如何暴露设置文字属性方法
 - 针对设置文字加粗，下划线，删除线等span属性。同时设置span，有许多类似的地方，考虑到后期的添加和移除，如何封装能够提高代码的扩展性。
-
+    ```
+    /**
+     * 修改加粗样式
+     */
+    public void bold() {
+        SpanTextHelper.getInstance().bold(lastFocusEdit);
+    }
+    
+    /**
+     * 修改斜体样式
+     */
+    public void italic() {
+        SpanTextHelper.getInstance().italic(lastFocusEdit);
+    }
+    
+    /**
+     * 修改删除线样式
+     */
+    public void strikeThrough() {
+        SpanTextHelper.getInstance().strikeThrough(lastFocusEdit);
+    }
+    
+    /**
+     * 修改下划线样式
+     */
+    public void underline() {
+        SpanTextHelper.getInstance().underline(lastFocusEdit);
+    }
+    ```
+- 上面实现了选中文本加粗的功能，斜体、 下划线 、中划线等样式的设置和取消与粗体样式一致，只是创建 span 的区别而已，可以将代码进行抽取。
+    ```
+    public abstract class NormalStyle<E> {
+    
+        private Class<E> clazzE;
+    
+        public NormalStyle() {
+            //利用反射
+            clazzE = (Class<E>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+        }
+    
+        /**
+         * 样式情况判断
+         * @param editable                      editable
+         * @param start                         start
+         * @param end                           end
+         */
+        public void applyStyle(Editable editable, int start, int end) {
+    
+        }
+    }
+    ```
+- 其他的设置span的属性代码即是如下所示，可以看到添加一种类型很容易，也容易看懂，便于拓展：
+    ```
+    public class ItalicStyle extends NormalStyle<ItalicStyleSpan> {
+        @Override
+        protected ItalicStyleSpan newSpan() {
+            return new ItalicStyleSpan();
+        }
+    }
+    
+    public class UnderlineStyle extends NormalStyle<UnderLineSpan> {
+        @Override
+        protected UnderLineSpan newSpan() {
+            return new UnderLineSpan();
+        }
+    }
+    ```
 
 
 
