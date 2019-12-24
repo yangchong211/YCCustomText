@@ -261,6 +261,76 @@
 
 
 ### 08.利用Span对文字属性处理
+- 这里仅仅是对字体加粗进行介绍，其实设置span可以找到规律。多个span样式，考虑到后期的拓展性，肯定要进行封装和抽象，具体该如何处理呢？
+    - 设置文本选中内容加粗模式，代码如下所示，可以看到这里只需要传递一个lastFocusEdit对象即可，这个对象是最近被聚焦的EditText。
+    ```
+    /**
+     * 修改加粗样式
+     */
+    public void bold(EditText lastFocusEdit) {
+        //获取editable对象
+        Editable editable = lastFocusEdit.getEditableText();
+        //获取当前选中的起始位置
+        int start = lastFocusEdit.getSelectionStart();
+        //获取当前选中的末尾位置
+        int end = lastFocusEdit.getSelectionEnd();
+        HyperLogUtils.i("bold select  Start:" + start + "   end:  " + end);
+        if (checkNormalStyle(start, end)) {
+            return;
+        }
+        new BoldStyle().applyStyle(editable, start, end);
+    }
+    ```
+    - 然后如何调用这个，在HyperTextEditor类中代码如下所示。为何要这样写，可以把HyperTextEditor富文本类中设置span的逻辑放到SpanTextHelper类中处理，该类专门处理各种span属性，这样代码结构更加清晰，也方便后期增加更多span属性，避免一个类代码太臃肿。
+    ```
+    /**
+     * 修改加粗样式
+     */
+    public void bold() {
+        SpanTextHelper.getInstance().bold(lastFocusEdit);
+    }
+    /**
+     * 修改斜体样式
+     */
+    public void italic() {
+        SpanTextHelper.getInstance().italic(lastFocusEdit);
+    }
+    
+    /**
+     * 修改删除线样式
+     */
+    public void strikeThrough() {
+        SpanTextHelper.getInstance().strikeThrough(lastFocusEdit);
+    }
+    ```
+- 然后看一下new BoldStyle().applyStyle(editable, start, end)具体做了什么？下面这段代码逻辑，具体可以看07.如果对选中文字加粗的分析思路。
+    ```
+    public void applyStyle(Editable editable, int start, int end) {
+        //获取 从  start 到 end 位置上所有的指定 class 类型的 Span数组
+        E[] spans = editable.getSpans(start, end, clazzE);
+        E existingSpan = null;
+        if (spans.length > 0) {
+            existingSpan = spans[0];
+        }
+        if (existingSpan == null) {
+            //当前选中内部无此样式，开始设置span样式
+            checkAndMergeSpan(editable, start, end, clazzE);
+        } else {
+            //获取 一个 span 的起始位置
+            int existingSpanStart = editable.getSpanStart(existingSpan);
+            //获取一个span 的结束位置
+            int existingSpanEnd = editable.getSpanEnd(existingSpan);
+            if (existingSpanStart <= start && existingSpanEnd >= end) {
+                //在一个 完整的 span 中
+                //删除 样式
+                removeStyle(editable, start, end, clazzE, true);
+            } else {
+                //当前选中区域存在了某某样式，需要合并样式
+                checkAndMergeSpan(editable, start, end, clazzE);
+            }
+        }
+    }
+    ```
 
 
 

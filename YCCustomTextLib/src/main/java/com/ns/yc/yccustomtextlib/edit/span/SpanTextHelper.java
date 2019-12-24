@@ -37,8 +37,11 @@ public class SpanTextHelper {
      * 修改加粗样式
      */
     public void bold(EditText lastFocusEdit) {
+        //获取editable对象
         Editable editable = lastFocusEdit.getEditableText();
+        //获取当前选中的起始位置
         int start = lastFocusEdit.getSelectionStart();
+        //获取当前选中的末尾位置
         int end = lastFocusEdit.getSelectionEnd();
         HyperLogUtils.i("bold select  Start:" + start + "   end:  " + end);
         if (checkNormalStyle(start, end)) {

@@ -37,7 +37,7 @@ public abstract class NormalStyle<E> {
             existingSpan = spans[0];
         }
         if (existingSpan == null) {
-            //当前选中内部无此样式
+            //当前选中内部无此样式，开始设置span样式
             checkAndMergeSpan(editable, start, end, clazzE);
         } else {
             //获取 一个 span 的起始位置
