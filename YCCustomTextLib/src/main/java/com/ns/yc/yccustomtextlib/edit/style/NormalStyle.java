@@ -46,6 +46,7 @@ public abstract class NormalStyle<E> {
             int existingSpanEnd = editable.getSpanEnd(existingSpan);
             if (existingSpanStart <= start && existingSpanEnd >= end) {
                 //在一个 完整的 span 中
+                //当我们选中的区域在一段连续的 Bold 样式里面的时候，再次选择Bold将会取消样式
                 //删除 样式
                 removeStyle(editable, start, end, clazzE, true);
             } else {
@@ -78,7 +79,6 @@ public abstract class NormalStyle<E> {
                 //在 同一个 span 中
                 E span = spans[0];
                 if (null != span) {
-                    //
                     // User stops the style, and wants to show
                     // un-UNDERLINE characters
                     int ess = editable.getSpanStart(span);
@@ -136,7 +136,6 @@ public abstract class NormalStyle<E> {
 
                 editable.removeSpan(lastSpan);
                 editable.setSpan(lastSpan,end,rightEnd,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
             }
         }
 
