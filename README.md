@@ -21,6 +21,7 @@
 ![image](https://github.com/yangchong211/YCCustomText/blob/master/image/image2.jpeg)
 
 
+
 ### 02.业务需求简单介绍
 - 富文本控件支持动态插入文字，图片等图文混排内容。图片可以支持本地图片，也支持插入网络链接图片；
 - 富文本又两种状态：编辑状态 + 预览状态 。两种状态可以相互进行切换；
