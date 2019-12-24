@@ -16,6 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:windowSoftInputMode="adjustResize"
+        android:networkSecurityConfig="@xml/network_security_config"
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -30,6 +31,7 @@
         <activity android:name=".WebRichActivity"/>
         <activity android:name=".WebDataActivity"/>
         <activity android:name=".TextActivity"/>
+        <activity android:name=".WebTextActivity"/>
 
     </application>
 
