@@ -166,7 +166,7 @@
 
 
 
-### 06.富文本开发步骤
+### [06.富文本开发步骤](https://github.com/yangchong211/YCCustomText/blob/master/read/wiki1.md)
 - 01.业务需求简单介绍
 - 02.实现的方案介绍
 - 03.异常状态下保存状态信息
@@ -190,7 +190,7 @@
 - 21.生成html片段上传服务器
 - 22.生成json片段上传服务器
 - 23.图片上传策略问题思考
-
+- [更多信息](https://github.com/yangchong211/YCCustomText/blob/master/read/wiki1.md)
 
 
 ### 07.富文本遗留问题
