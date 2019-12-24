@@ -6,8 +6,15 @@ import android.widget.RelativeLayout;
 
 import com.bumptech.glide.request.target.ImageViewTarget;
 
+
 /**
- * Glide加载图片时，根据图片宽度等比缩放
+ * <pre>
+ *     @author 杨充
+ *     blog  : https://github.com/yangchong211
+ *     time  : 2016/3/31
+ *     desc  : Glide加载图片时，根据图片宽度等比缩放
+ *     revise:
+ * </pre>
  */
 public class TransformationScale extends ImageViewTarget<Bitmap> {
 
@@ -21,18 +28,14 @@ public class TransformationScale extends ImageViewTarget<Bitmap> {
     @Override
     protected void setResource(Bitmap resource) {
         view.setImageBitmap(resource);
-
         if (resource != null) {
             //获取原图的宽高
             int width = resource.getWidth();
             int height = resource.getHeight();
-
             //获取imageView的宽
             int imageViewWidth = target.getWidth();
-
             //计算缩放比例
             float sy = (float) (imageViewWidth * 0.1) / (float) (width * 0.1);
-
             //计算图片等比例放大后的高
             int imageHeight = (int) (height * sy);
             //ViewGroup.LayoutParams params = target.getLayoutParams();

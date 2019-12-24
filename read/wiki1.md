@@ -260,16 +260,69 @@
 
 
 
-
 ### 08.利用Span对文字属性处理
 
 
 
 ### 09.如何设置插入多张图片
+- 富文本当然支持插入多张图片，那么插入多张图片是如何操作呢。插入1，2，3这三张图片，如何保证它们的插入顺序，从而避免插入错位，带着这几个问题看一下插入多张图片操作。
+    ```
+    Observable.create(new ObservableOnSubscribe<String>() {
+        @Override
+        public void subscribe(ObservableEmitter<String> emitter) {
+            try{
+                hte_content.measure(0, 0);
+                List<Uri> mSelected = Matisse.obtainResult(data);
+                // 可以同时插入多张图片
+                for (Uri imageUri : mSelected) {
+                    String imagePath = HyperLibUtils.getFilePathFromUri(NewActivity.this,  imageUri);
+                    Bitmap bitmap = HyperLibUtils.getSmallBitmap(imagePath, screenWidth, screenHeight);
+                    //压缩图片
+                    imagePath = SDCardUtil.saveToSdCard(bitmap);
+                    emitter.onNext(imagePath);
+                }
+                emitter.onComplete();
+            }catch (Exception e){
+                e.printStackTrace();
+                emitter.onError(e);
+            }
+        }
+    })
+            .subscribeOn(Schedulers.io())//生产事件在io
+            .observeOn(AndroidSchedulers.mainThread())//消费事件在UI线程
+            .subscribe(new Observer<String>() {
+                @Override
+                public void onComplete() {
+                    ToastUtils.showRoundRectToast("图片插入成功");
+                }
+    
+                @Override
+                public void onError(Throwable e) {
+                    ToastUtils.showRoundRectToast("图片插入失败:"+e.getMessage());
+                }
+    
+                @Override
+                public void onSubscribe(Disposable d) {
+    
+                }
+    
+                @Override
+                public void onNext(String imagePath) {
+                    //插入图片
+                    hte_content.insertImage(imagePath);
+                }
+            });
+    ```
+
 
 
 
 ### 10.如何设置插入网络图片
+- 插入图片有两种情况，一种是本地图片，一种是网络图片。由于富文本中对插入图片的宽高有限制，即可以动态设置图片的高度，这就要求请求网络图片后，需要对图片进行处理。
+
+
+
+
 
 
 
@@ -404,8 +457,9 @@
 
 ### 14.点击图片可以查看大图
 - 编辑状态时，由于图片有空能比较大，在显示在富文本的时候，会裁剪局中显示，也就是图片会显示不全。那么后期如果是想添加点击图片查看，则需要暴露给开发者监听事件，需要考虑到后期拓展性，代码如下所示：
+    - 这样做的目的是是暴露给外部开发者调用，点击图片的操作只需要传递view还有图片即可。
     ```
-    // 图片删除图标叉掉处理
+    // 图片处理
     btnListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -419,7 +473,6 @@
         }
     };
     ```
-
 
 
 ### 15.如何暴露设置文字属性方法

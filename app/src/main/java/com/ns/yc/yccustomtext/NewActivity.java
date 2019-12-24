@@ -454,7 +454,9 @@ public class NewActivity extends AppCompatActivity {
                 Log.e("---", "imageHeight: "+imageHeight);
                 //如果是网络图片
                 if (imagePath.startsWith("http://") || imagePath.startsWith("https://")){
-                    Glide.with(getApplicationContext()).asBitmap().load(imagePath).dontAnimate()
+                    Glide.with(getApplicationContext()).asBitmap()
+                            .load(imagePath)
+                            .dontAnimate()
                             .into(new SimpleTarget<Bitmap>() {
                                 @Override
                                 public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
