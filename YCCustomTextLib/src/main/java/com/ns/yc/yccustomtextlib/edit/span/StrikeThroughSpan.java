@@ -12,7 +12,7 @@ import android.text.style.StrikethroughSpan;
  *     revise:
  * </pre>
  */
-public class StrikeThroughSpan extends StrikethroughSpan implements IInlineSpan {
+public class StrikeThroughSpan extends StrikethroughSpan implements InterInlineSpan {
 
     private String type;
 

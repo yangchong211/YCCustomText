@@ -43,6 +43,7 @@ import com.ns.yc.yccustomtextlib.edit.manager.HyperManager;
 import com.ns.yc.yccustomtextlib.R;
 import com.ns.yc.yccustomtextlib.edit.inter.OnHyperEditListener;
 import com.ns.yc.yccustomtextlib.edit.model.HyperEditData;
+import com.ns.yc.yccustomtextlib.edit.span.SpanTextHelper;
 import com.ns.yc.yccustomtextlib.edit.state.TextEditorState;
 import com.ns.yc.yccustomtextlib.utils.HyperLibUtils;
 import com.ns.yc.yccustomtextlib.utils.HyperLogUtils;
@@ -507,36 +508,7 @@ public class HyperTextEditor extends ScrollView {
 			imageView.setAbsolutePath(imagePath);
 			//imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);//裁剪剧中
 			HyperManager.getInstance().loadImage(imagePath, imageView, rtImageHeight);
-
-//			// 调整imageView的高度，根据宽度等比获得高度
-//			int imageHeight ; //解决连续加载多张图片导致后续图片都跟第一张高度相同的问题
-//			if (rtImageHeight > 0) {
-//				imageHeight = rtImageHeight;
-//			} else {
-//				Bitmap bmp = BitmapFactory.decodeFile(imagePath);
-//				int layoutWidth = layout.getWidth() - layout.getPaddingLeft() - layout.getPaddingRight();
-//				imageHeight = layoutWidth * bmp.getHeight() / bmp.getWidth();
-//				//imageHeight = layout.getWidth() * bmp.getHeight() / bmp.getWidth();
-//			}
-//			RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-//					LayoutParams.MATCH_PARENT, imageHeight);//固定图片高度，记得设置裁剪剧中
-//			lp.bottomMargin = rtImageBottom;
-//			imageView.setLayoutParams(lp);
-//
-//			if (rtImageHeight > 0){
-//				HyperManager.getInstance().loadImage(imagePath, imageView, true);
-//			} else {
-//				HyperManager.getInstance().loadImage(imagePath, imageView, false);
-//			}
-
-			// onActivityResult无法触发动画，此处post处理
 			layout.addView(imageLayout, index);
-//			layout.postDelayed(new Runnable() {
-//				@Override
-//				public void run() {
-//					layout.addView(imageLayout, index);
-//				}
-//			}, 200);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -674,6 +646,34 @@ public class HyperTextEditor extends ScrollView {
 
 	public void setOnHyperListener(OnHyperEditListener listener){
 		this.onHyperListener = listener;
+	}
+
+	/**
+	 * 修改加粗样式
+	 */
+	public void bold() {
+		SpanTextHelper.getInstance().bold(lastFocusEdit);
+	}
+
+	/**
+	 * 修改斜体样式
+	 */
+	public void italic() {
+		SpanTextHelper.getInstance().italic(lastFocusEdit);
+	}
+
+	/**
+	 * 修改删除线样式
+	 */
+	public void strikeThrough() {
+		SpanTextHelper.getInstance().strikeThrough(lastFocusEdit);
+	}
+
+	/**
+	 * 修改下划线样式
+	 */
+	public void underline() {
+		SpanTextHelper.getInstance().underline(lastFocusEdit);
 	}
 
 }

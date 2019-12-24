@@ -26,10 +26,8 @@
 
 
 
-
 ### 00.该控件介绍
 - 自定义文本控件，支持富文本，包含两种状态：编辑状态和预览状态。编辑状态中，可以对插入本地或者网络图片，可以同时插入多张有序图片和删除图片，支持图文混排，并且可以对文字内容简单操作加粗字体，设置字体下划线，支持设置文字超链接(超链接支持跳转)，功能正在开发中和完善中……
-
 
 
 
@@ -48,9 +46,6 @@
 - 在编辑状态中，可以设置文字大小和颜色，同时做好拓展需求，后期可能添加文本加粗，下划线，插入超链接，对齐方式等功能；
 - 编辑状态，连续插入多张图片，如果想在图片中间插入文字内容，则需要靠谱在图片之间预留编辑文本控件，方便操作；
 - 支持对文字选中的内容进行设置加粗，添加下划线，改变颜色，设置对齐方式等等；
-
-
-
 
 
 
@@ -93,6 +88,8 @@
 
 
 ### 03.异常状态下保存状态信息
+
+
 
 
 
@@ -238,10 +235,30 @@
 
 
 
-
-
 ### 07.如果对选中文字加粗
-- 
+- Span 的分类介绍
+    - 字符外观，这种类型修改字符的外形但是不影响字符的测量，会触发文本重新绘制但是不触发重新布局。
+        - ForegroundColorSpan，BackgroundColorSpan，UnderlineSpan，StrikethrougnSpan
+    - 字符大小布局，这种类型Span会更改文本的大小和布局，会触发文本的重新测量绘制
+        - StyleSpan，RelativeSizeSpan，AbsoluteSizeSpan
+    - 影响段落级别，这种类型Span 在段落级别起作用，更改文本块在段落级别的外观，修改对齐方式，边距等。
+        - AlignmentSpan，BulletSpan，QuoteSpan
+- 实现基础样式 粗体、 斜体、 下划线 、中划线 的设置和取消。举个例子，对文本加粗，文字设置span样式注意要点，这里需要区分几种情况
+- 当前选中区域不存在 bold 样式 这里我们选中BB。两种情况
+    - 当前区域紧靠左侧或者右侧不存在粗体样式: AABBCC 这时候直接设置 span即可
+    - 当前区域紧靠左侧或者右侧存在粗体样式如： AABBCC AABBCC AABBCC。这时候需要合并左右两侧的span，只剩下一个 span
+- 当前选中区域存在了Bold 样式 选中 ABBC。四种情况：
+    - 选中样式两侧不存在连续的bold样式 AABBCC
+    - 选中内部两端存在连续的bold 样式 AABBCC
+    - 选中左侧存在连续的bold 样式 AABBCC
+    - 选中右侧存在连续的bold 样式 AABBCC
+    - 这时候需要合并左右两侧已经存在的span，只剩下一个 span
+- 接下来逐步分解，然后处理span的逻辑顺序如下所示
+    - 首先对选中文字内容样式情况判断
+    - 边界判断与设置
+    - 取消Span
+
+
 
 
 ### 08.利用Span对文字属性处理
@@ -471,24 +488,10 @@
 
 
 
-### 参考项目和博客
-- https://github.com/wasabeef/richeditor-android
-    - WebView + JavaScript 的实现方式  ， 太多html和css标签，对这个不熟，慎用
-- https://github.com/sendtion/XRichText
-    - EditText
-- https://github.com/Even201314/MRichEditor
-    - webView ，太多html和css标签，对这个不熟，慎用
-- https://github.com/yuruiyin/RichEditor
-    - 原生EditText+span  有点复杂，可以参考一下
-- https://github.com/youlookwhat/RichEditorView
-    - webView
-
-
-
-
 ### 参考博客
 - Android富文本编辑器（四）：HTML文本转换：https://www.jianshu.com/p/578085fb07d1
 - Android 端 （图文混排）富文本编辑器的开发（一）：https://www.jianshu.com/p/155aa1e9f9d3
+- 图文混排富文本文章编辑器实现详解：https://blog.csdn.net/ljzdyh/article/details/82497625
 
 
 

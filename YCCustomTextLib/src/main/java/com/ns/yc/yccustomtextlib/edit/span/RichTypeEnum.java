@@ -12,7 +12,7 @@ import java.lang.annotation.RetentionPolicy;
  *     blog  : https://github.com/yangchong211
  *     time  : 2019/07/18
  *     desc  : span枚举
- *     revise:
+ *     revise: 后期逐步把功能完善
  * </pre>
  */
 @Retention(RetentionPolicy.SOURCE)

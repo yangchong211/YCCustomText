@@ -30,6 +30,7 @@ import com.ns.yc.yccustomtextlib.edit.inter.ImageLoader;
 import com.ns.yc.yccustomtextlib.edit.inter.OnHyperEditListener;
 import com.ns.yc.yccustomtextlib.edit.inter.OnHyperTextListener;
 import com.ns.yc.yccustomtextlib.edit.model.HyperEditData;
+import com.ns.yc.yccustomtextlib.utils.HyperHtmlUtils;
 import com.ns.yc.yccustomtextlib.utils.HyperLibUtils;
 import com.ns.yc.yccustomtextlib.edit.view.HyperTextEditor;
 import com.ns.yc.yccustomtextlib.edit.view.HyperTextView;
@@ -80,8 +81,41 @@ public class NewActivity extends AppCompatActivity {
     private void initListener() {
         TextView tv_0_1 = findViewById(R.id.tv_0_1);
         TextView tv_0_2 = findViewById(R.id.tv_0_2);
+        TextView tv_1 = findViewById(R.id.tv_1);
+        TextView tv_2 = findViewById(R.id.tv_2);
+        TextView tv_3 = findViewById(R.id.tv_3);
+        TextView tv_4 = findViewById(R.id.tv_4);
         TextView tv_5 = findViewById(R.id.tv_5);
         TextView tv_6 = findViewById(R.id.tv_6);
+        tv_1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //加粗
+                hte_content.bold();
+            }
+        });
+        tv_2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //下划线
+                hte_content.underline();
+            }
+        });
+        tv_3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //斜体
+                hte_content.italic();
+            }
+        });
+        tv_4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //删除线样式
+                hte_content.strikeThrough();
+            }
+        });
+
         tv_0_1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,7 +139,7 @@ public class NewActivity extends AppCompatActivity {
                 //生成json
                 Gson gson = new Gson();
                 String content = gson.toJson(editList);
-                String string = HyperLibUtils.stringToJson(content);
+                String string = HyperHtmlUtils.stringToJson(content);
                 Intent intent = new Intent(NewActivity.this, TextActivity.class);
                 intent.putExtra("content", string);
                 startActivity(intent);

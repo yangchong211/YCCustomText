@@ -12,7 +12,7 @@ import android.text.style.StyleSpan;
  *     revise:
  * </pre>
  */
-public class BoldStyleSpan extends StyleSpan implements IInlineSpan {
+public class BoldStyleSpan extends StyleSpan implements InterInlineSpan {
 
     private String type;
 

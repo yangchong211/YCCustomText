@@ -1,5 +1,6 @@
 package com.ns.yc.yccustomtextlib.edit.span;
 
+import android.graphics.Typeface;
 import android.text.style.UnderlineSpan;
 
 
@@ -12,7 +13,7 @@ import android.text.style.UnderlineSpan;
  *     revise:
  * </pre>
  */
-public class UnderLineSpan extends UnderlineSpan implements IInlineSpan {
+public class UnderLineSpan extends UnderlineSpan implements InterInlineSpan {
 
     private String type;
 

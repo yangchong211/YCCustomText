@@ -13,7 +13,7 @@ import android.text.style.StyleSpan;
  *     revise:
  * </pre>
  */
-public class ItalicStyleSpan extends StyleSpan implements IInlineSpan {
+public class ItalicStyleSpan extends StyleSpan implements InterInlineSpan {
 
     private String type;
 
