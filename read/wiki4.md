@@ -3,7 +3,7 @@
 - 02.业务需求简单介绍
 - 03.富文本支持功能
 - 04.富文本实现方案
-- 05.
+- 05.富文本如何使用
 
 
 
@@ -31,15 +31,37 @@
 
 
 ### 03.富文本支持功能
-- 支持加粗、斜体、删除线、下划线行内样式
-- 支持插入标题、引用段内样式
+- 支持加粗、斜体、删除线、下划线行内样式，一行代码即可设置文本span属性，十分方便
+- 支持添加单张或者多张图片，并且插入过渡动画友好，同时可以保证插入图片顺序
+- 支持富文本编辑状态和预览状态的切换，支持富文本内容转化为json内容输出，转化为html内容输出
+- 支持设置富文本的文字大小，行间距，图片和文本间距，以及插入图片的宽和高的属性
+- 图片支持点击预览，支持点击叉号控件去除图片，暴露给外部开发者调用。同时加载图片的逻辑也是暴露给外部开发者，充分解耦
+
 
 
 ### 04.富文本实现方案
+#### 4.0 页面构成分析
+- 整个界面的要求
+    - 整体界面可滚动，可以编辑，也可以预览
+    - 内容可编辑可以插入文字、图片等。图片提供按钮操作
+    - 软键盘删除键可删除图片，也可以删除文字内容
+    - 文字可以修改属性，比如加粗，对齐，下划线
+- 根据富文本作出以下分析
+    - 使用原生控件，可插入图片、文字界面不能用一个EditText来做，需要使用LinearLayout添加不同的控件，图片部分用ImageView，界面可滑动最外层使用ScrollView。
+    - 使用WebView+js+css方式，富文本格式用html方式展现，比较复杂，对标签要非常熟悉才可以尝试使用
+- 使用原生控件多焦点问题分析
+    - 界面是由多个输入区域拼接而成，暂且把输入区域称为EditText，图片区域称为ImageView，外层是LinearLayout。
+    - 如果一个富文本是：文字1+图片1+文字2+文字3+图片3+图片4；那么使用LinearLayout包含多个EditText实现的难点：
+        - 如何处理记录当前的焦点区域
+        - 如何处理在文字区域的中间位置插入ImageView样式的拆分和合并
+        - 如何处理输入区域的删除键处理 
+
+
+
 #### 4.1 第一种方案
 - 使用ScrollView作为最外层，布局包含LineaLayout，图文混排内容，则是用TextView/EditText和ImageView去填充。
-- 富文本编辑状态：ScrollView + LineaLayout + n个EditText + n个ImageView
-- 富文本预览状态：ScrollView + LineaLayout + n个TextView + n个ImageView
+- 富文本编辑状态：ScrollView + LineaLayout + n个EditText+Span + n个ImageView
+- 富文本预览状态：ScrollView + LineaLayout + n个TextView+Span + n个ImageView
 - 删除的时候，根据光标的位置，如果光标遇到是图片，则可以用光标删除图片；如果光标遇到是文字，则可以用光标删除文字
 - 当插入或者删除图片的时候，可以添加一个过渡动画效果，避免直接生硬的显示。如何在ViewGroup中添加view，删除view时给相应view和受影响的其他view添加动画，不太容易做。如果只是对受到影响的view添加动画，可以通过设置view的高度使之显示和隐藏，还可以利用ScrollView通过滚动隐藏和显示动画，但其他受影响的view则比较难处理，最终选择布局动画LayoutTransition 就可以很好地完成这个功能。
 
@@ -52,12 +74,92 @@
 
 
 
-
-
-
-
-
-
+### 05.富文本如何使用
+- 在布局中引用，HyperTextEditor是编辑富文本，HyperTextView是预览富文本
+    ```
+    <?xml version="1.0" encoding="utf-8"?>
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="vertical"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:ignore="MissingDefaultResource">
+    
+        <com.ns.yc.yccustomtextlib.edit.view.HyperTextEditor
+            android:id="@+id/hte_content"
+            android:visibility="visible"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/white"
+            android:textSize="16sp"
+            app:editor_text_line_space="6dp"
+            app:editor_image_height="500"
+            app:editor_image_bottom="10"
+            app:editor_text_init_hint="在这里输入内容"
+            app:editor_text_size="16sp"
+            app:editor_text_color="@android:color/black"/>
+    
+    
+        <com.ns.yc.yccustomtextlib.edit.view.HyperTextView
+            android:id="@+id/htv_content"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:ht_view_text_line_space="6dp"
+            app:ht_view_image_height="0"
+            app:ht_view_image_bottom="10"
+            app:ht_view_text_size="16sp"
+            app:ht_view_text_color="@android:color/black"/>
+    
+    </LinearLayout>
+    ```
+- 在编辑富文本状态时
+    ```
+    //插入图片
+    hte_content.insertImage(imagePath);
+    //对外提供的接口, 生成编辑数据上传
+    List<HyperEditData> editList = hte_content.buildEditData();
+    ```
+- 在预览富文本状态时
+    ```
+    //清除所有文本
+    htv_content.clearAllLayout();
+    //将html数据转化成集合
+    List<String> textList = HyperLibUtils.cutStringByImgTag(html);
+    //省略部分代码，具体看demo
+    if (text.contains("<img") && text.contains("src=")) {
+        //imagePath可能是本地路径，也可能是网络地址
+        String imagePath = HyperLibUtils.getImgSrc(text);
+        //在特定位置添加ImageView
+        htv_content.addImageViewAtIndex(htv_content.getLastIndex(), imagePath);
+    } else {
+        //在特定位置插入TextView
+        htv_content.addTextViewAtIndex(htv_content.getLastIndex(), text);
+    }
+    ```
+- 关于HyperTextEditor的属性介绍说明
+    ```
+    <declare-styleable name="HyperTextEditor" >
+        <!--父控件的左和右padding-->
+        <attr name="editor_layout_right_left" format="integer" />
+        <!--父控件的上和下padding-->
+        <attr name="editor_layout_top_bottom" format="integer" />
+        <!--插入的图片显示高度-->
+        <attr name="editor_image_height" format="integer" />
+        <!--两张相邻图片间距-->
+        <attr name="editor_image_bottom" format="integer" />
+        <!--文字相关属性，初始提示信息-->
+        <attr name="editor_text_init_hint" format="string" />
+        <!--文字大小-->
+        <attr name="editor_text_size" format="dimension" />
+        <!--文字颜色-->
+        <attr name="editor_text_color" format="color" />
+        <!--文字行间距-->
+        <attr name="editor_text_line_space" format="dimension" />
+    </declare-styleable>
+    ```
 
 
 

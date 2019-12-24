@@ -129,8 +129,17 @@ public class HyperTextEditor extends ScrollView {
 	 * 文字相关属性，初始提示信息，文字大小和颜色
 	 */
     private String rtTextInitHint = "请输入内容";
-    private int rtTextSize = 16;
+	/**
+	 * 文字大小
+	 */
+	private int rtTextSize = 16;
+	/**
+	 * 文字颜色
+	 */
     private int rtTextColor = Color.parseColor("#757575");
+	/**
+	 * 文字行间距
+	 */
 	private int rtTextLineSpace = 8;
 	private OnHyperEditListener onHyperListener;
 
@@ -506,13 +515,11 @@ public class HyperTextEditor extends ScrollView {
 			final RelativeLayout imageLayout = createImageLayout();
 			HyperImageView imageView = imageLayout.findViewById(R.id.edit_imageView);
 			imageView.setAbsolutePath(imagePath);
-			//imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);//裁剪剧中
 			HyperManager.getInstance().loadImage(imagePath, imageView, rtImageHeight);
 			layout.addView(imageLayout, index);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	/**

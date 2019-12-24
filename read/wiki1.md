@@ -72,8 +72,8 @@
 
 #### 2.2 第一种方案
 - 使用ScrollView作为最外层，布局包含LineaLayout，图文混排内容，则是用TextView/EditText和ImageView去填充。
-- 富文本编辑状态：ScrollView + LineaLayout + n个EditText + n个ImageView
-- 富文本预览状态：ScrollView + LineaLayout + n个TextView + n个ImageView
+- 富文本编辑状态：ScrollView + LineaLayout + n个EditText+Span + n个ImageView
+- 富文本预览状态：ScrollView + LineaLayout + n个TextView+Span + n个ImageView
 - 删除的时候，根据光标的位置，如果光标遇到是图片，则可以用光标删除图片；如果光标遇到是文字，则可以用光标删除文字
 - 当插入或者删除图片的时候，可以添加一个过渡动画效果，避免直接生硬的显示。如何在ViewGroup中添加view，删除view时给相应view和受影响的其他view添加动画，不太容易做。如果只是对受到影响的view添加动画，可以通过设置view的高度使之显示和隐藏，还可以利用ScrollView通过滚动隐藏和显示动画，但其他受影响的view则比较难处理，最终选择布局动画LayoutTransition 就可以很好地完成这个功能。
 
@@ -315,13 +315,44 @@
     ```
 
 
-
-
 ### 10.如何设置插入网络图片
 - 插入图片有两种情况，一种是本地图片，一种是网络图片。由于富文本中对插入图片的宽高有限制，即可以动态设置图片的高度，这就要求请求网络图片后，需要对图片进行处理。
-
-
-
+- 首先看一下插入图片的代码，在HyperTextEditor类中，由于封装lib，不建议在lib中使用某个图片加载库加载图片，而应该是暴露给外部开发者去加载图片。
+    ```
+    /**
+     * 在特定位置添加ImageView
+     */
+    public void addImageViewAtIndex(final int index, final String imagePath) {
+        if (TextUtils.isEmpty(imagePath)){
+            return;
+        }
+        try {
+            imagePaths.add(imagePath);
+            final RelativeLayout imageLayout = createImageLayout();
+            HyperImageView imageView = imageLayout.findViewById(R.id.edit_imageView);
+            imageView.setAbsolutePath(imagePath);
+            HyperManager.getInstance().loadImage(imagePath, imageView, rtImageHeight);
+            layout.addView(imageLayout, index);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    ```
+- 那么具体在那个地方去loadImage设置加载图片呢？可以发现这样极大地提高了代码的拓展性，原因是你可能用glide，他可能用Picasso，还有的用ImageLoader，所以最好暴露给外部。
+    ```
+    HyperManager.getInstance().setImageLoader(new ImageLoader() {
+        @Override
+        public void loadImage(final String imagePath, final ImageView imageView, final int imageHeight) {
+            Log.e("---", "imageHeight: "+imageHeight);
+            //如果是网络图片
+            if (imagePath.startsWith("http://") || imagePath.startsWith("https://")){
+                //直接用图片加载框架加载图片即可
+            } else { //如果是本地图片
+                
+            }
+        }
+    });
+    ```
 
 
 
@@ -476,7 +507,8 @@
 
 
 ### 15.如何暴露设置文字属性方法
-- 针对设置文字加粗，下划线，删除线等span属性。
+- 针对设置文字加粗，下划线，删除线等span属性。同时设置span，有许多类似的地方，考虑到后期的添加和移除，如何封装能够提高代码的扩展性。
+
 
 
 

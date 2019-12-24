@@ -242,7 +242,7 @@ public class HyperTextView extends ScrollView {
     }
 
     /**
-     * 在特定位置插入EditText
+     * 在特定位置插入TextView
      *
      * @param index 位置
      * @param editStr EditText显示的文字
@@ -269,6 +269,8 @@ public class HyperTextView extends ScrollView {
 
     /**
      * 在特定位置添加ImageView
+     * @param index                             索引值
+     * @param imagePath                         图片地址
      */
     public void addImageViewAtIndex(final int index, final String imagePath) {
         if (index==-1){
@@ -291,6 +293,9 @@ public class HyperTextView extends ScrollView {
 
     /**
      * 在特定位置添加ImageView，折行
+     * @param index                             索引值
+     * @param imagePath                         图片地址
+     * @param isWordWrap                        是否折行
      */
     public void addImageViewAtIndex(final int index, String imagePath , boolean isWordWrap) {
         if (index==-1){
