@@ -98,6 +98,7 @@
 
 ### 04.处理软键盘回删按钮逻辑
 - 想了一下，当富文本处于编辑的状态，利用光标可以进行删除插入点之前的字符。删除的时候，根据光标的位置，如果光标遇到是图片，则可以用光标删除图片；如果光标遇到是文字，则可以用光标删除文字。
+- 更详细的来说，监听删除键的点击的逻辑需要注意，当光标在EditText 输入中间，点击删除不进行处理正常删除；当光标在EditText首端，判断前一个控件，如果是图片控件，删除图片控件，如果是输入控件，删除当前控件并将输入区域合并成一个输入区域。
 - 创建一个键盘退格监听事件，代码如下所示：
     ```
     // 初始化键盘退格监听，主要用来处理点击回删按钮时，view的一些列合并操作
@@ -190,9 +191,52 @@
     ```
 
 
+
 ### 06.在指定位置插入输入文字
 - 前面已经提到了，如果一个富文本是：文字1+图片1+文字2+文字3+图片3+图片4，那么点击文字1控件则在此输入文字，点击文字3控件则在此输入文字。
-- 所以，这样操作，确定处理记录当前的焦点区域位置十分重要。
+- 所以，这样操作，确定处理记录当前的焦点区域位置十分重要。当前的编辑器已经添加了多个输入文本EditText，现在的问题在于需要记录当前编辑的EditText，在应用样式的时候定位到输入的控件，在编辑器中添加一个变量lastFocusEdit。具体可以看代码……
+- 既然可以记录最后焦点输入文本，那么如何监听当前的输入控件呢，这就用到了OnFocusChangeListener，这个又是在哪里用到，具体如下面所示。要先setOnFocusChangeListener(focusListener) 再 requestFocus。
+    ```
+    /**
+     * 所有EditText的焦点监听listener
+     */
+    private OnFocusChangeListener focusListener;
+    
+    
+    focusListener = new OnFocusChangeListener() {
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            if (hasFocus) {
+                lastFocusEdit = (EditText) v;
+                HyperLogUtils.d("HyperTextEditor---onFocusChange--"+lastFocusEdit);
+            }
+        }
+    };
+    
+	/**
+	 * 在特定位置插入EditText
+	 * @param index							位置
+	 * @param editStr						EditText显示的文字
+	 */
+	public void addEditTextAtIndex(final int index, CharSequence editStr) {
+	    //省略部分代码
+		try {
+			EditText editText = createEditText("插入文字", EDIT_PADDING);
+			editText.setOnFocusChangeListener(focusListener);
+			layout.addView(editText, index);
+			//插入新的EditText之后，修改lastFocusEdit的指向
+			lastFocusEdit = editText;
+			//获取焦点
+			lastFocusEdit.requestFocus();
+			//将光标移至文字指定索引处
+			lastFocusEdit.setSelection(editStr.length(), editStr.length());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+    ```
+
+
 
 
 
@@ -365,7 +409,27 @@
 
 
 
+
 ### 16.文字中间添加图片注意事项
+- 在文字中添加图片比较特殊，因此这里单独拿出来说一下。在文字内容中间插入图片，则需要分割字符串，分割成两个EditText，并在两个EditText中间插入图片，那么这个光标又定位在何处呢？
+    - 对于光标前面的字符串保留，设置给当前获得焦点的EditText（此为分割出来的第一个EditText）
+    - 把光标后面的字符串放在新创建的EditText中（此为分割出来的第二个EditText）
+    - 在第二个EditText的位置插入一个空的EditText，以便连续插入多张图片时，有空间写文字，第二个EditText下移
+    - 在空的EditText的位置插入图片布局，空的EditText下移。注意，这个过程添加动画过渡一下插入的效果比较好，不然会比较生硬
+    ```
+    //获取光标所在位置
+    int cursorIndex = lastFocusEdit.getSelectionStart();
+    //获取光标前面的字符串
+    String editStr1 = lastEditStr.substring(0, cursorIndex).trim();
+    //获取光标后的字符串
+    String editStr2 = lastEditStr.substring(cursorIndex).trim();
+    
+    lastFocusEdit.setText(editStr1);
+    addEditTextAtIndex(lastEditIndex + 1, editStr2);
+    addEditTextAtIndex(lastEditIndex + 1, "");
+    addImageViewAtIndex(lastEditIndex + 1, imagePath);
+    ```
+
 
 
 

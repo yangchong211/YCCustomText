@@ -242,6 +242,7 @@ public class HyperTextEditor extends ScrollView {
 			public void onFocusChange(View v, boolean hasFocus) {
 				if (hasFocus) {
 					lastFocusEdit = (EditText) v;
+					HyperLogUtils.d("HyperTextEditor---onFocusChange--"+lastFocusEdit);
 				}
 			}
 		};
@@ -354,7 +355,10 @@ public class HyperTextEditor extends ScrollView {
 	}
 
 	/**
-	 * 生成文本输入框
+	 * 添加生成文本输入框
+	 * @param hint								内容
+	 * @param paddingTop						到顶部高度
+	 * @return
 	 */
 	public EditText createEditText(String hint, int paddingTop) {
 		EditText editText = new DeletableEditText(getContext());
@@ -371,7 +375,6 @@ public class HyperTextEditor extends ScrollView {
 		editText.setTextSize(TypedValue.COMPLEX_UNIT_PX, rtTextSize);
 		editText.setTextColor(rtTextColor);
 		editText.setLineSpacing(rtTextLineSpace, 1.0f);
-		editText.setOnFocusChangeListener(focusListener);
 		return editText;
 	}
 
@@ -462,25 +465,25 @@ public class HyperTextEditor extends ScrollView {
 	 */
 	public void addEditTextAtIndex(final int index, CharSequence editStr) {
 		try {
-			EditText editText2 = createEditText("插入文字", EDIT_PADDING);
+			EditText editText = createEditText("插入文字", EDIT_PADDING);
 			if (!TextUtils.isEmpty(keywords)) {
 				//搜索关键词高亮
 				SpannableStringBuilder textStr = HyperLibUtils.highlight(
 						editStr.toString(), keywords  , Color.parseColor("#EE5C42"));
-				editText2.setText(textStr);
+				editText.setText(textStr);
 			} else if (!TextUtils.isEmpty(editStr)) {
 				//判断插入的字符串是否为空，如果没有内容则显示hint提示信息
-				editText2.setText(editStr);
+				editText.setText(editStr);
 			}
-			editText2.setOnFocusChangeListener(focusListener);
+			editText.setOnFocusChangeListener(focusListener);
 
 			// 请注意此处，EditText添加、或删除不触动Transition动画
 			layout.setLayoutTransition(null);
-			layout.addView(editText2, index);
+			layout.addView(editText, index);
 			// remove之后恢复transition动画
 			layout.setLayoutTransition(mTransition);
 			//插入新的EditText之后，修改lastFocusEdit的指向
-			lastFocusEdit = editText2;
+			lastFocusEdit = editText;
 			//获取焦点
 			lastFocusEdit.requestFocus();
 			//将光标移至文字指定索引处
