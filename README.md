@@ -17,12 +17,11 @@
 
 
 #### 1.2 富文本截图
-![image](https://img-blog.csdnimg.cn/20191225181646837.jpeg)
-![image](https://img-blog.csdnimg.cn/2019122518174761.jpeg)
-![image](https://img-blog.csdnimg.cn/20191225181807586.jpeg)
-![image](https://img-blog.csdnimg.cn/20191225181830627.jpeg)
-![image](https://img-blog.csdnimg.cn/20191225181849342.jpeg)
-
+![image](https://github.com/yangchong211/YCCustomText/blob/master/image/image1.jpeg)
+![image](https://github.com/yangchong211/YCCustomText/blob/master/image/image2.jpeg)
+![image](https://github.com/yangchong211/YCCustomText/blob/master/image/image3.jpeg)
+![image](https://github.com/yangchong211/YCCustomText/blob/master/image/image4.jpeg)
+![image](https://github.com/yangchong211/YCCustomText/blob/master/image/image5.jpeg)
 
 
 
