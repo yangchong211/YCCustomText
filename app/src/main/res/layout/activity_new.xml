@@ -47,22 +47,24 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="1px"
         android:background="@android:color/darker_gray"/>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp">
+        android:layout_height="40dp"
+        android:orientation="horizontal">
         <TextView
             android:id="@+id/tv_length"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="共24个字"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
     </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@android:color/darker_gray"/>
 
     <HorizontalScrollView
         android:layout_width="match_parent"
@@ -79,7 +81,7 @@
                 android:padding="10dp"
                 android:text="编辑" />
             <View
-                android:layout_width="1dp"
+                android:layout_width="1px"
                 android:layout_height="match_parent"
                 android:background="@android:color/darker_gray"/>
             <TextView
@@ -89,7 +91,7 @@
                 android:padding="10dp"
                 android:text="保存" />
             <View
-                android:layout_width="1dp"
+                android:layout_width="1px"
                 android:layout_height="match_parent"
                 android:background="@android:color/darker_gray"/>
             <TextView
@@ -99,7 +101,7 @@
                 android:padding="10dp"
                 android:text="加粗" />
             <View
-                android:layout_width="1dp"
+                android:layout_width="1px"
                 android:layout_height="match_parent"
                 android:background="@android:color/darker_gray"/>
             <TextView
@@ -109,7 +111,7 @@
                 android:padding="10dp"
                 android:text="下划线" />
             <View
-                android:layout_width="1dp"
+                android:layout_width="1px"
                 android:layout_height="match_parent"
                 android:background="@android:color/darker_gray"/>
             <TextView
@@ -119,7 +121,7 @@
                 android:padding="10dp"
                 android:text="斜体" />
             <View
-                android:layout_width="1dp"
+                android:layout_width="1px"
                 android:layout_height="match_parent"
                 android:background="@android:color/darker_gray"/>
             <TextView
@@ -129,7 +131,7 @@
                 android:padding="10dp"
                 android:text="删除线" />
             <View
-                android:layout_width="1dp"
+                android:layout_width="1px"
                 android:layout_height="match_parent"
                 android:background="@android:color/darker_gray"/>
             <TextView
@@ -139,7 +141,7 @@
                 android:padding="10dp"
                 android:text="生成json" />
             <View
-                android:layout_width="1dp"
+                android:layout_width="1px"
                 android:layout_height="match_parent"
                 android:background="@android:color/darker_gray"/>
             <TextView
@@ -149,7 +151,7 @@
                 android:padding="10dp"
                 android:text="生成html" />
             <View
-                android:layout_width="1dp"
+                android:layout_width="1px"
                 android:layout_height="match_parent"
                 android:background="@android:color/darker_gray"/>
         </LinearLayout>
