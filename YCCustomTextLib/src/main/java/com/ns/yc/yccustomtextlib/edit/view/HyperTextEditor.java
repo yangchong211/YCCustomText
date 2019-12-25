@@ -382,6 +382,13 @@ public class HyperTextEditor extends ScrollView {
 					//SDCardUtil.deleteFile(editData.imagePath);
 					//从图片集合中移除图片链接
 					imagePaths.remove(editData.getImagePath());
+                    //监听富文本：文字+图片数量变化
+                    getContentAndImageCount();
+                    int contentLength = getContentLength();
+                    int imageLength = getImageLength();
+                    if (onHyperChangeListener!=null){
+                        onHyperChangeListener.onImageClick(contentLength,imageLength);
+                    }
 				}
 				//然后移除当前view
 				layout.removeView(view);
@@ -499,6 +506,13 @@ public class HyperTextEditor extends ScrollView {
 			}
 			//隐藏小键盘
 			hideKeyBoard();
+			//监听富文本：文字+图片数量变化
+            getContentAndImageCount();
+            int contentLength = getContentLength();
+            int imageLength = getImageLength();
+            if (onHyperChangeListener!=null){
+                onHyperChangeListener.onImageClick(contentLength,imageLength);
+            }
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -570,29 +584,6 @@ public class HyperTextEditor extends ScrollView {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	/**
-	 * 根据view的宽度，动态缩放bitmap尺寸
-	 * 
-	 * @param width
-	 *            view的宽度
-	 */
-	public Bitmap getScaledBitmap(String filePath, int width) {
-		if (TextUtils.isEmpty(filePath)){
-			return null;
-		}
-		BitmapFactory.Options options = new BitmapFactory.Options();
-		try {
-			options.inJustDecodeBounds = true;
-			BitmapFactory.decodeFile(filePath, options);
-			int sampleSize = options.outWidth > width ? options.outWidth / width + 1 : 1;
-			options.inJustDecodeBounds = false;
-			options.inSampleSize = sampleSize;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return BitmapFactory.decodeFile(filePath, options);
 	}
 
 	/**
