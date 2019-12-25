@@ -239,6 +239,15 @@
 
 
 ### 08.其他说明介绍
+#### 参考博客和开源项目
+- Android富文本编辑器（四）：HTML文本转换：https://www.jianshu.com/p/578085fb07d1
+- Android 端 （图文混排）富文本编辑器的开发（一）：https://www.jianshu.com/p/155aa1e9f9d3
+- 图文混排富文本文章编辑器实现详解：https://blog.csdn.net/ljzdyh/article/details/82497625
+
+
+
+
+
 #### 关于其他内容介绍
 ![image](https://upload-images.jianshu.io/upload_images/4432347-7100c8e5a455c3ee.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
