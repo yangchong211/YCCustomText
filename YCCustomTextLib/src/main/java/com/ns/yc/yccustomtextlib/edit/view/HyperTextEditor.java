@@ -24,8 +24,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.text.Editable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -39,6 +41,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
+import com.ns.yc.yccustomtextlib.edit.inter.OnHyperChangeListener;
 import com.ns.yc.yccustomtextlib.edit.manager.HyperManager;
 import com.ns.yc.yccustomtextlib.R;
 import com.ns.yc.yccustomtextlib.edit.inter.OnHyperEditListener;
@@ -92,6 +95,10 @@ public class HyperTextEditor extends ScrollView {
 	 */
 	private OnFocusChangeListener focusListener;
 	/**
+	 * 所有EditText的文本变化监听listener
+	 */
+	private TextWatcher textWatcher;
+	/**
 	 * 最近被聚焦的EditText
 	 */
 	private EditText lastFocusEdit;
@@ -141,20 +148,40 @@ public class HyperTextEditor extends ScrollView {
 	 * 文字行间距
 	 */
 	private int rtTextLineSpace = 8;
+	/**
+	 * 富文本的文字长度
+	 */
+	private int contentLength = 0;
+	/**
+	 * 富文本的图片个数
+	 */
+	private int imageLength = 0;
 	private OnHyperEditListener onHyperListener;
+	private OnHyperChangeListener onHyperChangeListener;
 
+	/**
+	 * 保存重要信息
+	 * @return
+	 */
 	@Nullable
 	@Override
 	protected Parcelable onSaveInstanceState() {
 		Parcelable superState = super.onSaveInstanceState();
 		TextEditorState viewState = new TextEditorState(superState);
+		viewState.rtImageHeight = rtImageHeight;
 		return viewState;
 	}
 
+	/**
+	 * 复现
+	 * @param state								state
+	 */
 	@Override
 	protected void onRestoreInstanceState(Parcelable state) {
 		TextEditorState viewState = (TextEditorState) state;
+		rtImageHeight = viewState.rtImageHeight;
 		super.onRestoreInstanceState(viewState.getSuperState());
+		requestLayout();
 	}
 
 	@Override
@@ -254,6 +281,28 @@ public class HyperTextEditor extends ScrollView {
 					lastFocusEdit = (EditText) v;
 					HyperLogUtils.d("HyperTextEditor---onFocusChange--"+lastFocusEdit);
 				}
+			}
+		};
+		textWatcher = new TextWatcher() {
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+			}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				getContentAndImageCount();
+				int contentLength = getContentLength();
+				int imageLength = getImageLength();
+				if (onHyperChangeListener!=null){
+				    onHyperChangeListener.onImageClick(contentLength,imageLength);
+                }
+				HyperLogUtils.d("HyperTextEditor---onTextChanged--文字--"+contentLength+"--图片-"+imageLength);
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+
 			}
 		};
 	}
@@ -379,6 +428,8 @@ public class HyperTextEditor extends ScrollView {
 		editText.setCursorVisible(true);
 		editText.setBackground(null);
 		editText.setOnKeyListener(keyListener);
+		editText.setOnFocusChangeListener(focusListener);
+		editText.addTextChangedListener(textWatcher);
 		editText.setTag(viewTagIndex++);
 		editText.setPadding(editNormalPadding, paddingTop, editNormalPadding, paddingTop);
 		editText.setHint(hint);
@@ -485,7 +536,6 @@ public class HyperTextEditor extends ScrollView {
 				//判断插入的字符串是否为空，如果没有内容则显示hint提示信息
 				editText.setText(editStr);
 			}
-			editText.setOnFocusChangeListener(focusListener);
 
 			// 请注意此处，EditText添加、或删除不触动Transition动画
 			layout.setLayoutTransition(null);
@@ -651,8 +701,54 @@ public class HyperTextEditor extends ScrollView {
 		return dataList;
 	}
 
+	/**
+	 * 用于统计文本文字的数量和图片的数量
+	 */
+	public void getContentAndImageCount() {
+		contentLength = 0;
+		imageLength = 0;
+		if (layout==null){
+			return;
+		}
+		try {
+			int num = layout.getChildCount();
+			for (int index = 0; index < num; index++) {
+				View itemView = layout.getChildAt(index);
+				if (itemView instanceof EditText) {
+					//文本
+					EditText item = (EditText) itemView;
+					String string = item.getText().toString().trim();
+					int length = string.length();
+					contentLength = contentLength + length;
+				} else if (itemView instanceof RelativeLayout) {
+					//图片
+					imageLength++;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		HyperLogUtils.d("HyperTextEditor----buildEditData------dataList---");
+	}
+
 	public void setOnHyperListener(OnHyperEditListener listener){
 		this.onHyperListener = listener;
+	}
+
+    public void setOnHyperChangeListener(OnHyperChangeListener onHyperChangeListener) {
+        this.onHyperChangeListener = onHyperChangeListener;
+    }
+
+    public EditText getLastFocusEdit() {
+		return lastFocusEdit;
+	}
+
+	public int getContentLength() {
+		return contentLength;
+	}
+
+	public int getImageLength() {
+		return imageLength;
 	}
 
 	/**

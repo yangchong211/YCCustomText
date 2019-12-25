@@ -27,7 +27,7 @@
 
 
 ### 00.该控件介绍
-- 自定义文本控件，支持富文本，包含两种状态：编辑状态和预览状态。编辑状态中，可以对插入本地或者网络图片，可以同时插入多张有序图片和删除图片，支持图文混排，并且可以对文字内容简单操作加粗字体，设置字体下划线，支持设置文字超链接(超链接支持跳转)，功能正在开发中和完善中……
+- 自定义文本控件，支持富文本，包含两种状态：编辑状态和预览状态。编辑状态中，可以对插入本地或者网络图片，可以同时插入多张有序图片和删除图片，支持图文混排，并且可以对文字内容简单操作加粗字体，设置字体下划线，支持设置文字超链接(超链接支持跳转)，还可以统计富文本中的字数，功能正在开发中和完善中……
 
 
 
@@ -46,7 +46,7 @@
 - 在编辑状态中，可以设置文字大小和颜色，同时做好拓展需求，后期可能添加文本加粗，下划线，插入超链接，对齐方式等功能；
 - 编辑状态，连续插入多张图片，如果想在图片中间插入文字内容，则需要靠谱在图片之间预留编辑文本控件，方便操作；
 - 支持对文字选中的内容进行设置加粗，添加下划线，改变颜色，设置对齐方式等等；
-
+- 关于富文本字数统计，由于富文本中包括文字和图片，因此图片和文字数量统计分开。参考易车是：共n个文字，共n个图片显示
 
 
 ### 02.实现的方案介绍
@@ -85,11 +85,78 @@
 
 
 
+#### 2.4 富文本支持功能
+- 支持加粗、斜体、删除线、下划线行内样式，一行代码即可设置文本span属性，十分方便
+- 支持添加单张或者多张图片，并且插入过渡动画友好，同时可以保证插入图片顺序
+- 支持富文本编辑状态和预览状态的切换，支持富文本内容转化为json内容输出，转化为html内容输出
+- 支持设置富文本的文字大小，行间距，图片和文本间距，以及插入图片的宽和高的属性
+- 图片支持点击预览，支持点击叉号控件去除图片，暴露给外部开发者调用。同时加载图片的逻辑也是暴露给外部开发者，充分解耦
+- 关于富文本字数统计，由于富文本中包括文字和图片，因此图片和文字数量统计分开。参考易车是：共n个文字，共n个图片显示
+
+
 
 ### 03.异常状态下保存状态信息
-
-
-
+- 对于自定义View，如果页面出现异常导致自定义View异常退出，则当然希望保存一些重要的信息。自定义保存状态类，继承BaseSavedState，代码如下所示
+    ```
+    public class TextEditorState extends View.BaseSavedState {
+    
+        public int rtImageHeight;
+    
+        public static final Creator<TextEditorState> CREATOR = new Creator<TextEditorState>() {
+            @Override
+            public TextEditorState createFromParcel(Parcel in) {
+                return new TextEditorState(in);
+            }
+    
+            @Override
+            public TextEditorState[] newArray(int size) {
+                return new TextEditorState[size];
+            }
+        };
+    
+        public TextEditorState(Parcelable superState) {
+            super(superState);
+        }
+    
+        public TextEditorState(Parcel source) {
+            super(source);
+            rtImageHeight = source.readInt();
+        }
+    
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            super.writeToParcel(out, flags);
+            out.writeInt(rtImageHeight);
+        }
+    }
+    ```
+- 如何使用该保存状态栏，自定义View中，有两个特别的方法，分别是onSaveInstanceState和onRestoreInstanceState，具体逻辑如下所示
+    ```
+    /**
+     * 保存重要信息
+     * @return
+     */
+    @Nullable
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Parcelable superState = super.onSaveInstanceState();
+        TextEditorState viewState = new TextEditorState(superState);
+        viewState.rtImageHeight = rtImageHeight;
+        return viewState;
+    }
+    
+    /**
+     * 复现
+     * @param state								state
+     */
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        TextEditorState viewState = (TextEditorState) state;
+        rtImageHeight = viewState.rtImageHeight;
+        super.onRestoreInstanceState(viewState.getSuperState());
+        requestLayout();
+    }
+    ```
 
 
 ### 04.处理软键盘回删按钮逻辑
@@ -694,9 +761,18 @@
     adjustResize-调整模式：当软键盘显示的时候，当前界面会自动重绘，会被压缩，软键盘消失之后，界面恢复正常（正常布局，非scrollView父布局）；当父布局是scrollView的时候，软键盘弹出，会将布局顶起（保证输入框不被遮挡），不压缩，而且可以软键盘不消失的情况下，手动滑出被遮挡的布局；
     adjustPan-默认模式：软键盘弹出，软键盘会遮挡屏幕下半部分布局，当输入框在屏幕下方布局，软键盘弹起，会自动将当前布局顶起，保证，软键盘不遮挡当前输入框（正常布局，非scrollView父布局）。当父布局是scrollView的时候，感觉没啥变化，还是自定将布局顶起，输入框不被遮挡，不可以手动滑出被遮挡的布局（白瞎了scrollView）;
     ```
+    - 看了上面的属性，那么该如何设置呢？具体效果可以看demo案例。
+    ```
+    <activity android:name=".NewArticleActivity"
+        android:windowSoftInputMode="adjustResize|stateHidden"/>
+    ```
 - 软键盘及时退出的问题
     - 当用户输入完成之后，必须手动点击软键盘的收回键，软键盘才收起。如果能通过代码主动将软键盘收起，这对于用户体验来说，是一个极大的提升，思前想后，参考网上的文档，个人比较喜欢的实现方式是通过事件分发机制来解决这个问题。
-
+- 解决点击EditText弹出收起键盘时出现的黑屏闪现现象
+    ```
+    View rootView = hte_content.getRootView();
+    rootView.setBackgroundColor(Color.WHITE);
+    ```
 
 
 

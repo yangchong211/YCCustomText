@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.tv_1:
-                startActivity(new Intent(this,NewActivity.class));
+                startActivity(new Intent(this, NewArticleActivity.class));
                 break;
             case R.id.tv_2:
                 startActivity(new Intent(MainActivity.this,WebRichActivity.class));

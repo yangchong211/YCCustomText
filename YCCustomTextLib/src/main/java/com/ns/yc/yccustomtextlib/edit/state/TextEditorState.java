@@ -20,6 +20,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.view.View;
 
+import java.util.ArrayList;
+
 /**
  * <pre>
  *     @author yangchong
@@ -32,7 +34,6 @@ import android.view.View;
 public class TextEditorState extends View.BaseSavedState {
 
     public int rtImageHeight;
-    public String imagePath;
 
     public static final Creator<TextEditorState> CREATOR = new Creator<TextEditorState>() {
         @Override
@@ -53,12 +54,11 @@ public class TextEditorState extends View.BaseSavedState {
     public TextEditorState(Parcel source) {
         super(source);
         rtImageHeight = source.readInt();
-        imagePath = source.readString();
     }
 
-    @Override public void writeToParcel(Parcel out, int flags) {
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
         super.writeToParcel(out, flags);
         out.writeInt(rtImageHeight);
-        out.writeString(imagePath);
     }
 }

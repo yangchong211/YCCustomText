@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -27,6 +28,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.gson.Gson;
+import com.ns.yc.yccustomtextlib.edit.inter.OnHyperChangeListener;
 import com.ns.yc.yccustomtextlib.edit.manager.HyperManager;
 import com.ns.yc.yccustomtextlib.edit.inter.ImageLoader;
 import com.ns.yc.yccustomtextlib.edit.inter.OnHyperEditListener;
@@ -52,7 +54,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class NewActivity extends AppCompatActivity {
+public class NewArticleActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_CHOOSE = 520;
     private Toolbar toolbar;
@@ -63,21 +65,21 @@ public class NewActivity extends AppCompatActivity {
     private Disposable subsInsert;
     private Disposable mDisposable;
 
-//    @Override
-//    public boolean dispatchTouchEvent(MotionEvent ev) {
-//        if(ev.getAction()==MotionEvent.ACTION_DOWN){
-//            if(isShouldHideInput(ev)){
-//                hintKeyBord();
-//            }
-//        }
-//        if (getWindow().superDispatchTouchEvent(ev)) {
-//            return true;
-//        }
-//        return onTouchEvent(ev);
-//    }
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if(ev.getAction()==MotionEvent.ACTION_DOWN){
+            if(isShouldHideInput(ev)){
+                hintKeyBord();
+            }
+        }
+        if (getWindow().superDispatchTouchEvent(ev)) {
+            return true;
+        }
+        return onTouchEvent(ev);
+    }
 
     private boolean isShouldHideInput(MotionEvent ev) {
-        View view=getCurrentFocus();
+        View view = getCurrentFocus();
         if(view!=null && view instanceof EditText){
             int[]viewsArr=new int [2];
             view.getLocationInWindow(viewsArr);
@@ -115,9 +117,20 @@ public class NewActivity extends AppCompatActivity {
         screenHeight = CommonUtil.getScreenHeight(this);
         initListener();
         initHyper();
+        //解决点击EditText弹出收起键盘时出现的黑屏闪现现象
+        View rootView = hte_content.getRootView();
+        rootView.setBackgroundColor(Color.WHITE);
+        hte_content.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                EditText lastFocusEdit = hte_content.getLastFocusEdit();
+                lastFocusEdit.requestFocus();
+            }
+        },300);
     }
 
     private void initListener() {
+        final TextView tv_length = findViewById(R.id.tv_length);
         TextView tv_0_1 = findViewById(R.id.tv_0_1);
         TextView tv_0_2 = findViewById(R.id.tv_0_2);
         TextView tv_1 = findViewById(R.id.tv_1);
@@ -179,7 +192,7 @@ public class NewActivity extends AppCompatActivity {
                 Gson gson = new Gson();
                 String content = gson.toJson(editList);
                 String string = HyperHtmlUtils.stringToJson(content);
-                Intent intent = new Intent(NewActivity.this, TextActivity.class);
+                Intent intent = new Intent(NewArticleActivity.this, TextActivity.class);
                 intent.putExtra("content", string);
                 startActivity(intent);
             }
@@ -201,12 +214,19 @@ public class NewActivity extends AppCompatActivity {
                 //图片删除事件
             }
         });
+        hte_content.setOnHyperChangeListener(new OnHyperChangeListener() {
+            @Override
+            public void onImageClick(int contentLength, int imageLength) {
+                tv_length.setText("文字共"+contentLength+"个字，图片共"+imageLength+"张");
+            }
+        });
         htv_content.setOnHyperTextListener(new OnHyperTextListener() {
             @Override
             public void onImageClick(View view, String imagePath) {
                 //图片点击事件
             }
         });
+
     }
 
     private void initToolBar() {
@@ -291,7 +311,7 @@ public class NewActivity extends AppCompatActivity {
                     List<Uri> mSelected = Matisse.obtainResult(data);
                     // 可以同时插入多张图片
                     for (Uri imageUri : mSelected) {
-                        String imagePath = HyperLibUtils.getFilePathFromUri(NewActivity.this,  imageUri);
+                        String imagePath = HyperLibUtils.getFilePathFromUri(NewArticleActivity.this,  imageUri);
 
                         Bitmap bitmap = HyperLibUtils.getSmallBitmap(imagePath, screenWidth, screenHeight);
                         //压缩图片
@@ -409,6 +429,7 @@ public class NewActivity extends AppCompatActivity {
             emitter.onError(e);
         }
     }
+
 
 
     /**

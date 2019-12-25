@@ -58,7 +58,8 @@ public class TextViewState extends View.BaseSavedState {
         isRunning = source.readInt() == 1;
     }
 
-    @Override public void writeToParcel(Parcel out, int flags) {
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
         super.writeToParcel(out, flags);
         out.writeInt(mLoadingTime);
         out.writeInt(mLocation);
