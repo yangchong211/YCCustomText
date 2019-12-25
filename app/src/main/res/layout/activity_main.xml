@@ -17,6 +17,7 @@
         android:layout_width="match_parent"
         android:padding="10dp"
         android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
         android:text="1.图文混排控件，组合自定义控件"/>
 
 
@@ -26,17 +27,8 @@
         android:padding="10dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:background="@color/colorAccent"
         android:text="2.使用webView实现富文本控件"/>
-
-
-    <TextView
-        android:id="@+id/tv_3"
-        android:layout_width="match_parent"
-        android:padding="10dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="3.使用网页编辑器实现富文本控件"/>
-
 
 
 </LinearLayout>
