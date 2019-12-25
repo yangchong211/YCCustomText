@@ -674,11 +674,15 @@ public class HyperTextEditor extends ScrollView {
 				View itemView = layout.getChildAt(index);
 				HyperEditData hyperEditData = new HyperEditData();
 				if (itemView instanceof EditText) {
+				    //文本
 					EditText item = (EditText) itemView;
 					hyperEditData.setInputStr(item.getText().toString());
+					hyperEditData.setType(2);
 				} else if (itemView instanceof RelativeLayout) {
+				    //图片
 					HyperImageView item = itemView.findViewById(R.id.edit_imageView);
 					hyperEditData.setImagePath(item.getAbsolutePath());
+                    hyperEditData.setType(1);
 				}
 				dataList.add(hyperEditData);
 			}
@@ -751,6 +755,13 @@ public class HyperTextEditor extends ScrollView {
 	 */
 	public void italic() {
 		SpanTextHelper.getInstance().italic(lastFocusEdit);
+	}
+
+	/**
+	 * 修改加粗斜体样式
+	 */
+	public void boldItalic() {
+		SpanTextHelper.getInstance().boldItalic(lastFocusEdit);
 	}
 
 	/**

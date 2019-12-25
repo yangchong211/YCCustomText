@@ -3,6 +3,7 @@ package com.ns.yc.yccustomtextlib.edit.span;
 import android.text.Editable;
 import android.widget.EditText;
 
+import com.ns.yc.yccustomtextlib.edit.style.BoldItalicStyle;
 import com.ns.yc.yccustomtextlib.edit.style.BoldStyle;
 import com.ns.yc.yccustomtextlib.edit.style.ItalicStyle;
 import com.ns.yc.yccustomtextlib.edit.style.StrikeThroughStyle;
@@ -63,6 +64,22 @@ public class SpanTextHelper {
         }
         new ItalicStyle().applyStyle(editable, start, end);
     }
+
+
+    /**
+     * 修改加粗斜体样式
+     */
+    public void boldItalic(EditText lastFocusEdit) {
+        Editable editable = lastFocusEdit.getEditableText();
+        int start = lastFocusEdit.getSelectionStart();
+        int end = lastFocusEdit.getSelectionEnd();
+        HyperLogUtils.i("boldItalic select  Start:" + start + "   end:  " + end);
+        if (checkNormalStyle(start, end)) {
+            return;
+        }
+        new BoldItalicStyle().applyStyle(editable, start, end);
+    }
+
 
     /**
      * 修改删除线样式

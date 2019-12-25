@@ -18,7 +18,7 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.SOURCE)
 @StringDef({RichTypeEnum.BOLD, RichTypeEnum.ITALIC, RichTypeEnum.STRIKE_THROUGH,
         RichTypeEnum.UNDERLINE, RichTypeEnum.INLINE_IMAGE_SPAN, RichTypeEnum.BLOCK_HEADLINE,
-        RichTypeEnum.BLOCK_QUOTE, RichTypeEnum.BLOCK_NORMAL_TEXT})
+        RichTypeEnum.BLOCK_QUOTE, RichTypeEnum.BLOCK_NORMAL_TEXT,RichTypeEnum.BOLD_ITALIC})
 public @interface RichTypeEnum {
 
     /**
@@ -30,6 +30,11 @@ public @interface RichTypeEnum {
      * 斜体
      */
     String ITALIC = "italic";
+
+    /**
+     * 粗斜体
+     */
+    String BOLD_ITALIC = "bold_italic";
 
     /**
      * 删除线

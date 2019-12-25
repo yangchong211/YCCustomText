@@ -17,12 +17,11 @@
 - 16.文字中间添加图片注意事项
 - 17.键盘弹出和收缩优化
 - 18.前后台切换编辑富文本优化
-- 19.合理运用面向对象编程思想
-- 20.用的设计模式介绍
-- 21.生成html片段上传服务器
-- 22.生成json片段上传服务器
-- 23.图片上传策略问题思考
-
+- 19.生成html片段上传服务器
+- 20.生成json片段上传服务器
+- 21.图片上传策略问题思考
+- 22.合理运用面向对象编程思想
+- 23.用的设计模式介绍
 
 
 
@@ -778,25 +777,12 @@
 
 
 ### 18.前后台切换编辑富文本优化
-- 由于富文本中，用户会输入很多的内容，当关闭页面时候，需要提醒用户是否保存输入内容。同时，切换到后台的时候，需要注意保存输入内容，避免长时间切换后台进程内存吃紧，在回到前台输入的内容没有呢，查阅了简书，掘金等手机上的富文本编辑器，都会有这个细节点的优化。
+- 由于富文本中，用户会输入很多的内容，当关闭页面时候，需要提醒用户是否保存输入内容。同时，切换到后台的时候，需要注意保存输入内容，避免长时间切换后台进程内存吃紧，在回到前台输入的内容没有呢，查阅了汽车之家，易车等app等手机上的富文本编辑器，都会有这个细节点的优化。
 
 
 
-
-### 19.合理运用面向对象编程思想
-- 针对富文本插入图片操作
-- 针对修改EditText文本内容加粗，下划线格式
-
-
-
-
-### 20.用的设计模式介绍
-
-
-
-
-### 21.生成html片段上传服务器
-#### 21.1 提交富文本
+### 19.生成html片段上传服务器
+#### 19.1 提交富文本
 - 客户端生成html片段到服务器
     - 在客户端提交帖子，文章。富文本包括图片，文字内容，还有文字span样式，同时会选择一些文章，帖子的标签。还有设置文章的类型，封面图，作者等许多属性。
     - 当点击提交的时候，客户端把这些数据，转化成html，还是转化成json对象提交给服务器呢？思考一下，会有哪些问题……
@@ -809,8 +795,7 @@
 
 
 
-
-#### 21.2 编辑富文本
+#### 19.2 编辑富文本
 - 服务器返回html给客户端加载
     - 涉及到富文本的加载，后台管理端编辑器生成的一段html 代码要渲染到移动端上面，一种方法是前端做成html页面，放到服务器上，移动端这边直接webView 加载url即可。
     - 还有一种后台接口直接返回这段html富文本的，String类型的，移动端直接加载的；具体的需求按实际情况而定。
@@ -818,20 +803,86 @@
     - webView直接加载url体验上没那么流畅，相对的加载html文件会好点。但是对比原生，体验上稍微弱点。
     - 如果不用WebView，使用TextView显示html富文本，则会出现图片不显示，以及格式问题。
     - 如果不用WebView，使用自定义富文本RichText，则需要解析html显示，如果对html标签，js不熟悉，也不太好处理。
-- 富文本编辑遇到的问题
-    - 当富文本切换到编辑模式时，
 
 
 
-### 22.生成json片段上传服务器
-#### 22.1 提交富文本
+### 20.生成json片段上传服务器
+- 参考了易车发布帖子，提交数据到服务器，针对富文本，是把它拼接成对象。将文字，图片按照富文本的顺序拼接成json片段，然后提交给服务器。
 
 
-#### 22.2 编辑富文本
+#### 20.1 提交富文本
+- 用原生ScrollView + LineaLayout + n个EditText+Span + n个ImageView来实现富文本。可以先创建一个对象用来存储数据，下面这个实体类比较简单，开发中字段稍微多些。如下所示
+    ```
+    public class HyperEditData implements Serializable {
+    
+        /**
+         * 富文本输入文字内容
+         */
+        private String inputStr;
+        /**
+         * 富文本输入图片地址
+         */
+        private String imagePath;
+        /**
+         * 类型：1，代表文字；2，代表图片
+         */
+        private int type;
+    
+        //省略很多set，get方法
+    }
+    ```
+- 然后怎么去把富文本数据按照有序去放到集合中呢？如下所示，具体可以看demo中的代码……
+    ```
+    /**
+     * 对外提供的接口, 生成编辑数据上传
+     */
+    public List<HyperEditData> buildEditData() {
+        List<HyperEditData> dataList = new ArrayList<>();
+        try {
+            int num = layout.getChildCount();
+            for (int index = 0; index < num; index++) {
+                View itemView = layout.getChildAt(index);
+                HyperEditData hyperEditData = new HyperEditData();
+                if (itemView instanceof EditText) {
+                    //文本
+                    EditText item = (EditText) itemView;
+                    hyperEditData.setInputStr(item.getText().toString());
+                    hyperEditData.setType(2);
+                } else if (itemView instanceof RelativeLayout) {
+                    //图片
+                    HyperImageView item = itemView.findViewById(R.id.edit_imageView);
+                    hyperEditData.setImagePath(item.getAbsolutePath());
+                    hyperEditData.setType(1);
+                }
+                dataList.add(hyperEditData);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        HyperLogUtils.d("HyperTextEditor----buildEditData------dataList---"+dataList.size());
+        return dataList;
+    }
+    ```
+- 最后将富文本数据转化为json提交到服务器，服务器拿到json后，结合富文本的后续信息，比如，作者，时间，类型，标签等创建可以用浏览器打开的h5页面，这个需要跟服务器端配合。如下所示
+    ```
+    List<HyperEditData> editList = hte_content.buildEditData();
+    //生成json
+    Gson gson = new Gson();
+    String content = gson.toJson(editList);
+    //转化成json字符串
+    String string = HyperHtmlUtils.stringToJson(content);
+    //提交服务器省略
+    ```
 
 
 
-### 23.图片上传策略问题思考
+#### 20.2 编辑富文本
+- 当然，提交了文章肯定还有审核功能，这个时候想去修改富文本怎么办。ok，需要服务器把之前传递给它的json返回给客户端，然后解析填充到富文本中。这个就没什么好说的……
+
+
+
+
+### 21.图片上传策略问题思考
 - 大多数开发者会采用的方式：
     - 先在编辑器里显示本地图片，等待用户编辑完成再上传全部图片，然后用上传返回的url替换之前html中显示本地图片的位置。
 - 这样会遇到很多问题：
@@ -840,6 +891,26 @@
     - 选图完成即上传，得到url之后直接插入，上传是耗时操作，再加上图片压缩的时间，这样编辑器显示图片会有可观的延迟时间，实际项目中可以加一个默认的占位图，另外加一个标记提醒用户是否上传完成，避免没有上传成功用户即提交的问题。
 - 这种场景很容易想到：
     - 比如，在简书，掘金上写博客。写文章时，插入本地图片，即使你没有提交文章，也会把图片上传到服务器，然后返回一个图片链接给你，最后当你发表文章时，图片只需要用链接替代即可。
+
+
+
+
+
+### 22.合理运用面向对象编程思想
+#### 22.1 针对富文本插入图片操作
+
+
+
+#### 22.2 针对修改EditText文本内容加粗等格式
+- 由于文本选中文字改变字体样式，有加粗，下划线，删除线，添加引号，加粗斜体，斜体等n种样式。
+
+
+
+
+
+### 23.用的设计模式介绍
+
+
 
 
 

@@ -135,6 +135,16 @@
                 android:layout_height="match_parent"
                 android:background="@android:color/darker_gray"/>
             <TextView
+                android:id="@+id/tv_4_2"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:padding="10dp"
+                android:text="加粗斜体" />
+            <View
+                android:layout_width="1px"
+                android:layout_height="match_parent"
+                android:background="@android:color/darker_gray"/>
+            <TextView
                 android:id="@+id/tv_5"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"

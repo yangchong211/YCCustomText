@@ -137,6 +137,7 @@ public class NewArticleActivity extends AppCompatActivity {
         TextView tv_2 = findViewById(R.id.tv_2);
         TextView tv_3 = findViewById(R.id.tv_3);
         TextView tv_4 = findViewById(R.id.tv_4);
+        TextView tv_4_2 = findViewById(R.id.tv_4_2);
         TextView tv_5 = findViewById(R.id.tv_5);
         TextView tv_6 = findViewById(R.id.tv_6);
         tv_1.setOnClickListener(new View.OnClickListener() {
@@ -167,7 +168,13 @@ public class NewArticleActivity extends AppCompatActivity {
                 hte_content.strikeThrough();
             }
         });
-
+        tv_4_2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //加粗斜体
+                hte_content.boldItalic();
+            }
+        });
         tv_0_1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -191,6 +198,7 @@ public class NewArticleActivity extends AppCompatActivity {
                 //生成json
                 Gson gson = new Gson();
                 String content = gson.toJson(editList);
+                //转化成json字符串
                 String string = HyperHtmlUtils.stringToJson(content);
                 Intent intent = new Intent(NewArticleActivity.this, TextActivity.class);
                 intent.putExtra("content", string);

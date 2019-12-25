@@ -36,6 +36,10 @@ public class HyperEditData implements Serializable {
      * 富文本输入图片地址
      */
     private String imagePath;
+    /**
+     * 类型：1，代表文字；2，代表图片
+     */
+    private int type;
 
     public String getInputStr() {
         return inputStr;
@@ -51,5 +55,13 @@ public class HyperEditData implements Serializable {
 
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 }
