@@ -677,12 +677,12 @@ public class HyperTextEditor extends ScrollView {
 				    //文本
 					EditText item = (EditText) itemView;
 					hyperEditData.setInputStr(item.getText().toString());
-					hyperEditData.setType(2);
+					hyperEditData.setType(1);
 				} else if (itemView instanceof RelativeLayout) {
 				    //图片
 					HyperImageView item = itemView.findViewById(R.id.edit_imageView);
 					hyperEditData.setImagePath(item.getAbsolutePath());
-                    hyperEditData.setType(1);
+                    hyperEditData.setType(2);
 				}
 				dataList.add(hyperEditData);
 			}
