@@ -59,7 +59,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="共24个字"/>
+            android:text="共0个字"/>
     </LinearLayout>
     <View
         android:layout_width="match_parent"
