@@ -217,6 +217,7 @@ public class NewArticleActivity extends AppCompatActivity {
         hte_content.setOnHyperChangeListener(new OnHyperChangeListener() {
             @Override
             public void onImageClick(int contentLength, int imageLength) {
+                //富文本的文字数量，图片数量统计
                 tv_length.setText("文字共"+contentLength+"个字，图片共"+imageLength+"张");
             }
         });

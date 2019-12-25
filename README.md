@@ -13,7 +13,7 @@
 
 ### 01.富文本控件介绍
 #### 1.1 富文本介绍
-- 自定义文本控件，支持富文本，包含两种状态：编辑状态和预览状态。编辑状态中，可以对插入本地或者网络图片，可以同时插入多张有序图片和删除图片，支持图文混排，并且可以对文字内容简单操作加粗字体，设置字体下划线，支持设置文字超链接(超链接支持跳转)，功能正在开发中和完善中……
+- 自定义文本控件，支持富文本，包含两种状态：编辑状态和预览状态。编辑状态中，可以对插入本地或者网络图片，可以同时插入多张有序图片和删除图片，支持图文混排，并且可以对文字内容简单操作加粗字体，设置字体下划线，支持设置文字超链接(超链接支持跳转)，支持字数和图片数量统计，功能正在开发中和完善中……
 
 
 #### 1.2 富文本截图
@@ -125,14 +125,33 @@
     
     </LinearLayout>
     ```
-- 在编辑富文本状态时
+- 在编辑富文本状态时，HyperTextEditor控件
     ```
     //插入图片
     hte_content.insertImage(imagePath);
     //对外提供的接口, 生成编辑数据上传
     List<HyperEditData> editList = hte_content.buildEditData();
+    
+    hte_content.setOnHyperListener(new OnHyperEditListener() {
+        @Override
+        public void onImageClick(View view, String imagePath) {
+            //图片点击事件
+        }
+
+        @Override
+        public void onRtImageDelete(String imagePath) {
+            //图片删除事件
+        }
+    });
+    hte_content.setOnHyperChangeListener(new OnHyperChangeListener() {
+        @Override
+        public void onImageClick(int contentLength, int imageLength) {
+            //富文本的文字数量，图片数量统计
+            tv_length.setText("文字共"+contentLength+"个字，图片共"+imageLength+"张");
+        }
+    });
     ```
-- 在预览富文本状态时
+- 在预览富文本状态时，HyperTextView控件
     ```
     //清除所有文本
     htv_content.clearAllLayout();
@@ -148,6 +167,13 @@
         //在特定位置插入TextView
         htv_content.addTextViewAtIndex(htv_content.getLastIndex(), text);
     }
+    
+    htv_content.setOnHyperTextListener(new OnHyperTextListener() {
+        @Override
+        public void onImageClick(View view, String imagePath) {
+            //图片点击事件
+        }
+    });
     ```
 - 关于HyperTextEditor的属性介绍说明
     ```
