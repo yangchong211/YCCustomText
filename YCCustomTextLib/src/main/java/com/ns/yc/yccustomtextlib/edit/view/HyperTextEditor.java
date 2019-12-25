@@ -291,12 +291,7 @@ public class HyperTextEditor extends ScrollView {
 
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				getContentAndImageCount();
-				int contentLength = getContentLength();
-				int imageLength = getImageLength();
-				if (onHyperChangeListener!=null){
-				    onHyperChangeListener.onImageClick(contentLength,imageLength);
-                }
+				addHyperEditorChangeListener();
 				HyperLogUtils.d("HyperTextEditor---onTextChanged--文字--"+contentLength+"--图片-"+imageLength);
 			}
 
@@ -382,13 +377,7 @@ public class HyperTextEditor extends ScrollView {
 					//SDCardUtil.deleteFile(editData.imagePath);
 					//从图片集合中移除图片链接
 					imagePaths.remove(editData.getImagePath());
-                    //监听富文本：文字+图片数量变化
-                    getContentAndImageCount();
-                    int contentLength = getContentLength();
-                    int imageLength = getImageLength();
-                    if (onHyperChangeListener!=null){
-                        onHyperChangeListener.onImageClick(contentLength,imageLength);
-                    }
+                    addHyperEditorChangeListener();
 				}
 				//然后移除当前view
 				layout.removeView(view);
@@ -397,6 +386,19 @@ public class HyperTextEditor extends ScrollView {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * 监听富文本：文字+图片数量变化
+	 * 分别在图片插入，图片删除，以及文本变化时添加监听事件
+	 */
+	private void addHyperEditorChangeListener() {
+		getContentAndImageCount();
+		int contentLength = getContentLength();
+		int imageLength = getImageLength();
+		if (onHyperChangeListener!=null){
+			onHyperChangeListener.onImageClick(contentLength,imageLength);
 		}
 	}
 
@@ -507,12 +509,7 @@ public class HyperTextEditor extends ScrollView {
 			//隐藏小键盘
 			hideKeyBoard();
 			//监听富文本：文字+图片数量变化
-            getContentAndImageCount();
-            int contentLength = getContentLength();
-            int imageLength = getImageLength();
-            if (onHyperChangeListener!=null){
-                onHyperChangeListener.onImageClick(contentLength,imageLength);
-            }
+			addHyperEditorChangeListener();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
