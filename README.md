@@ -19,6 +19,9 @@
 #### 1.2 富文本截图
 ![image](https://github.com/yangchong211/YCCustomText/blob/master/image/image1.jpeg)
 ![image](https://github.com/yangchong211/YCCustomText/blob/master/image/image2.jpeg)
+![image](https://github.com/yangchong211/YCCustomText/blob/master/image/image3.jpeg)
+![image](https://github.com/yangchong211/YCCustomText/blob/master/image/image4.jpeg)
+![image](https://github.com/yangchong211/YCCustomText/blob/master/image/image5.jpeg)
 
 
 
