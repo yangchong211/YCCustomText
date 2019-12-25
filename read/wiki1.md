@@ -69,7 +69,6 @@
 
 
 
-
 #### 2.2 第一种方案
 - 使用ScrollView作为最外层，布局包含LineaLayout，图文混排内容，则是用TextView/EditText和ImageView去填充。
 - 富文本编辑状态：ScrollView + LineaLayout + n个EditText+Span + n个ImageView
