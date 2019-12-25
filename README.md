@@ -88,6 +88,10 @@
 
 
 ### 05.富文本如何使用
+- 如何引用
+```
+
+```
 - 在布局中引用，HyperTextEditor是编辑富文本，HyperTextView是预览富文本
     ```
     <?xml version="1.0" encoding="utf-8"?>
