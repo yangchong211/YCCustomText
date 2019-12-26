@@ -65,42 +65,14 @@ public class NewArticleActivity extends AppCompatActivity {
     private Disposable subsInsert;
     private Disposable mDisposable;
 
+
     @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        if(ev.getAction()==MotionEvent.ACTION_DOWN){
-            if(isShouldHideInput(ev)){
-                hintKeyBord();
-            }
-        }
-        if (getWindow().superDispatchTouchEvent(ev)) {
-            return true;
-        }
-        return onTouchEvent(ev);
-    }
-
-    private boolean isShouldHideInput(MotionEvent ev) {
-        View view = getCurrentFocus();
-        if(view!=null && view instanceof EditText){
-            int[]viewsArr=new int [2];
-            view.getLocationInWindow(viewsArr);
-            int left=viewsArr[0];
-            int top=viewsArr[1];
-            int bottom = top + view.getHeight();
-            int right = left + view.getWidth();
-            if(ev.getX()>=left && ev.getX()<=right && ev.getY()>top && ev.getY()<bottom){
-                return false;
-            }else {
-                return true;
-            }
-        }else {
-            return true;
-        }
-    }
-
-    public void hintKeyBord(){
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm !=null) {
-            imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
+    public void onBackPressed() {
+        super.onBackPressed();
+        //判断键盘是否弹出
+        boolean softInputVisible = HyperLibUtils.isSoftInputVisible(this);
+        if (softInputVisible){
+            HyperLibUtils.hideSoftInput(this);
         }
     }
 
@@ -125,6 +97,8 @@ public class NewArticleActivity extends AppCompatActivity {
             public void run() {
                 EditText lastFocusEdit = hte_content.getLastFocusEdit();
                 lastFocusEdit.requestFocus();
+                //打开软键盘显示
+                //HyperLibUtils.openSoftInput(NewArticleActivity.this);
             }
         },300);
     }
@@ -255,7 +229,7 @@ public class NewArticleActivity extends AppCompatActivity {
         switch (item.getItemId()){
             case R.id.insert_image:
                 //插入图片
-                closeSoftKeyInput();
+                HyperLibUtils.hideSoftInput(this);
                 PermissionUtils.checkWritePermissionsRequest(this, new PermissionCallBack() {
                     @Override
                     public void onPermissionGranted(Context context) {
@@ -480,40 +454,6 @@ public class NewArticleActivity extends AppCompatActivity {
                 //参数1 true表示拍照存储在共有目录，false表示存储在私有目录；参数2与 AndroidManifest中authorities值相同，用于适配7.0系统 必须设置
                 .captureStrategy(new CaptureStrategy(true,"com.sendtion.matisse.fileprovider"))//存储到哪里
                 .forResult(REQUEST_CODE_CHOOSE);//请求码
-    }
-
-
-
-
-    /**
-     * 关闭软键盘
-     */
-    private void closeSoftKeyInput(){
-        InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
-        //boolean isOpen=imm.isActive();//isOpen若返回true，则表示输入法打开
-        if (imm != null && imm.isActive() && getCurrentFocus() != null){
-            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
-                    InputMethodManager.HIDE_NOT_ALWAYS);
-            //imm.hideSoftInputFromInputMethod();//据说无效
-            //imm.hideSoftInputFromWindow(et_content.getWindowToken(), 0); //强制隐藏键盘
-            //如果输入法在窗口上已经显示，则隐藏，反之则显示
-            //imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
-        }
-    }
-
-    /**
-     * 打开软键盘
-     */
-    private void openSoftKeyInput(){
-        InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
-        //boolean isOpen=imm.isActive();//isOpen若返回true，则表示输入法打开
-        if (imm != null && !imm.isActive() && hte_content != null){
-            hte_content.requestFocus();
-            //第二个参数可设置为0
-            //imm.showSoftInput(et_content, InputMethodManager.SHOW_FORCED);//强制显示
-            imm.showSoftInputFromInputMethod(hte_content.getWindowToken(),
-                    InputMethodManager.SHOW_FORCED);
-        }
     }
 
     private void initHyper(){

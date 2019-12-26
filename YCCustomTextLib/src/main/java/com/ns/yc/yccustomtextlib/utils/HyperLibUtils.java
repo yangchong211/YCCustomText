@@ -15,20 +15,32 @@ limitations under the License.
 */
 package com.ns.yc.yccustomtextlib.utils;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
 import android.os.ParcelFileDescriptor;
+import android.os.ResultReceiver;
+import android.support.annotation.NonNull;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.CharacterStyle;
 import android.text.style.ForegroundColorSpan;
 import android.util.Base64;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -408,8 +420,6 @@ public final class HyperLibUtils {
         return null;
     }
 
-
-
     public static String toBase64(Bitmap bitmap) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
@@ -443,5 +453,155 @@ public final class HyperLibUtils {
         return System.currentTimeMillis();
     }
 
+
+    private static int sDecorViewDelta = 0;
+    /**
+     * 判断软键盘是否可见
+     * @param activity                          activity上下文
+     * @return
+     */
+    public static boolean isSoftInputVisible(@NonNull final Activity activity) {
+        return getDecorViewInvisibleHeight(activity) > 0;
+    }
+
+    /**
+     * 获取DecorView可见的高度
+     * @param activity                          activity
+     * @return
+     */
+    private static int getDecorViewInvisibleHeight(final Activity activity) {
+        Window window = activity.getWindow();
+        if (window==null){
+            return 0;
+        }
+        final View decorView = window.getDecorView();
+        final Rect outRect = new Rect();
+        decorView.getWindowVisibleDisplayFrame(outRect);
+        HyperLogUtils.d("getDecorViewInvisibleHeight: " + (decorView.getBottom() - outRect.bottom));
+        int delta = Math.abs(decorView.getBottom() - outRect.bottom);
+        if (delta <= getNavBarHeight(activity) + getStatusBarHeight(activity)) {
+            sDecorViewDelta = delta;
+            return 0;
+        }
+        return delta - sDecorViewDelta;
+    }
+
+    /**
+     * 获取状态栏高度
+     * @return
+     */
+    private static int getStatusBarHeight(Context context) {
+        Resources resources = context.getApplicationContext().getResources();
+        int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
+        return resources.getDimensionPixelSize(resourceId);
+    }
+
+    /**
+     * 获取底部导航栏高度
+     * @return
+     */
+    private static int getNavBarHeight(Context context) {
+        Resources res = context.getApplicationContext().getResources();
+        int resourceId = res.getIdentifier("navigation_bar_height", "dimen", "android");
+        if (resourceId != 0) {
+            return res.getDimensionPixelSize(resourceId);
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * 隐藏软键盘
+     * @param activity                              上下文
+     */
+    public static void hideSoftInput(@NonNull final Activity activity) {
+        View view = activity.getCurrentFocus();
+        if (view == null) {
+            View decorView = activity.getWindow().getDecorView();
+            View focusView = decorView.findViewWithTag("keyboardTagView");
+            if (focusView == null) {
+                view = new EditText(activity);
+                view.setTag("keyboardTagView");
+                ((ViewGroup) decorView).addView(view, 0, 0);
+            } else {
+                view = focusView;
+            }
+            view.requestFocus();
+        }
+        hideSoftInput(activity,view);
+    }
+
+    /**
+     * 隐藏软键盘
+     * @param context                               上下文
+     * @param view                                  view
+     */
+    public static void hideSoftInput(Context context, @NonNull final View view) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm == null) {
+            return;
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        //imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        //imm.hideSoftInputFromInputMethod();//据说无效
+        //imm.hideSoftInputFromWindow(et_content.getWindowToken(), 0); //强制隐藏键盘
+        //如果输入法在窗口上已经显示，则隐藏，反之则显示
+        //imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+    }
+
+    /**
+     * 打开软键盘
+     * @param activity                              上下文
+     */
+    public static void openSoftInput(@NonNull Activity activity) {
+        if (!isSoftInputVisible(activity)) {
+            toggleSoftInput(activity);
+        }
+    }
+
+    /**
+     * 打开软键盘
+     * @param activity                              上下文
+     * @param view                                  view
+     */
+    public static void openSoftInput(Activity activity, final View view) {
+        openSoftInput(activity,view, 0);
+    }
+
+    /**
+     * 打开软键盘
+     * @param context                               上下文
+     * @param view                                  view
+     * @param flags                                 flags
+     */
+    private static void openSoftInput(final Context context, @NonNull final View view, final int flags) {
+        InputMethodManager imm = (InputMethodManager) context.getApplicationContext()
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm == null) {
+            return;
+        }
+        view.setFocusable(true);
+        view.setFocusableInTouchMode(true);
+        view.requestFocus();
+        imm.showSoftInput(view, flags, new ResultReceiver(new Handler()) {
+            @Override
+            protected void onReceiveResult(int resultCode, Bundle resultData) {
+                if (resultCode == InputMethodManager.RESULT_UNCHANGED_HIDDEN
+                        || resultCode == InputMethodManager.RESULT_HIDDEN) {
+                    toggleSoftInput(context);
+                }
+            }
+        });
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+    }
+
+    private static void toggleSoftInput(Context context) {
+        InputMethodManager imm = (InputMethodManager) context.getApplicationContext()
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm == null) {
+            return;
+        }
+        imm.toggleSoftInput(0, 0);
+    }
 
 }
