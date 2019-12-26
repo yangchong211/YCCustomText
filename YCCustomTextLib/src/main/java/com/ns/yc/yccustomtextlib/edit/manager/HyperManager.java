@@ -27,7 +27,7 @@ import com.ns.yc.yccustomtextlib.edit.inter.ImageLoader;
  *     revise: 暴露给开发者调用，将请求图片的过程暴露给开发者，便于维护
  * </pre>
  */
-public class HyperManager {
+public final class HyperManager {
 
     private static HyperManager instance;
     private ImageLoader imageLoader;

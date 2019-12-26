@@ -20,8 +20,7 @@
 - 19.生成html片段上传服务器
 - 20.生成json片段上传服务器
 - 21.图片上传策略问题思考
-- 22.合理运用面向对象编程思想
-- 23.用的设计模式介绍
+- 22.一些细节问题的处理
 
 
 
@@ -30,9 +29,18 @@
 - 自定义文本控件，支持富文本，包含两种状态：编辑状态和预览状态。编辑状态中，可以对插入本地或者网络图片，可以同时插入多张有序图片和删除图片，支持图文混排，并且可以对文字内容简单操作加粗字体，设置字体下划线，支持设置文字超链接(超链接支持跳转)，还可以统计富文本中的字数，功能正在开发中和完善中……
 
 
-#### 1.2 富文本截图
+#### 1.2 富文本效果图
 ![image](https://github.com/yangchong211/YCCustomText/blob/master/image/image1.jpeg)
 ![image](https://github.com/yangchong211/YCCustomText/blob/master/image/image2.jpeg)
+![image](https://github.com/yangchong211/YCCustomText/blob/master/image/image3.jpeg)
+![image](https://github.com/yangchong211/YCCustomText/blob/master/image/image4.jpeg)
+![image](https://github.com/yangchong211/YCCustomText/blob/master/image/image5.jpeg)
+
+
+
+#### 1.3 富文本开源库
+- https://github.com/yangchong211/YCCustomText
+
 
 
 
@@ -54,7 +62,6 @@
 
 
 
-
 ### 02.实现的方案介绍
 #### 2.0 页面构成分析
 - 整个界面的要求
@@ -64,13 +71,14 @@
     - 文字可以修改属性，比如加粗，对齐，下划线
 - 根据富文本作出以下分析
     - 使用原生控件，可插入图片、文字界面不能用一个EditText来做，需要使用LinearLayout添加不同的控件，图片部分用ImageView，界面可滑动最外层使用ScrollView。
-    - 使用WebView+js+css方式，富文本格式用html方式展现，比较复杂，对标签要非常熟悉才可以尝试使用
+    - 使用WebView+js+css方式，富文本格式用html方式展现，比较复杂，对标签要非常熟悉才可以尝试使用。
 - 使用原生控件多焦点问题分析
     - 界面是由多个输入区域拼接而成，暂且把输入区域称为EditText，图片区域称为ImageView，外层是LinearLayout。
     - 如果一个富文本是：文字1+图片1+文字2+文字3+图片3+图片4；那么使用LinearLayout包含多个EditText实现的难点：
         - 如何处理记录当前的焦点区域
         - 如何处理在文字区域的中间位置插入ImageView样式的拆分和合并
         - 如何处理输入区域的删除键处理 
+        - span的查分和合并，以及边界逻辑，span多样式问题处理等
 
 
 
@@ -87,7 +95,7 @@
 
 #### 2.3 第二种方法
 - 使用WebView实现编辑器，支持n多格式，例如常见的html或者markdown格式。利用html标签对富文本处理，这种方式就需要专门处理标签的样式。
-- 注意这种方法的实现，需要深入研究js，css等，必须非常熟悉才可以用到实际开发中，可以当作学习一下。这种方式对于图片的显示和上传，相比原生要麻烦一些。
+- 注意这种方法的实现，需要深入研究js，css等，必须非常熟悉才可以用到实际开发中，可以当作学习一下。这种方式对于图片的显示和上传，以及js交互等需要考虑兼容性，相比原生要麻烦一些。
 
 
 
@@ -102,8 +110,8 @@
 
 
 ### 03.异常状态下保存状态信息
-- 对于自定义View，如果页面出现异常导致自定义View异常退出，则当然希望保存一些重要的信息。自定义保存状态类，继承BaseSavedState，代码如下所示
-    ```
+- 对于自定义View，如果页面出现异常导致自定义View异常退出，则当然希望保存一些重要的信息。自定义保存状态类，继承BaseSavedState，代码如下所示：
+    ```java
     public class TextEditorState extends View.BaseSavedState {
     
         public int rtImageHeight;
@@ -136,8 +144,8 @@
         }
     }
     ```
-- 如何使用该保存状态栏，自定义View中，有两个特别的方法，分别是onSaveInstanceState和onRestoreInstanceState，具体逻辑如下所示
-    ```
+- 如何使用该保存状态栏，自定义View中，有两个特别的方法，分别是onSaveInstanceState和onRestoreInstanceState，具体逻辑如下所示：
+    ```java
     /**
      * 保存重要信息
      * @return
@@ -167,9 +175,9 @@
 
 ### 04.处理软键盘回删按钮逻辑
 - 想了一下，当富文本处于编辑的状态，利用光标可以进行删除插入点之前的字符。删除的时候，根据光标的位置，如果光标遇到是图片，则可以用光标删除图片；如果光标遇到是文字，则可以用光标删除文字。
-- 更详细的来说，监听删除键的点击的逻辑需要注意，当光标在EditText 输入中间，点击删除不进行处理正常删除；当光标在EditText首端，判断前一个控件，如果是图片控件，删除图片控件，如果是输入控件，删除当前控件并将输入区域合并成一个输入区域。
+- 更详细的来说，监听删除键的点击的逻辑需要注意，当光标在EditText输入中间，点击删除不进行处理正常删除；当光标在EditText首端，判断前一个控件，如果是图片控件，删除图片控件，如果是输入控件，删除当前控件并将输入区域合并成一个输入区域。
 - 创建一个键盘退格监听事件，代码如下所示：
-    ```
+    ```java
     // 初始化键盘退格监听，主要用来处理点击回删按钮时，view的一些列合并操作
     keyListener = new OnKeyListener() {
         @Override
@@ -185,7 +193,7 @@
     };
     ```
 - 然后针对退格删除，分为两种情况，第一种是删除图片，第二种是删除文字内容。具体代码如下所示：
-    ```
+    ```java
     /**
      * 处理软键盘backSpace回退事件
      * @param editTxt 					光标所在的文本输入框
@@ -223,7 +231,7 @@
     - 如果光标已经顶在了editText的最中间，则需要分割字符串，分割成两个EditText，并在两个EditText中间插入图片
     - 如果当前获取焦点的EditText为空，直接在EditText下方插入图片，并且插入空的EditText
 - 代码思路如下所示
-    ```
+    ```java
     /**
      * 插入一张图片
      * @param imagePath							图片路径地址
@@ -265,7 +273,7 @@
 - 前面已经提到了，如果一个富文本是：文字1+图片1+文字2+文字3+图片3+图片4，那么点击文字1控件则在此输入文字，点击文字3控件则在此输入文字。
 - 所以，这样操作，确定处理记录当前的焦点区域位置十分重要。当前的编辑器已经添加了多个输入文本EditText，现在的问题在于需要记录当前编辑的EditText，在应用样式的时候定位到输入的控件，在编辑器中添加一个变量lastFocusEdit。具体可以看代码……
 - 既然可以记录最后焦点输入文本，那么如何监听当前的输入控件呢，这就用到了OnFocusChangeListener，这个又是在哪里用到，具体如下面所示。要先setOnFocusChangeListener(focusListener) 再 requestFocus。
-    ```
+    ```java
     /**
      * 所有EditText的焦点监听listener
      */
@@ -343,7 +351,7 @@
 ### 08.利用Span对文字属性处理
 - 这里仅仅是对字体加粗进行介绍，其实设置span可以找到规律。多个span样式，考虑到后期的拓展性，肯定要进行封装和抽象，具体该如何处理呢？
     - 设置文本选中内容加粗模式，代码如下所示，可以看到这里只需要传递一个lastFocusEdit对象即可，这个对象是最近被聚焦的EditText。
-    ```
+    ```java
     /**
      * 修改加粗样式
      */
@@ -371,7 +379,7 @@
     }
     ```
 - 然后看一下new BoldStyle().applyStyle(editable, start, end)具体做了什么？下面这段代码逻辑，具体可以看07.如果对选中文字加粗的分析思路。
-    ```
+    ```java
     public void applyStyle(Editable editable, int start, int end) {
         //获取 从  start 到 end 位置上所有的指定 class 类型的 Span数组
         E[] spans = editable.getSpans(start, end, clazzE);
@@ -405,7 +413,7 @@
 
 ### 09.如何设置插入多张图片
 - 富文本当然支持插入多张图片，那么插入多张图片是如何操作呢。插入1，2，3这三张图片，如何保证它们的插入顺序，从而避免插入错位，带着这几个问题看一下插入多张图片操作。
-    ```
+    ```java
     Observable.create(new ObservableOnSubscribe<String>() {
         @Override
         public void subscribe(ObservableEmitter<String> emitter) {
@@ -457,7 +465,7 @@
 ### 10.如何设置插入网络图片
 - 插入图片有两种情况，一种是本地图片，一种是网络图片。由于富文本中对插入图片的宽高有限制，即可以动态设置图片的高度，这就要求请求网络图片后，需要对图片进行处理。
 - 首先看一下插入图片的代码，在HyperTextEditor类中，由于封装lib，不建议在lib中使用某个图片加载库加载图片，而应该是暴露给外部开发者去加载图片。
-    ```
+    ```java
     /**
      * 在特定位置添加ImageView
      */
@@ -478,7 +486,7 @@
     }
     ```
 - 那么具体在那个地方去loadImage设置加载图片呢？可以发现这样极大地提高了代码的拓展性，原因是你可能用glide，他可能用Picasso，还有的用ImageLoader，所以最好暴露给外部。
-    ```
+    ```java
     HyperManager.getInstance().setImageLoader(new ImageLoader() {
         @Override
         public void loadImage(final String imagePath, final ImageView imageView, final int imageHeight) {
@@ -508,7 +516,7 @@
     - 2.计算图片的缩放值
     - 3.最后对图片进行质量压缩
 - 具体设置图片压缩的代码如下所示
-    ```
+    ```java
     public static Bitmap getSmallBitmap(String filePath, int newWidth, int newHeight) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -539,7 +547,7 @@
 
 ### 12.如何删除图片或者文字
 - 当富文本处于编辑状态时，点击删除图片是可以删除图片的，对于删除的逻辑，封装的lib可以给开发者暴露一个删除的监听事件。注意删除图片有两种操作：第一种是利用光标删除，第二种是点击触发删除。删除图片后，不仅仅是要删除图片数据，而且还要删除图片ImageView控件。
-    ```
+    ```java
     /**
      * 处理图片上删除的点击事件
      * 删除类型 0代表backspace删除 1代表按红叉按钮删除
@@ -589,7 +597,7 @@
     - 若向ViewGroup中添加一个ImageView，ImageView对象可以设置动画(即APPEARING 动画形式)，ViewGroup中的其它ImageView对象此时移动到新的位置的过程中也可以设置相关的动画(即CHANGE_APPEARING 动画形式)。
     - 给ViewGroup设置动画很简单，只需要生成一个LayoutTransition实例，然后调用ViewGroup的setLayoutTransition（LayoutTransition）函数就可以了。当设置了布局动画的ViewGroup添加或者删除内部view时就会触发动画。
 - 具体初始化动画的代码如下所示：
-    ```
+    ```java
     mTransition = new LayoutTransition();
     mTransition.addTransitionListener(new LayoutTransition.TransitionListener() {
     
@@ -611,7 +619,7 @@
     layout.setLayoutTransition(mTransition);
     ```
 - 有个问题需要注意一下，当控件销毁的时候，记得把监听给移除一下更好，代码如下所示
-    ```
+    ```java
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
@@ -629,7 +637,7 @@
 ### 14.点击图片可以查看大图
 - 编辑状态时，由于图片有空能比较大，在显示在富文本的时候，会裁剪局中显示，也就是图片会显示不全。那么后期如果是想添加点击图片查看，则需要暴露给开发者监听事件，需要考虑到后期拓展性，代码如下所示：
     - 这样做的目的是是暴露给外部开发者调用，点击图片的操作只需要传递view还有图片即可。
-    ```
+    ```java
     // 图片处理
     btnListener = new OnClickListener() {
         @Override
@@ -648,7 +656,7 @@
 
 ### 15.如何暴露设置文字属性方法
 - 针对设置文字加粗，下划线，删除线等span属性。同时设置span，有许多类似的地方，考虑到后期的添加和移除，如何封装能够提高代码的扩展性。
-    ```
+    ```java
     /**
      * 修改加粗样式
      */
@@ -678,7 +686,7 @@
     }
     ```
 - 上面实现了选中文本加粗的功能，斜体、 下划线 、中划线等样式的设置和取消与粗体样式一致，只是创建 span 的区别而已，可以将代码进行抽取。
-    ```
+    ```java
     public abstract class NormalStyle<E> {
     
         private Class<E> clazzE;
@@ -700,7 +708,7 @@
     }
     ```
 - 其他的设置span的属性代码即是如下所示，可以看到添加一种类型很容易，也容易看懂，便于拓展：
-    ```
+    ```java
     public class ItalicStyle extends NormalStyle<ItalicStyleSpan> {
         @Override
         protected ItalicStyleSpan newSpan() {
@@ -724,7 +732,7 @@
     - 把光标后面的字符串放在新创建的EditText中（此为分割出来的第二个EditText）
     - 在第二个EditText的位置插入一个空的EditText，以便连续插入多张图片时，有空间写文字，第二个EditText下移
     - 在空的EditText的位置插入图片布局，空的EditText下移。注意，这个过程添加动画过渡一下插入的效果比较好，不然会比较生硬
-    ```
+    ```java
     //获取光标所在位置
     int cursorIndex = lastFocusEdit.getSelectionStart();
     //获取光标前面的字符串
@@ -756,7 +764,7 @@
 - 软键盘遮挡界面的问题
     - 当界面中有输入框，需要弹起软键盘输入信息的时候，软键盘可能遮挡部分布局，更有甚者，当前输入框如果在屏幕下方，软键盘也会直接遮挡输入框，这种情况对用户体验是相当不友好的，所以要根据具体的情况作出相应的处理。
     - android定义了一个属性，名字为windowSoftInputMode, 这个属性用于设置Activity主窗口与软键盘的交互模式，用于避免软键盘遮挡内容的问题。我们可以在AndroidManifet.xml中对Activity进行设置。
-    ```
+    ```java
     stateUnspecified-未指定状态：软件默认采用的交互方式，系统会根据当前界面自动调整软键盘的显示模式。
     stateUnchanged-不改变状态：当前界面软键盘状态由上个界面软键盘的状态决定；
     stateHidden-隐藏状态：进入页面，无论是否有输入需求，软键盘是隐藏的，但是如果跳转到下一个页面软键盘是展示的，回到这个页面，软键盘可能也是展示的，这个属性区别下个属性。
@@ -768,14 +776,14 @@
     adjustPan-默认模式：软键盘弹出，软键盘会遮挡屏幕下半部分布局，当输入框在屏幕下方布局，软键盘弹起，会自动将当前布局顶起，保证，软键盘不遮挡当前输入框（正常布局，非scrollView父布局）。当父布局是scrollView的时候，感觉没啥变化，还是自定将布局顶起，输入框不被遮挡，不可以手动滑出被遮挡的布局（白瞎了scrollView）;
     ```
     - 看了上面的属性，那么该如何设置呢？具体效果可以看demo案例。
-    ```
+    ```java
     <activity android:name=".NewArticleActivity"
         android:windowSoftInputMode="adjustResize|stateHidden"/>
     ```
 - 软键盘及时退出的问题
     - 当用户输入完成之后，必须手动点击软键盘的收回键，软键盘才收起。如果能通过代码主动将软键盘收起，这对于用户体验来说，是一个极大的提升，思前想后，参考网上的文档，个人比较喜欢的实现方式是通过事件分发机制来解决这个问题。
 - 解决点击EditText弹出收起键盘时出现的黑屏闪现现象
-    ```
+    ```java
     View rootView = hte_content.getRootView();
     rootView.setBackgroundColor(Color.WHITE);
     ```
@@ -819,7 +827,7 @@
 
 #### 20.1 提交富文本
 - 用原生ScrollView + LineaLayout + n个EditText+Span + n个ImageView来实现富文本。可以先创建一个对象用来存储数据，下面这个实体类比较简单，开发中字段稍微多些。如下所示
-    ```
+    ```java
     public class HyperEditData implements Serializable {
     
         /**
@@ -839,7 +847,7 @@
     }
     ```
 - 然后怎么去把富文本数据按照有序去放到集合中呢？如下所示，具体可以看demo中的代码……
-    ```
+    ```java
     /**
      * 对外提供的接口, 生成编辑数据上传
      */
@@ -871,7 +879,7 @@
     }
     ```
 - 最后将富文本数据转化为json提交到服务器，服务器拿到json后，结合富文本的后续信息，比如，作者，时间，类型，标签等创建可以用浏览器打开的h5页面，这个需要跟服务器端配合。如下所示
-    ```
+    ```java
     List<HyperEditData> editList = hte_content.buildEditData();
     //生成json
     Gson gson = new Gson();
@@ -898,36 +906,24 @@
     - 选图完成即上传，得到url之后直接插入，上传是耗时操作，再加上图片压缩的时间，这样编辑器显示图片会有可观的延迟时间，实际项目中可以加一个默认的占位图，另外加一个标记提醒用户是否上传完成，避免没有上传成功用户即提交的问题。
 - 这种场景很容易想到：
     - 比如，在简书，掘金上写博客。写文章时，插入本地图片，即使你没有提交文章，也会把图片上传到服务器，然后返回一个图片链接给你，最后当你发表文章时，图片只需要用链接替代即可。
+- 参考博客
+    - Android富文本编辑器（四）：HTML文本转换：https://www.jianshu.com/p/578085fb07d1
+    - Android 端 （图文混排）富文本编辑器的开发（一）：https://www.jianshu.com/p/155aa1e9f9d3
+    - 图文混排富文本文章编辑器实现详解：https://blog.csdn.net/ljzdyh/article/details/82497625
 
 
 
-
-
-### 22.合理运用面向对象编程思想
-#### 22.1 针对富文本插入图片操作
-
-
-
-#### 22.2 针对修改EditText文本内容加粗等格式
-- 由于文本选中文字改变字体样式，有加粗，下划线，删除线，添加引号，加粗斜体，斜体等n种样式。
+### 22.一些细节问题的处理
+- 关于软键盘的弹出和关闭，以及避免点击EditText弹出收起键盘时出现的黑屏闪现现象，还有返回键判断如果有软键盘显示则需要先关闭软键盘。
+- 在获取EditText控件内容字符串的时候，或者对字符串裁剪等等，建议最后都进行trim一下，避免字符串末尾处出现空格，增加严谨性。
+- 针对封装库中的一些工具类，或者不想被继承的类，建议用finial修饰一下，这边可以避免反射修改属性，或者通过继承修改属性，看了Rx，OkHttp等源码，可以发现很多类用了finial修饰。
+- 在控件销毁的时候，建议移除一些监听事件，同时保存一些比较重要的信息。针对设置span样式，考虑后期添加更多，因此特别注意后期代码的拆分和解藕操作。
+- 写了一个开源库，最好的体验是，用起来特别简单，如果需求改了，也容易修改和拓展，注释详细，分包合理等等。
 
 
 
-
-
-### 23.用的设计模式介绍
-
-
-
-
-
-### 参考博客
-- Android富文本编辑器（四）：HTML文本转换：https://www.jianshu.com/p/578085fb07d1
-- Android 端 （图文混排）富文本编辑器的开发（一）：https://www.jianshu.com/p/155aa1e9f9d3
-- 图文混排富文本文章编辑器实现详解：https://blog.csdn.net/ljzdyh/article/details/82497625
-
-
-
+### 富文本开源库：https://github.com/yangchong211/YCCustomText
+### 你的star是我开源的动力，谢谢！
 
 
 
