@@ -89,7 +89,9 @@ public final class HyperLibUtils {
         SpannableStringBuilder spannable = new SpannableStringBuilder(text);
         CharacterStyle span;
         try {
+            //将给定的正则表达式编译成模式
             Pattern p = Pattern.compile(target);
+            //创建将根据此模式匹配给定输入的匹配器
             Matcher m = p.matcher(text);
             while (m.find()) {
                 // 需要重复！
@@ -109,7 +111,9 @@ public final class HyperLibUtils {
      */
     public static List<String> cutStringByImgTag(String targetStr) {
         List<String> splitTextList = new ArrayList<>();
+        //将给定的正则表达式编译成模式
         Pattern pattern = Pattern.compile(IMG_REGEX1);
+        //创建将根据此模式匹配给定输入的匹配器
         Matcher matcher = pattern.matcher(targetStr);
         int lastIndex = 0;
         while (matcher.find()) {
@@ -136,7 +140,9 @@ public final class HyperLibUtils {
         //目前img标签标示有3种表达式
         //<img alt="" src="1.jpg"/>   <img alt="" src="1.jpg"></img>     <img alt="" src="1.jpg">
         //开始匹配content中的<img />标签
+        //将给定的正则表达式编译成模式
         Pattern pImg = Pattern.compile(IMG_REGEX2);
+        //创建将根据此模式匹配给定输入的匹配器
         Matcher mImg = pImg.matcher(content);
         boolean resultImg = mImg.find();
         if (resultImg) {
