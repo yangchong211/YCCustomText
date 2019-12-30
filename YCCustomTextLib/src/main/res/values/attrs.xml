@@ -3,19 +3,21 @@
 
     <declare-styleable name="HyperTextEditor" >
         <!--父控件的左和右padding-->
-        <attr name="editor_layout_right_left" format="integer" />
+        <attr name="editor_layout_right_left" format="dimension" />
         <!--父控件的上和下padding-->
-        <attr name="editor_layout_top_bottom" format="integer" />
+        <attr name="editor_layout_top_bottom" format="dimension" />
         <!--插入的图片显示高度-->
-        <attr name="editor_image_height" format="integer" />
+        <attr name="editor_image_height" format="dimension" />
         <!--两张相邻图片间距-->
-        <attr name="editor_image_bottom" format="integer" />
+        <attr name="editor_image_bottom" format="dimension" />
         <!--文字相关属性，初始提示信息-->
         <attr name="editor_text_init_hint" format="string" />
         <!--文字大小-->
         <attr name="editor_text_size" format="dimension" />
         <!--文字颜色-->
         <attr name="editor_text_color" format="color" />
+        <!--hint文字颜色-->
+        <attr name="editor_hint_text_color" format="color" />
         <!--文字行间距-->
         <attr name="editor_text_line_space" format="dimension" />
     </declare-styleable>

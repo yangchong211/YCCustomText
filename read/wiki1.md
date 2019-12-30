@@ -220,7 +220,25 @@
         }
     }
     ```
-
+- 当EditText内容为空时，发现手机根本无法响应软键盘的删除监听，这个是为什么呢？
+    - 可以看一下源码，EditText继承自TextView，翻看TextView的代码，里面有一个叫做InputConnection的东西，看起是什么输入连接的意思。如果想实现删除的功能，需要自行实现重写一个deleteSurroundingText()方法。
+    ```java
+    /**
+     * 删除操作
+     * @param beforeLength                      beforeLength
+     * @param afterLength                       afterLength
+     * @return
+     */
+    @Override
+    public boolean deleteSurroundingText(int beforeLength, int afterLength) {
+        HyperLogUtils.d("DeletableEditText---deleteSurroundingText--"+beforeLength+"----"+afterLength);
+        if (beforeLength == 1 && afterLength == 0) {
+            return sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL))
+                    && sendKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DEL));
+        }
+        return super.deleteSurroundingText(beforeLength, afterLength);
+    }
+    ```
 
 
 ### 05.在指定位置插入图片
@@ -918,7 +936,6 @@
 - 在获取EditText控件内容字符串的时候，或者对字符串裁剪等等，建议最后都进行trim一下，避免字符串末尾处出现空格，增加严谨性。
 - 针对封装库中的一些工具类，或者不想被继承的类，建议用finial修饰一下，这边可以避免反射修改属性，或者通过继承修改属性，看了Rx，OkHttp等源码，可以发现很多类用了finial修饰。
 - 在控件销毁的时候，建议移除一些监听事件，同时保存一些比较重要的信息。针对设置span样式，考虑后期添加更多，因此特别注意后期代码的拆分和解藕操作。
-- 写了一个开源库，最好的体验是，用起来特别简单，如果需求改了，也容易修改和拓展，注释详细，分包合理等等。
 
 
 

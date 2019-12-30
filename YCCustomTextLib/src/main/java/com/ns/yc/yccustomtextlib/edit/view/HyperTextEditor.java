@@ -144,6 +144,7 @@ public class HyperTextEditor extends ScrollView {
 	 * 文字颜色
 	 */
     private int rtTextColor = Color.parseColor("#757575");
+	private int rtHintTextColor = Color.parseColor("#B0B1B8");
 	/**
 	 * 文字行间距
 	 */
@@ -232,13 +233,14 @@ public class HyperTextEditor extends ScrollView {
 	private void initAttrs(Context context, AttributeSet attrs) {
 		//获取自定义属性
 		TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.HyperTextEditor);
-		topAndBottom = ta.getInteger(R.styleable.HyperTextEditor_editor_layout_top_bottom, 15);
-		leftAndRight = ta.getInteger(R.styleable.HyperTextEditor_editor_layout_right_left, 40);
-		rtImageHeight = ta.getInteger(R.styleable.HyperTextEditor_editor_image_height, 500);
-		rtImageBottom = ta.getInteger(R.styleable.HyperTextEditor_editor_image_bottom, 10);
+		topAndBottom = ta.getDimensionPixelSize(R.styleable.HyperTextEditor_editor_layout_top_bottom, 15);
+		leftAndRight = ta.getDimensionPixelSize(R.styleable.HyperTextEditor_editor_layout_right_left, 40);
+		rtImageHeight = ta.getDimensionPixelSize(R.styleable.HyperTextEditor_editor_image_height, 250);
+		rtImageBottom = ta.getDimensionPixelSize(R.styleable.HyperTextEditor_editor_image_bottom, 10);
 		rtTextSize = ta.getDimensionPixelSize(R.styleable.HyperTextEditor_editor_text_size, 16);
 		rtTextLineSpace = ta.getDimensionPixelSize(R.styleable.HyperTextEditor_editor_text_line_space, 8);
 		rtTextColor = ta.getColor(R.styleable.HyperTextEditor_editor_text_color, Color.parseColor("#757575"));
+		rtHintTextColor = ta.getColor(R.styleable.HyperTextEditor_editor_hint_text_color,Color.parseColor("#B0B1B8"));
 		rtTextInitHint = ta.getString(R.styleable.HyperTextEditor_editor_text_init_hint);
 		ta.recycle();
 	}
@@ -444,6 +446,7 @@ public class HyperTextEditor extends ScrollView {
 		editText.setHint(hint);
 		editText.setTextSize(TypedValue.COMPLEX_UNIT_PX, rtTextSize);
 		editText.setTextColor(rtTextColor);
+		editText.setHintTextColor(rtHintTextColor);
 		editText.setLineSpacing(rtTextLineSpace, 1.0f);
 		return editText;
 	}
