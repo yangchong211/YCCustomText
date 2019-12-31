@@ -27,7 +27,8 @@ public class TransformationScale extends ImageViewTarget<Bitmap> {
 
     @Override
     protected void setResource(Bitmap resource) {
-        view.setImageBitmap(resource);
+        //设置图片
+        target.setImageBitmap(resource);
         if (resource != null) {
             //获取原图的宽高
             int width = resource.getWidth();

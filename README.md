@@ -249,9 +249,11 @@
 
 
 
-### 07.富文本遗留问题
-- [- 01.业务要求插入单个图片最高200，最小高度100](https://github.com/yangchong211/YCCustomText/blob/master/read/wiki2.md)
 
+### 07.富文本遗留问题
+- 01.业务要求插入单个图片最高200，最小高度100
+- 02.根据手机屏幕按照比例进行展示图片宽高
+- [更多信息](https://github.com/yangchong211/YCCustomText/blob/master/read/wiki2.md)
 
 
 

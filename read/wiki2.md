@@ -1,5 +1,6 @@
 #### 基础概念目录介绍
 - 01.业务要求插入单个图片最高200，最小高度100
+- 02.根据手机屏幕按照比例进行展示图片宽高
 
 
 
@@ -70,7 +71,43 @@
     ```
 
 
-
+### 02.根据手机屏幕按照比例进行展示图片宽高
+- 代码如下所示
+    ```
+    public class TransformationScale extends ImageViewTarget<Bitmap> {
+    
+        private ImageView target;
+    
+        public TransformationScale(ImageView target) {
+            super(target);
+            this.target = target;
+        }
+    
+        @Override
+        protected void setResource(Bitmap resource) {
+            //设置图片
+            target.setImageBitmap(resource);
+            if (resource != null) {
+                //获取原图的宽高
+                int width = resource.getWidth();
+                int height = resource.getHeight();
+                //获取imageView的宽
+                int imageViewWidth = target.getWidth();
+                //计算缩放比例
+                float sy = (float) (imageViewWidth * 0.1) / (float) (width * 0.1);
+                //计算图片等比例放大后的高
+                int imageHeight = (int) (height * sy);
+                //ViewGroup.LayoutParams params = target.getLayoutParams();
+                //params.height = imageHeight;
+                //固定图片高度，记得设置裁剪剧中
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                        RelativeLayout.LayoutParams.MATCH_PARENT, imageHeight);
+                params.bottomMargin = 10;
+                target.setLayoutParams(params);
+            }
+        }
+    }
+    ```
 
 
 
