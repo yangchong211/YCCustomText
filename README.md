@@ -22,6 +22,7 @@
 ![image](https://github.com/yangchong211/YCCustomText/blob/master/image/image3.jpeg)
 ![image](https://github.com/yangchong211/YCCustomText/blob/master/image/image4.jpeg)
 ![image](https://github.com/yangchong211/YCCustomText/blob/master/image/image5.jpeg)
+![image](https://github.com/yangchong211/YCCustomText/blob/master/image/image6.jpg)
 
 
 
