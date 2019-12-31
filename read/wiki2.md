@@ -1,57 +1,73 @@
 #### 基础概念目录介绍
-- 01.业务需求简单介绍
-- 02.实现的方案介绍
-- 03.异常状态下保存状态信息
+- 01.业务要求插入单个图片最高200，最小高度100
 
 
 
 
-### 00.该控件介绍
-- 自定义文本控件，支持富文本，包含两种状态：编辑状态和预览状态。编辑状态中，可以对插入本地或者网络图片，可以同时插入多张有序图片和删除图片，支持图文混排，并且可以对文字内容简单操作加粗字体，设置字体下划线，支持设置文字超链接(超链接支持跳转)，功能正在开发中和完善中……
-
-
-
-
-
-### 01.业务需求简单介绍
-- 富文本控件支持动态插入文字，图片等图文混排内容。图片可以支持本地图片，也支持插入网络链接图片；
-- 富文本又两种状态：编辑状态 + 预览状态 。两种状态可以相互进行切换；
-- 富文本在编辑状态，可以同时选择插入超过一张以上的多张图片，并且可以动态设置图片之间的top间距；
-- 在编辑状态，支持利用光标删除文字内容，同时也支持用光标删除图片；
-- 在编辑状态，插入图片后，图片的宽度填充满手机屏幕的宽度，然后高度可以动态设置，图片是剧中裁剪显示；
-- 在编辑状态，插入图片后，如果本地图片过大，要求对图片进行质量压缩，大小压缩；
-- 在编辑状态，插入多张图片时，添加插入过渡动画，避免显示图片生硬。结束后，光标移到插入图片中的最后一行显示；
-- 编辑状态中，图片点击暴露点击事件接口，可以在4个边角位置动态设置一个删除图片的功能，点击删除按钮则删除图片；
-- 连续插入多张图片时，比如顺序1，2，3，注意避免出现图片插入顺序混乱的问题(异步插入多张图片可能出现顺序错乱问题)；
-- 在编辑富文本状态的时候，连续多张图片之间插入输入框，方便在图片间输入文本内容；
-- 在编辑状态中，可以设置文字大小和颜色，同时做好拓展需求，后期可能添加文本加粗，下划线，插入超链接，对齐方式等功能；
-- 编辑状态，连续插入多张图片，如果想在图片中间插入文字内容，则需要靠谱在图片之间预留编辑文本控件，方便操作；
-
-
-
-
-
-
-### 02.实现的方案介绍
-#### 2.1 第一种方案
-- 使用ScrollView作为最外层，布局包含LineaLayout，图文混排内容，则是用TextView/EditText和ImageView去填充。
-- 富文本编辑状态：ScrollView + LineaLayout + n个EditText + n个ImageView
-- 富文本预览状态：ScrollView + LineaLayout + n个TextView + n个ImageView
-- 删除的时候，根据光标的位置，如果光标遇到是图片，则可以用光标删除图片；如果光标遇到是文字，则可以用光标删除文字
-- 当插入或者删除图片的时候，可以添加一个过渡动画效果，避免直接生硬的显示。如何在ViewGroup中添加view，删除view时给相应view和受影响的其他view添加动画，不太容易做。如果只是对受到影响的view添加动画，可以通过设置view的高度使之显示和隐藏，还可以利用ScrollView通过滚动隐藏和显示动画，但其他受影响的view则比较难处理，最终选择布局动画LayoutTransition 就可以很好地完成这个功能。
-
-
-
-
-#### 2.2 第二种方法
-- 使用WebView实现编辑器，支持n多格式，例如常见的html或者markdown格式。利用html标签对富文本处理，这种方式就需要专门处理标签的样式。
-
-
-
-
-
-### 03.异常状态下保存状态信息
-
+### 01.业务要求插入单个图片最高200，最小高度100
+- 直接展示代码如下所示
+    ```
+    Glide.with(getApplicationContext())
+        .asBitmap()
+        .load(imagePath)
+        .centerCrop()
+        .placeholder(R.drawable.img_load_fail)
+        .error(R.drawable.img_load_fail)
+        .into(new SimpleTarget<Bitmap>() {
+            @Override
+            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                int width = resource.getWidth();
+                int height = resource.getHeight();
+                HyperLogUtils.d("本地图片--3--"+height+"----"+width);
+                imageView.setImageBitmap(resource);
+                ViewParent parent = imageView.getParent();
+                int imageHeight = 0;
+                //单个图片最高200，最小高度100，图片按高度宽度比例，通过改变夫布局来控制动态高度
+                if (height> HyperLibUtils.dip2px(NewArticleActivity.this,200)){
+                    if (parent instanceof RelativeLayout){
+                        ViewGroup.LayoutParams layoutParams = ((RelativeLayout) parent).getLayoutParams();
+                        layoutParams.height = HyperLibUtils.dip2px(NewArticleActivity.this,200);
+                        ((RelativeLayout) parent).setLayoutParams(layoutParams);
+                    } else if (parent instanceof FrameLayout){
+                        ViewGroup.LayoutParams layoutParams = ((FrameLayout) parent).getLayoutParams();
+                        layoutParams.height = HyperLibUtils.dip2px(NewArticleActivity.this,200);
+                        ((FrameLayout) parent).setLayoutParams(layoutParams);
+                        HyperLogUtils.d("本地图片--4--");
+                    }
+                    imageHeight = HyperLibUtils.dip2px(NewArticleActivity.this,200);
+                } else if (height>HyperLibUtils.dip2px(NewArticleActivity.this,100)
+                        && height<HyperLibUtils.dip2px(NewArticleActivity.this,200)){
+                    //自是因高度
+                    HyperLogUtils.d("本地图片--5--");
+                    imageHeight = height;
+                } else {
+                    if (parent instanceof RelativeLayout){
+                        ViewGroup.LayoutParams layoutParams = ((RelativeLayout) parent).getLayoutParams();
+                        layoutParams.height = HyperLibUtils.dip2px(NewArticleActivity.this,100);
+                        ((RelativeLayout) parent).setLayoutParams(layoutParams);
+                    } else if (parent instanceof FrameLayout){
+                        ViewGroup.LayoutParams layoutParams = ((FrameLayout) parent).getLayoutParams();
+                        layoutParams.height = HyperLibUtils.dip2px(NewArticleActivity.this,100);
+                        ((FrameLayout) parent).setLayoutParams(layoutParams);
+                        HyperLogUtils.d("本地图片--6--");
+                    }
+                    imageHeight = HyperLibUtils.dip2px(NewArticleActivity.this,100);
+                }
+                //设置图片的属性，图片的底边距，以及图片的动态高度
+                if (imageView.getLayoutParams() instanceof RelativeLayout.LayoutParams){
+                    RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                            FrameLayout.LayoutParams.MATCH_PARENT, imageHeight);//固定图片高度，记得设置裁剪剧中
+                    lp.bottomMargin = 10;//图片的底边距
+                    imageView.setLayoutParams(lp);
+                } else if (imageView.getLayoutParams() instanceof FrameLayout.LayoutParams){
+                    FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
+                            FrameLayout.LayoutParams.MATCH_PARENT, imageHeight);//固定图片高度，记得设置裁剪剧中
+                    lp.bottomMargin = 10;//图片的底边距
+                    imageView.setLayoutParams(lp);
+                }
+            }
+        });
+    ```
 
 
 
