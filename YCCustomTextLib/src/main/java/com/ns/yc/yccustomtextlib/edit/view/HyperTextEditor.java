@@ -19,8 +19,6 @@ import android.animation.LayoutTransition;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
@@ -30,6 +28,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,7 +37,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
+import android.widget.FrameLayout;
 import android.widget.ScrollView;
 
 import com.ns.yc.yccustomtextlib.edit.inter.OnHyperChangeListener;
@@ -157,6 +156,10 @@ public class HyperTextEditor extends ScrollView {
 	 * 富文本的图片个数
 	 */
 	private int imageLength = 0;
+	/**
+	 * 删除图片的位置
+	 */
+	private int delIconLocation = 0;
 	private OnHyperEditListener onHyperListener;
 	private OnHyperChangeListener onHyperChangeListener;
 
@@ -242,6 +245,7 @@ public class HyperTextEditor extends ScrollView {
 		rtTextColor = ta.getColor(R.styleable.HyperTextEditor_editor_text_color, Color.parseColor("#757575"));
 		rtHintTextColor = ta.getColor(R.styleable.HyperTextEditor_editor_hint_text_color,Color.parseColor("#B0B1B8"));
 		rtTextInitHint = ta.getString(R.styleable.HyperTextEditor_editor_text_init_hint);
+		delIconLocation = ta.getInt(R.styleable.HyperTextEditor_editor_del_icon_location,0);
 		ta.recycle();
 	}
 
@@ -271,8 +275,12 @@ public class HyperTextEditor extends ScrollView {
 						onHyperListener.onImageClick(imageView, imageView.getAbsolutePath());
 					}
 				} else if (v instanceof ImageView){
-					RelativeLayout parentView = (RelativeLayout) v.getParent();
-					onImageCloseClick(parentView);
+					FrameLayout parentView = (FrameLayout) v.getParent();
+					// 图片删除图片点击事件
+					if (onHyperListener != null){
+						onHyperListener.onImageCloseClick(parentView);
+					}
+					//onImageCloseClick(parentView);
 				}
 			}
 		};
@@ -330,7 +338,7 @@ public class HyperTextEditor extends ScrollView {
 				// 如果editIndex-1<0,
 				View preView = layout.getChildAt(editIndex - 1);
 				if (null != preView) {
-					if (preView instanceof RelativeLayout) {
+					if (preView instanceof FrameLayout) {
 						// 光标EditText的上一个view对应的是图片，删除图片操作
 						onImageCloseClick(preView);
 					} else if (preView instanceof EditText) {
@@ -364,7 +372,7 @@ public class HyperTextEditor extends ScrollView {
 	 * 删除类型 0代表backspace删除 1代表按红叉按钮删除
 	 * @param view 							整个image对应的relativeLayout view
 	 */
-	private void onImageCloseClick(View view) {
+	public void onImageCloseClick(View view) {
 		try {
 			//判断过渡动画是否结束，只能等到结束才可以操作
 			if (!mTransition.isRunning()) {
@@ -454,10 +462,39 @@ public class HyperTextEditor extends ScrollView {
 	/**
 	 * 生成图片View
 	 */
-	private RelativeLayout createImageLayout() {
-		RelativeLayout layout = (RelativeLayout) inflater.inflate(R.layout.edit_imageview, null);
+	private FrameLayout createImageLayout() {
+		FrameLayout layout = (FrameLayout) inflater.inflate(R.layout.hte_edit_imageview, null);
 		layout.setTag(viewTagIndex++);
-		View closeView = layout.findViewById(R.id.image_close);
+		ImageView closeView = layout.findViewById(R.id.image_close);
+		FrameLayout.LayoutParams layoutParams = (LayoutParams) closeView.getLayoutParams();
+		layoutParams.bottomMargin = HyperLibUtils.dip2px(layout.getContext(),10.0f);
+		switch (delIconLocation){
+			//左上角
+			case 1:
+				layoutParams.gravity = Gravity.TOP | Gravity.START;
+				closeView.setLayoutParams(layoutParams);
+				break;
+			//右上角
+			case 2:
+				layoutParams.gravity = Gravity.TOP | Gravity.END;
+				closeView.setLayoutParams(layoutParams);
+				break;
+			//左下角
+			case 3:
+				layoutParams.gravity = Gravity.BOTTOM | Gravity.START;
+				closeView.setLayoutParams(layoutParams);
+				break;
+			//右下角
+			case 4:
+				layoutParams.gravity = Gravity.BOTTOM | Gravity.END;
+				closeView.setLayoutParams(layoutParams);
+				break;
+			//其他右下角
+			default:
+				layoutParams.gravity = Gravity.BOTTOM | Gravity.END;
+				closeView.setLayoutParams(layoutParams);
+				break;
+		}
 		closeView.setTag(layout.getTag());
 		closeView.setOnClickListener(btnListener);
 		HyperImageView imageView = layout.findViewById(R.id.edit_imageView);
@@ -576,7 +613,7 @@ public class HyperTextEditor extends ScrollView {
 		}
 		try {
 			imagePaths.add(imagePath);
-			final RelativeLayout imageLayout = createImageLayout();
+			final FrameLayout imageLayout = createImageLayout();
 			HyperImageView imageView = imageLayout.findViewById(R.id.edit_imageView);
 			imageView.setAbsolutePath(imagePath);
 			HyperManager.getInstance().loadImage(imagePath, imageView, rtImageHeight);
@@ -681,7 +718,7 @@ public class HyperTextEditor extends ScrollView {
 					EditText item = (EditText) itemView;
 					hyperEditData.setInputStr(item.getText().toString());
 					hyperEditData.setType(1);
-				} else if (itemView instanceof RelativeLayout) {
+				} else if (itemView instanceof FrameLayout) {
 				    //图片
 					HyperImageView item = itemView.findViewById(R.id.edit_imageView);
 					hyperEditData.setImagePath(item.getAbsolutePath());
@@ -715,7 +752,7 @@ public class HyperTextEditor extends ScrollView {
 					String string = item.getText().toString().trim();
 					int length = string.length();
 					contentLength = contentLength + length;
-				} else if (itemView instanceof RelativeLayout) {
+				} else if (itemView instanceof FrameLayout) {
 					//图片
 					imageLength++;
 				}

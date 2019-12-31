@@ -35,8 +35,14 @@ public interface OnHyperEditListener {
     void onImageClick(View view, String imagePath);
 
     /**
-     * 图片删除事件
+     * 图片删除成功回调事件
      * @param imagePath             图片地址
      */
     void onRtImageDelete(String imagePath);
+
+    /**
+     * 图片删除图片点击事件
+     * @param view                  view
+     */
+    void onImageCloseClick(View view);
 }

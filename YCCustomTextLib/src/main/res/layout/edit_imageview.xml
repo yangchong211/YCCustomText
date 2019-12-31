@@ -12,16 +12,12 @@
 
     <ImageView
         android:id="@+id/image_close"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:paddingStart="20dp"
-        android:paddingLeft="20dp"
-        android:paddingTop="5dp"
-        android:paddingEnd="5dp"
-        android:paddingRight="5dp"
-        android:paddingBottom="20dp"
-        android:src="@drawable/ic_clean" />
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/icon_del" />
 
 </RelativeLayout>

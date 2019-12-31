@@ -49,6 +49,7 @@
 - 支持设置富文本的文字大小，行间距，图片和文本间距，以及插入图片的宽和高的属性
 - 图片支持点击预览，支持点击叉号控件去除图片，暴露给外部开发者调用。同时加载图片的逻辑也是暴露给外部开发者，充分解耦
 - 关于富文本字数统计，由于富文本中包括文字和图片，因此图片和文字数量统计分开。参考易车是：共n个文字，共n个图片显示
+- 富文本中支持动态设置图片的宽高适应条件，比如高度在100到200dp之间，支持动态设置删除按钮的位置
 
 
 
@@ -143,11 +144,18 @@
         @Override
         public void onImageClick(View view, String imagePath) {
             //图片点击事件
+            ToastUtils.showRoundRectToast("图片点击"+imagePath);
         }
 
         @Override
         public void onRtImageDelete(String imagePath) {
-            //图片删除事件
+            //图片删除成功事件
+            ToastUtils.showRoundRectToast("图片删除成功");
+        }
+
+        @Override
+        public void onImageCloseClick(final View view) {
+            //图片删除图片点击事件
         }
     });
     hte_content.setOnHyperChangeListener(new OnHyperChangeListener() {
@@ -201,6 +209,13 @@
         <attr name="editor_text_color" format="color" />
         <!--文字行间距-->
         <attr name="editor_text_line_space" format="dimension" />
+        <!--删除图片图标的位置-->
+        <attr name="editor_del_icon_location" format="enum">
+            <enum name="top_left" value="1" />
+            <enum name="top_right" value="2" />
+            <enum name="bottom_left" value="3" />
+            <enum name="bottom_right" value="4" />
+        </attr>
     </declare-styleable>
     ```
 

@@ -17,6 +17,8 @@ package com.ns.yc.yccustomtextlib.edit.inter;
 
 import android.widget.ImageView;
 
+import com.ns.yc.yccustomtextlib.edit.view.HyperImageView;
+
 /**
  * <pre>
  *     @author 杨充
@@ -34,6 +36,6 @@ public interface ImageLoader {
      * @param imageView                 view
      * @param imageHeight               图片高度
      */
-    void loadImage(String imagePath, ImageView imageView, int imageHeight);
+    void loadImage(String imagePath, HyperImageView imageView, int imageHeight);
 
 }

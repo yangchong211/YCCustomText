@@ -17,6 +17,7 @@ package com.ns.yc.yccustomtextlib.edit.manager;
 
 import android.widget.ImageView;
 import com.ns.yc.yccustomtextlib.edit.inter.ImageLoader;
+import com.ns.yc.yccustomtextlib.edit.view.HyperImageView;
 
 /**
  * <pre>
@@ -47,7 +48,7 @@ public final class HyperManager {
         this.imageLoader = imageLoader;
     }
 
-    public void loadImage(String imagePath, ImageView imageView, int imageHeight){
+    public void loadImage(String imagePath, HyperImageView imageView, int imageHeight){
         if (imageLoader != null){
             imageLoader.loadImage(imagePath, imageView, imageHeight);
         }

@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -34,10 +35,12 @@ import com.ns.yc.yccustomtextlib.edit.inter.ImageLoader;
 import com.ns.yc.yccustomtextlib.edit.inter.OnHyperEditListener;
 import com.ns.yc.yccustomtextlib.edit.inter.OnHyperTextListener;
 import com.ns.yc.yccustomtextlib.edit.model.HyperEditData;
+import com.ns.yc.yccustomtextlib.edit.view.HyperImageView;
 import com.ns.yc.yccustomtextlib.utils.HyperHtmlUtils;
 import com.ns.yc.yccustomtextlib.utils.HyperLibUtils;
 import com.ns.yc.yccustomtextlib.edit.view.HyperTextEditor;
 import com.ns.yc.yccustomtextlib.edit.view.HyperTextView;
+import com.pedaily.yc.ycdialoglib.fragment.CustomDialogFragment;
 import com.pedaily.yc.ycdialoglib.toast.ToastUtils;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
@@ -189,11 +192,41 @@ public class NewArticleActivity extends AppCompatActivity {
             @Override
             public void onImageClick(View view, String imagePath) {
                 //图片点击事件
+                ToastUtils.showRoundRectToast("图片点击"+imagePath);
             }
 
             @Override
             public void onRtImageDelete(String imagePath) {
-                //图片删除事件
+                //图片删除成功事件
+                ToastUtils.showRoundRectToast("图片删除成功");
+            }
+
+            @Override
+            public void onImageCloseClick(final View view) {
+                //图片删除图片点击事件
+                CustomDialogFragment
+                        .create((NewArticleActivity.this).getSupportFragmentManager())
+                        .setTitle("删除图片")
+                        .setContent("确定要删除该图片吗?")
+                        .setCancelContent("取消")
+                        .setOkContent("确定")
+                        .setDimAmount(0.5f)
+                        .setOkColor(NewArticleActivity.this.getResources().getColor(R.color.color_000000))
+                        .setCancelOutside(true)
+                        .setCancelListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                CustomDialogFragment.dismissDialogFragment();
+                            }
+                        })
+                        .setOkListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                CustomDialogFragment.dismissDialogFragment();
+                                hte_content.onImageCloseClick(view);
+                            }
+                        })
+                        .show();
             }
         });
         hte_content.setOnHyperChangeListener(new OnHyperChangeListener() {
@@ -459,7 +492,7 @@ public class NewArticleActivity extends AppCompatActivity {
     private void initHyper(){
         HyperManager.getInstance().setImageLoader(new ImageLoader() {
             @Override
-            public void loadImage(final String imagePath, final ImageView imageView, final int imageHeight) {
+            public void loadImage(final String imagePath, final HyperImageView imageView, final int imageHeight) {
                 Log.e("---", "imageHeight: "+imageHeight);
                 //如果是网络图片
                 if (imagePath.startsWith("http://") || imagePath.startsWith("https://")){
@@ -470,10 +503,17 @@ public class NewArticleActivity extends AppCompatActivity {
                                 @Override
                                 public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                                     if (imageHeight > 0) {//固定高度
-                                        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-                                                FrameLayout.LayoutParams.MATCH_PARENT, imageHeight);//固定图片高度，记得设置裁剪剧中
-                                        lp.bottomMargin = 10;//图片的底边距
-                                        imageView.setLayoutParams(lp);
+                                        if (imageView.getLayoutParams() instanceof RelativeLayout.LayoutParams){
+                                            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                                                    FrameLayout.LayoutParams.MATCH_PARENT, imageHeight);//固定图片高度，记得设置裁剪剧中
+                                            lp.bottomMargin = 10;//图片的底边距
+                                            imageView.setLayoutParams(lp);
+                                        } else if (imageView.getLayoutParams() instanceof FrameLayout.LayoutParams){
+                                            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
+                                                    FrameLayout.LayoutParams.MATCH_PARENT, imageHeight);//固定图片高度，记得设置裁剪剧中
+                                            lp.bottomMargin = 10;//图片的底边距
+                                            imageView.setLayoutParams(lp);
+                                        }
                                         Glide.with(getApplicationContext()).asBitmap().load(imagePath).centerCrop()
                                                 .placeholder(R.drawable.img_load_fail).error(R.drawable.img_load_fail).into(imageView);
                                     } else {//自适应高度
@@ -484,10 +524,17 @@ public class NewArticleActivity extends AppCompatActivity {
                             });
                 } else { //如果是本地图片
                     if (imageHeight > 0) {//固定高度
-                        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-                                FrameLayout.LayoutParams.MATCH_PARENT, imageHeight);//固定图片高度，记得设置裁剪剧中
-                        lp.bottomMargin = 10;//图片的底边距
-                        imageView.setLayoutParams(lp);
+                        if (imageView.getLayoutParams() instanceof RelativeLayout.LayoutParams){
+                            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                                    FrameLayout.LayoutParams.MATCH_PARENT, imageHeight);//固定图片高度，记得设置裁剪剧中
+                            lp.bottomMargin = 10;//图片的底边距
+                            imageView.setLayoutParams(lp);
+                        } else if (imageView.getLayoutParams() instanceof FrameLayout.LayoutParams){
+                            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
+                                    FrameLayout.LayoutParams.MATCH_PARENT, imageHeight);//固定图片高度，记得设置裁剪剧中
+                            lp.bottomMargin = 10;//图片的底边距
+                            imageView.setLayoutParams(lp);
+                        }
 
                         Glide.with(getApplicationContext()).asBitmap().load(imagePath).centerCrop()
                                 .placeholder(R.drawable.img_load_fail).error(R.drawable.img_load_fail).into(imageView);
