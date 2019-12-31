@@ -15,7 +15,6 @@ limitations under the License.
 */
 package com.ns.yc.yccustomtextlib.edit.inter;
 
-import android.widget.ImageView;
 
 import com.ns.yc.yccustomtextlib.edit.view.HyperImageView;
 

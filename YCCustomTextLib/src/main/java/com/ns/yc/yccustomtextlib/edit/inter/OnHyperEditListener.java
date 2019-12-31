@@ -45,4 +45,5 @@ public interface OnHyperEditListener {
      * @param view                  view
      */
     void onImageCloseClick(View view);
+
 }

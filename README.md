@@ -91,7 +91,7 @@
 ### 05.富文本如何使用
 - 如何引用
     ```
-    implementation 'cn.yc:YCCustomTextLib:2.1.2'
+    implementation 'cn.yc:YCCustomTextLib:2.1.3'
     ```
 - 在布局中引用，HyperTextEditor是编辑富文本，HyperTextView是预览富文本
     ```
