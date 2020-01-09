@@ -31,6 +31,8 @@
 
 
     <declare-styleable name="HyperTextView" >
+        <attr name="ht_view_right_left" format="dimension" />
+        <attr name="ht_view_top_bottom" format="dimension" />
         <attr name="ht_view_image_height" format="integer" />
         <attr name="ht_view_image_bottom" format="integer" />
         <attr name="ht_view_text_init_hint" format="string" />

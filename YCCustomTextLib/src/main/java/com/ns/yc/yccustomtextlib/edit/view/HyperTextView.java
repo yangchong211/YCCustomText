@@ -87,6 +87,14 @@ public class HyperTextView extends ScrollView {
      */
     private int rtImageBottom = 10;
     /**
+     * 父控件的上和下padding
+     */
+    private int topAndBottom;
+    /**
+     * 父控件的左和右padding
+     */
+    private int leftAndRight;
+    /**
      * 文字相关属性，初始提示信息，文字大小和颜色
      */
     private String rtTextInitHint = "没有内容";
@@ -133,6 +141,8 @@ public class HyperTextView extends ScrollView {
     private void initAttrs(Context context, AttributeSet attrs) {
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.HyperTextView);
         rtImageHeight = ta.getInteger(R.styleable.HyperTextView_ht_view_image_height, 0);
+        topAndBottom = ta.getDimensionPixelSize(R.styleable.HyperTextView_ht_view_top_bottom, 15);
+        leftAndRight = ta.getDimensionPixelSize(R.styleable.HyperTextView_ht_view_right_left, 40);
         rtImageBottom = ta.getInteger(R.styleable.HyperTextView_ht_view_image_bottom, 10);
         rtTextSize = ta.getDimensionPixelSize(R.styleable.HyperTextView_ht_view_text_size, 16);
         rtTextLineSpace = ta.getDimensionPixelSize(R.styleable.HyperTextView_ht_view_text_line_space, 8);
@@ -148,8 +158,8 @@ public class HyperTextView extends ScrollView {
         allLayout.setOrientation(LinearLayout.VERTICAL);
         //allLayout.setBackgroundColor(Color.WHITE);//去掉背景
         LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        //设置间距，防止生成图片时文字太靠边
-        allLayout.setPadding(50,15,50,15);
+        //设置间距，防止生成图片时文字太靠边，不能用margin，否则有黑边
+        allLayout.setPadding(leftAndRight,topAndBottom,leftAndRight,topAndBottom);
         addView(allLayout, layoutParams);
     }
 
@@ -286,6 +296,7 @@ public class HyperTextView extends ScrollView {
         }
         final HyperImageView imageView = imageLayout.findViewById(R.id.edit_imageView);
         imageView.setAbsolutePath(imagePath);
+        // 暴露给外部加载图片
         HyperManager.getInstance().loadImage(imagePath, imageView, rtImageHeight);
         // onActivityResult无法触发动画，此处post处理
         allLayout.addView(imageLayout, index);
