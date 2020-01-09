@@ -280,7 +280,9 @@ public class NewArticleActivity extends AppCompatActivity {
                 break;
             case R.id.save:
                 //保存
-                showDataSync(getEditData());
+                List<HyperEditData> hyperEditData = hte_content.buildEditData();
+                ModelStorage.getInstance().setHyperEditData(hyperEditData);
+                startActivity(new Intent(this,PreviewArticleActivity.class));
                 break;
             default:
                 break;
