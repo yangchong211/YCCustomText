@@ -258,7 +258,7 @@ public class HyperTextView extends ScrollView {
      * @param editStr EditText显示的文字
      */
     public void addTextViewAtIndex(final int index, CharSequence editStr) {
-        if (index==-1){
+        if (index==-1 && editStr == null || editStr.length()==0){
             return;
         }
         try {
