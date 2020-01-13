@@ -693,6 +693,7 @@ public class HyperTextEditor extends ScrollView {
 				layout.setLayoutTransition(null);
 				layout.removeView(nextEdit);
 				preEdit.setText(mergeText);
+				//设置光标的定位
 				preEdit.requestFocus();
 				preEdit.setSelection(str1.length(), str1.length());
 				//设置动画
@@ -749,9 +750,11 @@ public class HyperTextEditor extends ScrollView {
 				if (itemView instanceof EditText) {
 					//文本
 					EditText item = (EditText) itemView;
-					String string = item.getText().toString().trim();
-					int length = string.length();
-					contentLength = contentLength + length;
+					if (item.getText()!=null){
+						String string = item.getText().toString().trim();
+						int length = string.length();
+						contentLength = contentLength + length;
+					}
 				} else if (itemView instanceof FrameLayout) {
 					//图片
 					imageLength++;
@@ -761,6 +764,35 @@ public class HyperTextEditor extends ScrollView {
 			e.printStackTrace();
 		}
 		HyperLogUtils.d("HyperTextEditor----buildEditData------dataList---");
+	}
+
+	/**
+	 * 上传图片成功之后，替换本地图片路径
+	 * @param url						网络图片
+	 * @param localPath					本地图片
+	 */
+	public void setImageUrl(String url,String localPath) {
+		HyperLogUtils.d("HyperTextEditor----setImageUrl1------"+url+"----"+localPath);
+		if (layout==null){
+			return;
+		}
+		try {
+			int num = layout.getChildCount();
+			for (int index = 0; index < num; index++) {
+				View itemView = layout.getChildAt(index);
+				if (itemView instanceof FrameLayout) {
+					//图片控件，需要替换图片url
+					HyperImageView item = itemView.findViewById(R.id.edit_imageView);
+					if (item.getAbsolutePath().equals(localPath)){
+						item.setAbsolutePath(url);
+						HyperLogUtils.d("HyperTextEditor----setImageUrl2------"+url+"----"+localPath);
+						return;
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void setOnHyperListener(OnHyperEditListener listener){
