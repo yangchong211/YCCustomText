@@ -106,6 +106,9 @@ public class HyperTextEditor extends ScrollView {
 	 */
 	private LayoutTransition mTransition;
 	private int editNormalPadding = 0;
+	/**
+	 * 删除该图片，消失的图片控件索引
+	 */
 	private int disappearingImageIndex = 0;
 	/**
 	 * 图片地址集合
@@ -376,9 +379,11 @@ public class HyperTextEditor extends ScrollView {
 		try {
 			//判断过渡动画是否结束，只能等到结束才可以操作
 			if (!mTransition.isRunning()) {
+				//获取当前要删除图片控件的索引值
 				disappearingImageIndex = layout.indexOfChild(view);
 				//删除文件夹里的图片
 				List<HyperEditData> dataList = buildEditData();
+				//获取要删除图片控件的数据
 				HyperEditData editData = dataList.get(disappearingImageIndex);
 				if (editData.getImagePath() != null){
 					if (onHyperListener != null){
