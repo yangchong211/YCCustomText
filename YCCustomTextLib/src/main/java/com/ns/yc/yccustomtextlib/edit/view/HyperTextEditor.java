@@ -332,6 +332,9 @@ public class HyperTextEditor extends ScrollView {
 	 */
 	@SuppressLint("SetTextI18n")
 	private void onBackspacePress(EditText editText) {
+		if (editText==null){
+			return;
+		}
 		try {
 			int startSelection = editText.getSelectionStart();
 			// 只有在光标已经顶到文本输入框的最前方，在判定是否删除之前的图片，或两个View合并
@@ -443,7 +446,7 @@ public class HyperTextEditor extends ScrollView {
 	 * @param paddingTop						到顶部高度
 	 * @return
 	 */
-	public EditText createEditText(String hint, int paddingTop) {
+	private EditText createEditText(String hint, int paddingTop) {
 		EditText editText = new DeletableEditText(getContext());
 		LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		editText.setLayoutParams(layoutParams);
@@ -511,7 +514,7 @@ public class HyperTextEditor extends ScrollView {
 	 * 插入一张图片
 	 * @param imagePath							图片路径地址
 	 */
-	public void insertImage(String imagePath) {
+	public synchronized void insertImage(String imagePath) {
 		//bitmap == null时，可能是网络图片，不能做限制
 		if (TextUtils.isEmpty(imagePath)){
 			return;
@@ -563,7 +566,7 @@ public class HyperTextEditor extends ScrollView {
 	/**
 	 * 隐藏小键盘
 	 */
-	public void hideKeyBoard() {
+	private void hideKeyBoard() {
 		InputMethodManager imm = (InputMethodManager)
 				getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
 		if (imm != null && lastFocusEdit != null) {
@@ -580,7 +583,7 @@ public class HyperTextEditor extends ScrollView {
 	 * @param index							位置
 	 * @param editStr						EditText显示的文字
 	 */
-	public void addEditTextAtIndex(final int index, CharSequence editStr) {
+	public synchronized void addEditTextAtIndex(final int index, CharSequence editStr) {
 		try {
 			EditText editText = createEditText("插入文字", EDIT_PADDING);
 			if (!TextUtils.isEmpty(keywords)) {
@@ -612,7 +615,7 @@ public class HyperTextEditor extends ScrollView {
 	/**
 	 * 在特定位置添加ImageView
 	 */
-	public void addImageViewAtIndex(final int index, final String imagePath) {
+	public synchronized void addImageViewAtIndex(final int index, final String imagePath) {
 		if (TextUtils.isEmpty(imagePath)){
 			return;
 		}

@@ -216,7 +216,7 @@ public class HyperTextView extends ScrollView {
     /**
      * 生成文本输入框
      */
-    public TextView createTextView(String hint, int paddingTop) {
+    private TextView createTextView(String hint, int paddingTop) {
         TextView textView = new TextView(getContext());
         LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         textView.setLayoutParams(layoutParams);
@@ -257,7 +257,7 @@ public class HyperTextView extends ScrollView {
      * @param index 位置
      * @param editStr EditText显示的文字
      */
-    public void addTextViewAtIndex(final int index, CharSequence editStr) {
+    public synchronized void addTextViewAtIndex(final int index, CharSequence editStr) {
         if (index==-1 && editStr == null || editStr.length()==0){
             return;
         }
@@ -282,7 +282,7 @@ public class HyperTextView extends ScrollView {
      * @param index                             索引值
      * @param imagePath                         图片地址
      */
-    public void addImageViewAtIndex(final int index, final String imagePath) {
+    public synchronized void addImageViewAtIndex(final int index, final String imagePath) {
         if (index==-1){
             return;
         }
@@ -308,7 +308,7 @@ public class HyperTextView extends ScrollView {
      * @param imagePath                         图片地址
      * @param isWordWrap                        是否折行
      */
-    public void addImageViewAtIndex(final int index, String imagePath , boolean isWordWrap) {
+    public synchronized void addImageViewAtIndex(final int index, String imagePath , boolean isWordWrap) {
         if (index==-1){
             return;
         }
