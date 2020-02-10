@@ -21,6 +21,7 @@
 - 20.生成json片段上传服务器
 - 21.图片上传策略问题思考
 - 22.一些细节问题的处理
+- 23.合理运用面向对象编程思想
 
 
 
@@ -936,6 +937,122 @@
 - 在获取EditText控件内容字符串的时候，或者对字符串裁剪等等，建议最后都进行trim一下，避免字符串末尾处出现空格，增加严谨性。
 - 针对封装库中的一些工具类，或者不想被继承的类，建议用finial修饰一下，这边可以避免反射修改属性，或者通过继承修改属性，看了Rx，OkHttp等源码，可以发现很多类用了finial修饰。
 - 在控件销毁的时候，建议移除一些监听事件，同时保存一些比较重要的信息。针对设置span样式，考虑后期添加更多，因此特别注意后期代码的拆分和解藕操作。
+
+
+
+### 23.合理运用面向对象编程思想
+#### 23.1 针对富文本插入图片操作
+- 刚开始的思路，插入图片控件大概思路是：创建图片控件，然后设置相关属性，然后使用glide加载图片并显示控件上。
+- 一般的思路是这样的，但是这样遇到问题，那就是富文本封装lib库，不适宜直接在lib用glide库。再者，如果别人不是glide，用的是imageLoader等等，那能否暴露给外部处理呢？
+    ```
+    /**
+     * 在特定位置添加ImageView，折行
+     * @param index                             索引值
+     * @param imagePath                         图片地址
+     * @param isWordWrap                        是否折行
+     */
+    public synchronized void addImageViewAtIndex(final int index, String imagePath ) {
+        if (index==-1){
+            return;
+        }
+        if(imagePath==null || imagePath.length()==0){
+            return;
+        }
+        Bitmap bmp = BitmapFactory.decodeFile(imagePath);
+        final RelativeLayout imageLayout = createImageLayout();
+        HyperImageView imageView = imageLayout.findViewById(R.id.edit_imageView);
+        //Picasso.with(getContext()).load(imagePath).centerCrop().into(imageView);
+        Glide.with(getContext()).load(imagePath).crossFade().centerCrop().into(imageView);
+        imageView.setAbsolutePath(imagePath);
+        allLayout.addView(imageLayout, index);
+    }
+    ```
+- 改进后的代码思路，思考一下，暴露给外部处理，需要有图片地址，图片控件等。同时，频繁插入图片控件，外部处理能否只需要设置一次即可。
+    - 首先先看看改进后的代码：注意这行代码HyperManager.getInstance().loadImage(imagePath, imageView, rtImageHeight);
+    ```
+    /**
+     * 在特定位置添加ImageView
+     */
+    public synchronized void addImageViewAtIndex(final int index, final String imagePath) {
+        if (TextUtils.isEmpty(imagePath)){
+            return;
+        }
+        try {
+            imagePaths.add(imagePath);
+            final FrameLayout imageLayout = createImageLayout();
+            HyperImageView imageView = imageLayout.findViewById(R.id.edit_imageView);
+            imageView.setAbsolutePath(imagePath);
+            //最大宽度
+            HyperManager.getInstance().loadImage(imagePath, imageView, rtImageHeight);
+            layout.addView(imageLayout, index);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    ```
+    - 暴露给开发者自定义设置图片，这里肯定要定义一个接口。
+    ```
+    public interface ImageLoader {
+        /**
+         * 加载图片
+         * @param imagePath                 图片地址
+         * @param imageView                 view
+         * @param imageHeight               图片高度
+         */
+        void loadImage(String imagePath, HyperImageView imageView, int imageHeight);
+    }
+    ```
+    - 使用单利模式，创建一个加载图片的manager类，用于设置图片和加载图片功能。这里这样操作，具体也是参考Banner轮播图案例，感谢前辈开发者优秀思路。可以看到前面的addImageViewAtIndex已经使用到了该类中的loadImage方法。
+    ```
+    public class HyperManager {
+    
+        private static HyperManager instance;
+        private ImageLoader imageLoader;
+    
+        public static HyperManager getInstance(){
+            if (instance == null){
+                synchronized (HyperManager.class){
+                    if (instance == null){
+                        instance = new HyperManager();
+                    }
+                }
+            }
+            return instance;
+        }
+    
+        public void setImageLoader(ImageLoader imageLoader){
+            this.imageLoader = imageLoader;
+        }
+    
+        public void loadImage(String imagePath, HyperImageView imageView, int imageHeight){
+            if (imageLoader != null){
+                imageLoader.loadImage(imagePath, imageView, imageHeight);
+            }
+        }
+    }
+    ```
+    - 那么哪里处理加载图片呢，这个时候，你可以在具体使用富文本的页面初始化加载富文本图片方法，代码如下所示，可以发现暴露给开发者处理。开发者可以根据自身使用的图片框架加载图片，极大增加了代码的灵活性和可维护性。
+    ```
+    HyperManager.getInstance().setImageLoader(new ImageLoader() {
+        @Override
+        public void loadImage(final String imagePath, final HyperImageView imageView, final int imageHeight) {
+            //LogUtils.e("---", "imageHeight: "+imageHeight);
+            Glide.with(getApplicationContext())
+                    .asBitmap()
+                    .load(imagePath)
+                    .placeholder(R.drawable.icon_place_choose)
+                    .error(R.drawable.icon_place_choose)
+                    .into(new TransformationScale(imageView));
+        }
+    });
+    ```
+
+
+
+#### 23.2 针对修改EditText文本内容加粗等格式
+- 由于文本选中文字改变字体样式，有加粗，下划线，删除线，添加引号，加粗斜体，斜体等n种样式。
+
+
 
 
 
