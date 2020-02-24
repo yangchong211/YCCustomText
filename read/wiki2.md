@@ -1,6 +1,7 @@
 #### 基础概念目录介绍
 - 01.业务要求插入单个图片最高200，最小高度100
 - 02.根据手机屏幕按照比例进行展示图片宽高
+- 03.在富文本编辑页面携带数据传递到下一个页面注意点
 
 
 
@@ -110,8 +111,47 @@
     ```
 
 
+### 03.在富文本编辑页面携带数据传递到下一个页面注意点
+- Intent 在 Activity 间传递基础类型数据或者可序列化的对象数据。但是 Intent 对数据大小是有限制的，当超过这个限制后，就会触发 TransactionTooLargeException 异常。
+    ```
+    /**
+     * <pre>
+     *     @author yangchong
+     *     blog  : https://github.com/yangchong211
+     *     time  : 2019/9/18
+     *     desc  : 数据缓冲区，替代intent传递大数据方案
+     *     revise:
+     * </pre>
+     */
+    public class ModelStorage {
+    
+        private List<HyperEditData> hyperEditData = new ArrayList<>();
+    
+        public static ModelStorage getInstance(){
+            return SingletonHolder.instance;
+        }
+    
+        private static class SingletonHolder{
+            private static final ModelStorage instance = new ModelStorage();
+        }
 
-
+        public List<HyperEditData> getHyperEditData() {
+            return hyperEditData;
+        }
+    
+        public void setHyperEditData(List<HyperEditData> hyperEditData) {
+            this.hyperEditData.clear();
+            this.hyperEditData.addAll(hyperEditData);
+        }
+    }
+    ```
+- 如何存数据，还有如何取数据呢？代码如下所示
+    ```
+    //存数据
+    ModelStorage.getInstance().setHyperEditData(hyperEditData);
+    //取数据
+    List<HyperEditData> hyperEditData = ModelStorage.getInstance().getHyperEditData();
+    ```
 
 
 
