@@ -22,7 +22,7 @@
 - 21.图片上传策略问题思考
 - 22.一些细节问题的处理
 - 23.合理运用面向对象编程思想
-
+- 25.如何代码修改输入光标颜色
 
 
 ### 00.该控件介绍
@@ -1053,7 +1053,60 @@
 - 由于文本选中文字改变字体样式，有加粗，下划线，删除线，添加引号，加粗斜体，斜体等n种样式。
 
 
-
+### 25.如何代码修改输入光标颜色
+- 使用代码动态修改输入文本的光标颜色，这里可以用反射来实现，具体代码如下所示
+    ```
+    /**
+     * 代码设置光标颜色
+     *
+     * @param editText                              你使用的EditText
+     * @param color                                 光标颜色
+     */
+    public static void setCursorDrawableColor(EditText editText, int color) {
+        if (editText==null){
+            return;
+        }
+        try {
+            //获取这个字段
+            Field fCursorDrawableRes = TextView.class.getDeclaredField("mCursorDrawableRes");
+            //代表这个字段、方法等等可以被访问
+            fCursorDrawableRes.setAccessible(true);
+            int mCursorDrawableRes = fCursorDrawableRes.getInt(editText);
+    
+            Field fEditor = TextView.class.getDeclaredField("mEditor");
+            fEditor.setAccessible(true);
+            Object editor = fEditor.get(editText);
+    
+            Class<?> clazz = editor.getClass();
+            Field fCursorDrawable = clazz.getDeclaredField("mCursorDrawable");
+            fCursorDrawable.setAccessible(true);
+    
+            Drawable[] drawables = new Drawable[2];
+            drawables[0] = editText.getContext().getResources().getDrawable(mCursorDrawableRes);
+            drawables[1] = editText.getContext().getResources().getDrawable(mCursorDrawableRes);
+            //SRC_IN 上下层都显示。下层居上显示。
+            drawables[0].setColorFilter(color, PorterDuff.Mode.SRC_IN);
+            drawables[1].setColorFilter(color, PorterDuff.Mode.SRC_IN);
+            fCursorDrawable.set(editor, drawables);
+        } catch (Resources.NotFoundException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    ```
+- 如何使用上面工具方法
+    ```
+    HyperLibUtils.setCursorDrawableColor(editText, cursorColor);
+    ```
 
 
 ### 富文本开源库：https://github.com/yangchong211/YCCustomText

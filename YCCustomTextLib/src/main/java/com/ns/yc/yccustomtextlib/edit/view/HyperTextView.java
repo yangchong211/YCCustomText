@@ -26,6 +26,8 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -34,10 +36,12 @@ import android.widget.TextView;
 import com.ns.yc.yccustomtextlib.R;
 import com.ns.yc.yccustomtextlib.edit.inter.OnHyperTextListener;
 import com.ns.yc.yccustomtextlib.edit.manager.HyperManager;
+import com.ns.yc.yccustomtextlib.edit.model.HyperEditData;
 import com.ns.yc.yccustomtextlib.utils.HyperLibUtils;
 import com.ns.yc.yccustomtextlib.utils.HyperLogUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -334,6 +338,36 @@ public class HyperTextView extends ScrollView {
         lp.bottomMargin = 10;
         imageView.setLayoutParams(lp);
         allLayout.addView(imageLayout, index);
+    }
+
+    /**
+     * 对外提供的接口, 生成编辑数据上传
+     */
+    public List<HyperEditData> buildEditData() {
+        List<HyperEditData> dataList = new ArrayList<>();
+        try {
+            int num = allLayout.getChildCount();
+            for (int index = 0; index < num; index++) {
+                View itemView = allLayout.getChildAt(index);
+                HyperEditData hyperEditData = new HyperEditData();
+                if (itemView instanceof TextView) {
+                    //文本
+                    TextView item = (TextView) itemView;
+                    hyperEditData.setInputStr(item.getText().toString());
+                    hyperEditData.setType(1);
+                } else if (itemView instanceof RelativeLayout) {
+                    //图片
+                    HyperImageView item = itemView.findViewById(R.id.edit_imageView);
+                    hyperEditData.setImagePath(item.getAbsolutePath());
+                    hyperEditData.setType(2);
+                }
+                dataList.add(hyperEditData);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        HyperLogUtils.d("HyperTextEditor----buildEditData------dataList---"+dataList.size());
+        return dataList;
     }
 
 }

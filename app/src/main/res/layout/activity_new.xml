@@ -32,6 +32,7 @@
         app:editor_text_init_hint="在这里输入内容"
         app:editor_text_size="16sp"
         app:editor_del_icon_location = "bottom_right"
+        app:editor_text_cursor_color="@color/colorAccent"
         app:editor_text_color="@android:color/black"/>
 
 

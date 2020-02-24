@@ -163,6 +163,10 @@ public class HyperTextEditor extends ScrollView {
 	 * 删除图片的位置
 	 */
 	private int delIconLocation = 0;
+	/**
+	 * 自定义输入文本的光标颜色
+	 */
+	private int cursorColor;
 	private OnHyperEditListener onHyperListener;
 	private OnHyperChangeListener onHyperChangeListener;
 
@@ -249,6 +253,7 @@ public class HyperTextEditor extends ScrollView {
 		rtHintTextColor = ta.getColor(R.styleable.HyperTextEditor_editor_hint_text_color,Color.parseColor("#B0B1B8"));
 		rtTextInitHint = ta.getString(R.styleable.HyperTextEditor_editor_text_init_hint);
 		delIconLocation = ta.getInt(R.styleable.HyperTextEditor_editor_del_icon_location,0);
+		cursorColor = ta.getColor(R.styleable.HyperTextEditor_editor_text_cursor_color,Color.parseColor("#FF434F"));
 		ta.recycle();
 	}
 
@@ -464,6 +469,7 @@ public class HyperTextEditor extends ScrollView {
 		editText.setTextColor(rtTextColor);
 		editText.setHintTextColor(rtHintTextColor);
 		editText.setLineSpacing(rtTextLineSpace, 1.0f);
+		HyperLibUtils.setCursorDrawableColor(editText, cursorColor);
 		return editText;
 	}
 

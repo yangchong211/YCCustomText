@@ -20,6 +20,8 @@
         <attr name="editor_hint_text_color" format="color" />
         <!--文字行间距-->
         <attr name="editor_text_line_space" format="dimension" />
+        <!--输入文本光标颜色-->
+        <attr name="editor_text_cursor_color" format="color" />
         <!--删除图片图标的位置-->
         <attr name="editor_del_icon_location" format="enum">
             <enum name="top_left" value="1" />
