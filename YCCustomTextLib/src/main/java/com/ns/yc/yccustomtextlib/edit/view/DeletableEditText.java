@@ -34,21 +34,48 @@ import com.ns.yc.yccustomtextlib.edit.wrapper.DeleteInputConnection;
  */
 public class DeletableEditText extends AppCompatEditText {
 
+    private DeleteInputConnection inputConnection;
+
     public DeletableEditText(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        init();
     }
 
     public DeletableEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init();
     }
 
     public DeletableEditText(Context context) {
         super(context);
+        init();
     }
 
+
+    private void init(){
+        inputConnection = new DeleteInputConnection(null,true);
+    }
+
+    /**
+     * 当输入法和EditText建立连接的时候会通过这个方法返回一个InputConnection。
+     * 我们需要代理这个方法的父类方法生成的InputConnection并返回我们自己的代理类。
+     * @param outAttrs                          attrs
+     * @return
+     */
     @Override
     public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
-        return new DeleteInputConnection(super.onCreateInputConnection(outAttrs), true);
+        //inputConnection = new DeleteInputConnection(super.onCreateInputConnection(outAttrs), true);
+        inputConnection.setTarget(super.onCreateInputConnection(outAttrs));
+        return inputConnection;
     }
+
+    /**
+     * 设置格键删除监听事件，主要是解决少部分手机，使用搜狗输入法无法响应当内容为空时的删除逻辑
+     * @param listener                          listener
+     */
+    public void setBackSpaceListener(DeleteInputConnection.BackspaceListener listener){
+        inputConnection.setBackspaceListener(listener);
+    }
+
 
 }

@@ -32,12 +32,25 @@ import com.ns.yc.yccustomtextlib.utils.HyperLogUtils;
  */
 public class DeleteInputConnection extends InputConnectionWrapper {
 
+    private BackspaceListener mBackspaceListener;
+    public interface BackspaceListener {
+        /**
+         * @return true 代表消费了这个事件
+         * */
+        boolean onBackspace();
+    }
+    public void setBackspaceListener(BackspaceListener backspaceListener) {
+        this.mBackspaceListener = backspaceListener;
+    }
+
+
     public DeleteInputConnection(InputConnection target, boolean mutable) {
         super(target, mutable);
     }
 
     /**
      * 提交文本
+     * 输入法输入了字符，包括表情，字母、文字、数字和符号等内容，会回调该方法
      * @param text                              text
      * @param newCursorPosition                 新索引位置
      * @return
@@ -52,17 +65,27 @@ public class DeleteInputConnection extends InputConnectionWrapper {
      * 在commitText方法中，
      * 如果执行父类的 commitText（即super.commitText(text, newCursorPosition)）那么表示不拦截，
      * 如果返回false则表示拦截
+     *
+     * 当有按键输入时，该方法会被回调。比如点击退格键时，搜狗输入法应该就是通过调用该方法，
+     * 发送keyEvent的，但谷歌输入法却不会调用该方法，而是调用下面的deleteSurroundingText()方法。
+     * 网上说少数低端手机，无法响应退格键删除功能，后期找华为p9手机，安装搜狗输入法测试
      * @param event                             event事件
      * @return
      */
     @Override
     public boolean sendKeyEvent(KeyEvent event) {
         HyperLogUtils.d("DeletableEditText---sendKeyEvent--");
+        if( event.getKeyCode() == KeyEvent.KEYCODE_DEL && event.getAction() == KeyEvent.ACTION_DOWN){
+            if(mBackspaceListener != null && mBackspaceListener.onBackspace()){
+                return true;
+            }
+        }
         return super.sendKeyEvent(event);
     }
 
     /**
      * 删除操作
+     * 有文本删除操作时（剪切，点击退格键），会触发该方法
      * @param beforeLength                      beforeLength
      * @param afterLength                       afterLength
      * @return
@@ -77,4 +100,12 @@ public class DeleteInputConnection extends InputConnectionWrapper {
         return super.deleteSurroundingText(beforeLength, afterLength);
     }
 
+    /**
+     *结 束组合文本输入的时候，回调该方法
+     * @return
+     */
+    @Override
+    public boolean finishComposingText() {
+        return super.finishComposingText();
+    }
 }
