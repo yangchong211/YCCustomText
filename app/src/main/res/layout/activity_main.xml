@@ -31,4 +31,13 @@
         android:text="2.使用webView实现富文本控件"/>
 
 
+    <TextView
+        android:id="@+id/tv_3"
+        android:layout_width="match_parent"
+        android:padding="10dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@color/colorAccent"
+        android:text="3.文本两端对其自定义控件"/>
+
 </LinearLayout>

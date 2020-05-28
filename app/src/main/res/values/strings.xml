@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">YCCustomText</string>
+
+    <string name="content0">Pakistan native Shahid Khan started auto Jacksonville Jacksonville</string>
+    <string name="content1">自定义文本控件，支持富文本，包含两种状态：编辑状态和预览状态。编辑状态中，可以对插入本地或者网络图片，可以同时插入多张有序图片和删除图片，支持图文混排，并且可以对文字内容简单操作加粗字体，设置字体下划线，支持设置文字超链接(超链接支持跳转)，支持字数和图片数量统计，功能正在开发中和完善中……</string>
+
+
+    <string name="content2">Pakistan native Shahid Khan started auto parts company Flex-N-Gate and bought the Jacksonville Jaguars.Pakistan native Shahid Khan started auto parts company Flex-N-Gate and bought the Jacksonville Jaguars.Pakistan native Shahid Khan started auto parts company Flex-N-Gate and bought the Jacksonville Jaguars.</string>
+
 </resources>

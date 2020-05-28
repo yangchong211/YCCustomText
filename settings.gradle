@@ -1,1 +1,2 @@
 include ':app', ':YCCustomTextLib'
+include ':SuperTextLib'

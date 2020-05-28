@@ -2,8 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/YCCustomText.iml" filepath="$PROJECT_DIR$/.idea/YCCustomText.iml" />
+      <module fileurl="file://$PROJECT_DIR$/GitHub-YCCustomText.iml" filepath="$PROJECT_DIR$/GitHub-YCCustomText.iml" group="YCCustomText" />
+      <module fileurl="file://$PROJECT_DIR$/SuperTextLib/SuperTextLib.iml" filepath="$PROJECT_DIR$/SuperTextLib/SuperTextLib.iml" group="YCCustomText/SuperTextLib" />
       <module fileurl="file://$PROJECT_DIR$/YCCustomText.iml" filepath="$PROJECT_DIR$/YCCustomText.iml" />
+      <module fileurl="file://$PROJECT_DIR$/YCCustomTextLib/YCCustomText-YCCustomTextLib.iml" filepath="$PROJECT_DIR$/YCCustomTextLib/YCCustomText-YCCustomTextLib.iml" group="YCCustomText/YCCustomTextLib" />
+      <module fileurl="file://$PROJECT_DIR$/app/YCCustomText-app.iml" filepath="$PROJECT_DIR$/app/YCCustomText-app.iml" group="YCCustomText/app" />
       <module fileurl="file://$PROJECT_DIR$/YCCustomTextLib/YCCustomTextLib.iml" filepath="$PROJECT_DIR$/YCCustomTextLib/YCCustomTextLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
